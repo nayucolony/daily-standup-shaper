@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+set -euo pipefail
+INPUT="${1:-/dev/stdin}"
+TEXT=$(cat "$INPUT")
+echo "## Yesterday"
+echo "- $(echo "$TEXT" | grep -m1 '昨日' | sed 's/.*: *//')"
+echo
+echo "## Today"
+echo "- $(echo "$TEXT" | grep -m1 '今日' | sed 's/.*: *//')"
+echo
+echo "## Blockers"
+echo "- $(echo "$TEXT" | grep -m1 '詰まり' | sed 's/.*: *//')"
