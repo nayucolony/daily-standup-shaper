@@ -68,6 +68,10 @@
 
 各段落に `Name:` / `名前:` がある場合、Entry見出しに名前を表示します（例: `### Entry 1 (Alice)`）。
 
+名前が見つからない段落は `### Entry N`（括弧なし）で出力されます。
+
+`--header-name-keys` を指定した場合も、指定キーで値を抽出できなかった段落は同様に `### Entry N` になります。
+
 名前ラベルが `Owner:` など独自形式の場合は `--header-name-keys` で判定キーを指定できます。
 
 ```bash
@@ -175,9 +179,9 @@ cp ./config/labels.example.json ./config/labels.local.json
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。
 
 - [x] P1: READMEのwatchdog時刻更新ループを停止し、機能追加トリガー時のみ更新する運用へ変更（Impact: 5, Effort: 2, Evidence: yes）
-- [ ] P2: `scripts/selfcheck.sh` に実入力サンプルの回帰ケースを1件追加（Impact: 4, Effort: 2, Evidence: yes）
-- [ ] P3: `--all` 出力の見出し整形（名前欠落時の表示）仕様をREADMEに明文化（Impact: 3, Effort: 1, Evidence: yes）
+- [x] P2: `scripts/selfcheck.sh` に実入力サンプルの回帰ケースを1件追加（Impact: 4, Effort: 2, Evidence: yes）
+- [x] P3: `--all` 出力の見出し整形（名前欠落時の表示）仕様をREADMEに明文化（Impact: 3, Effort: 1, Evidence: yes）
 - [ ] P4: `config/labels.example.json` に日本語同義語セット例を追加（Impact: 3, Effort: 2, Evidence: yes）
 
 ## Next
-- P2を実施: `scripts/selfcheck.sh` に実入力サンプルの回帰ケースを1件追加する
+- P4を実施: `config/labels.example.json` に日本語同義語セット例を追加する
