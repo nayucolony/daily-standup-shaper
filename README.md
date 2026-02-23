@@ -216,6 +216,14 @@ printf 'Yesterday: done\nToday: plan\n' | ./bin/shape-standup --strict
 - stdout は JSON 配列を維持
 - stderr は空（完全無出力）
 
+対応表:
+
+| mode | stdout | exit code | stderr |
+|---|---|---|---|
+| `--strict --quiet` (single/markdown) | Markdown (`## Yesterday` など) | 非0 | 空 |
+| `--all --strict --quiet` (all/markdown) | Markdown（`### Entry N` を含む） | 非0 | 空 |
+| `--all --strict --quiet --format json` (all/json) | JSON配列 | 非0 | 空 |
+
 ## Label synonyms config
 `config/labels.json` でラベル同義語を拡張できます。必要なら `--labels` で別ファイルを指定可能です。
 

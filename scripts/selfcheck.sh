@@ -439,6 +439,20 @@ else
 fi
 
 set +e
+strict_all_quiet_stdout=$(printf "%s\n" "$strict_all_input" | "$CLI" --all --strict --quiet 2>/tmp/shape_strict_all_quiet_err.txt)
+strict_all_quiet_code=$?
+strict_all_quiet_err=$(cat /tmp/shape_strict_all_quiet_err.txt)
+set -e
+if [ "$strict_all_quiet_code" -ne 0 ] \
+  && [ -z "$strict_all_quiet_err" ] \
+  && echo "$strict_all_quiet_stdout" | grep -q "### Entry 1" \
+  && echo "$strict_all_quiet_stdout" | grep -q "## Blockers"; then
+  pass "--all --strict --quiet suppresses stderr and keeps markdown output"
+else
+  fail "--all --strict --quiet suppresses stderr and keeps markdown output" "non-zero exit + empty stderr + markdown output" "stdout=$strict_all_quiet_stdout | stderr=$strict_all_quiet_err | code=$strict_all_quiet_code"
+fi
+
+set +e
 strict_all_json_stdout=$(printf "%s\n" "$strict_all_input" | "$CLI" --all --strict --format json 2>/tmp/shape_strict_all_json_err.txt)
 strict_all_json_code=$?
 strict_all_json_err=$(cat /tmp/shape_strict_all_json_err.txt)
