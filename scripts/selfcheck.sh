@@ -65,6 +65,13 @@ OUT
 actual_multiline=$(printf "%s\n" "$multiline_input" | "$CLI")
 assert_eq "Pattern D multiline bullets are merged" "$expected_multiline" "$actual_multiline"
 
+actual_sample_file=$("$CLI" "$ROOT_DIR/examples/sample.txt")
+if echo "$actual_sample_file" | grep -q "APIモック作成" && echo "$actual_sample_file" | grep -q "ログインUIの接続" && echo "$actual_sample_file" | grep -q "stagingの環境変数不足"; then
+  pass "sample.txt regression parses 昨日やったこと/今日やること labels"
+else
+  fail "sample.txt regression parses 昨日やったこと/今日やること labels" "contains parsed values from examples/sample.txt" "$actual_sample_file"
+fi
+
 en_input=$(cat <<'IN'
 Yesterday: fixed flaky test
 Today: implement onboarding banner
