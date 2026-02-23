@@ -254,8 +254,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 08:00 JST)
-反復判定（直近5サイクル）では Quiet/Strict 契約の同系作業比率が 4/5 で閾値以上のため、Update Plan を更新しつつ、P32（`--no-entry-header` 非干渉のJSON契約）を優先完了しました（Impact/Effort/Evidence）。
+## Update Plan (watchdog 2026-02-24 08:10 JST)
+反復判定（直近5サイクル）では Quiet/Strict 契約の同系作業比率が 4/5 で閾値以上のため、同系ループ回避のために Update Plan を再優先付けしました（Impact/Effort/Evidence）。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。
 
