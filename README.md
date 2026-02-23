@@ -20,7 +20,7 @@
 - MP4: `./assets/demo/daily-standup-shaper-demo.mp4`
 - GIF: `./assets/demo/daily-standup-shaper-demo.gif`
 
-## Implemented (watchdog 2026-02-23 17:03 JST)
+## Implemented (watchdog 2026-02-23 17:13 JST)
 - 入力パターンを3系統追加（日本語ラベル / Englishラベル / Done-Plan-Risk）
 - 抽出失敗時のフォールバック文言を実装
 - `examples/patterns.txt` に Pattern D（ラベル直下の複数箇条書き）を追加
@@ -34,7 +34,7 @@
 - `scripts/selfcheck.sh` に `--labels` カスタムファイル読み込みテストを追加
 - `--labels` のJSON検証を追加（必須キー欠落・型不正を明示エラー化）
 - `--json-include-entry-meta` を追加（`--all --format json` で `entryIndex` / `entryName` を付与可能）
-- selfcheck PASS を確認（2026-02-23 17:03 JST, `./scripts/selfcheck.sh`）
+- selfcheck PASS を確認（2026-02-23 17:13 JST, `./scripts/selfcheck.sh`）
 
 ## Pattern D (multiline bullets)
 以下のような入力を 1 項目に連結して出力します。
