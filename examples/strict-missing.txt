@@ -1,0 +1,11 @@
+# Entry 1 (missing blockers)
+Yesterday: prepared API contract
+Today: implement client adapter
+
+# Entry 2 (complete)
+Yesterday: fixed lint errors
+Today: update release checklist
+Blockers: none
+
+# Entry 3 (missing today + blockers)
+Yesterday: draft migration plan

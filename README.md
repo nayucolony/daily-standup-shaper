@@ -193,6 +193,10 @@ CLIヘルプと同じ注意書き（再掲）:
 
 ```bash
 ./bin/shape-standup --strict ./examples/sample.txt
+
+# --all + jsonでも、entry単位エラーをstderrに出しつつstdout JSON配列は維持
+./bin/shape-standup --all --strict --format json ./examples/strict-missing.txt
+# stderr: strict mode: missing required fields in one or more entries (entry1:blockers;entry3:today,blockers)
 ```
 
 ## Quiet mode
