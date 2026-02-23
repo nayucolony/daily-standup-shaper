@@ -225,11 +225,12 @@ printf 'Yesterday: done\nToday: plan\n' | ./bin/shape-standup --strict
 
 対応表:
 
-| mode | stdout | exit code | stderr |
-|---|---|---|---|
-| `--strict --quiet` (single/markdown) | Markdown (`## Yesterday` など) | 2（strict失敗契約を維持） | 空 |
-| `--all --strict --quiet` (all/markdown) | Markdown（`### Entry N` を含む） | 2 | 空 |
-| `--all --strict --quiet --format json` (all/json) | JSON配列 | 2 | 空 |
+| mode | stdout | exit code | stderr | 要約（運用判断） |
+|---|---|---|---|---|
+| `--strict --quiet` (single/markdown) | Markdown (`## Yesterday` など) | 2（strict失敗契約を維持） | 空 | Markdown維持 + stderr空 + exit 2 |
+| `--strict --quiet --format json` (single/json) | JSONオブジェクト | 2 | 空 | JSON維持 + stderr空 + exit 2 |
+| `--all --strict --quiet` (all/markdown) | Markdown（`### Entry N` を含む） | 2 | 空 | Markdown維持 + stderr空 + exit 2 |
+| `--all --strict --quiet --format json` (all/json) | JSON配列 | 2 | 空 | JSON維持 + stderr空 + exit 2 |
 
 ## Label synonyms config
 `config/labels.json` でラベル同義語を拡張できます。必要なら `--labels` で別ファイルを指定可能です。
