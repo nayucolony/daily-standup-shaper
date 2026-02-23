@@ -252,7 +252,7 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P22: README `JSON output` に `--json-entry-meta-keys idx,name` の最小/推奨テンプレを追加し誤設定率を低減（Impact: 2, Effort: 1, Evidence: yes）
 - [x] P23: `--all --strict --format json` の stderr 実例（entry単位）を `examples/` 入力付きでREADMEに追記し、運用者の再現手順を1コマンド化（Impact: 2, Effort: 1, Evidence: yes）
 - [x] P24: `examples/strict-missing.txt` を使った strict stderr 期待値を `scripts/selfcheck.sh` に追加し、README記載コマンドの回帰を自動検証化（Impact: 4, Effort: 2, Evidence: yes）
-- [ ] P25: strictエラー文言の先頭プレフィックス（`strict mode: missing required fields in one or more entries`）まで selfcheck で固定し、stderr互換性を明示保証（Impact: 3, Effort: 2, Evidence: yes）
+- [x] P25: strictエラー文言の先頭プレフィックス（`strict mode: missing required fields in one or more entries`）まで selfcheck で固定し、stderr互換性を明示保証（Impact: 3, Effort: 2, Evidence: yes）
 
 ## Next
-- P25候補: strictエラー文言の先頭プレフィックス（`strict mode: missing required fields in one or more entries`）まで selfcheck で固定し、stderr互換性を明示保証
+- P26候補: strict single/all のエラーメッセージ英語文言をREADMEに固定サンプル化し、`scripts/selfcheck.sh` で single/all それぞれ冒頭一致を回帰化（Impact: 2, Effort: 2, Evidence: yes）
