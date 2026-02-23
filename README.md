@@ -254,8 +254,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 07:30 JST)
-反復判定（直近5サイクル: P25→P29）では同一作業ファミリ比率は 5/5 = 1.00 で閾値超過のため、同系ループ回避として Update Plan を再優先付けし、P30（`--all --strict --quiet --no-entry-header` の契約固定）を先行して回帰化しました。
+## Update Plan (watchdog 2026-02-24 07:40 JST)
+反復判定（直近5サイクル: P27→P30）では Quiet/Strict 契約の同系作業比率が 4/5 = 0.80 で閾値超過のため、このサイクルは実装ループを一旦止めて Update Plan を再優先付けしました（Impact/Effort/Evidence）。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。
 
@@ -276,9 +276,11 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P28: `--all --strict --quiet`（markdown出力）でも stderr 完全無出力かつ非0終了を `scripts/selfcheck.sh` で固定し、README Quiet mode に対応表を追記（Impact: 3, Effort: 2, Evidence: yes）
 - [x] P29: `--strict --quiet --format json`（single/json）の stderr 完全無出力 + 非0終了 + JSONオブジェクト維持を `scripts/selfcheck.sh` に追加（Impact: 4, Effort: 2, Evidence: yes）
 - [x] P30: `--all --strict --quiet --no-entry-header` の markdown出力で Entry見出し非表示 + stderr空 + 非0終了を `scripts/selfcheck.sh` に追加（Impact: 3, Effort: 2, Evidence: yes）
-- [ ] P31: Quiet mode節に「終了コード2維持」注記と strict節への相互リンクを追加し運用誤解を防止（Impact: 2, Effort: 1, Evidence: yes）
-- [ ] P32: `--all --strict --quiet --no-entry-header --format json` 指定時に `--no-entry-header` がJSON出力へ影響しないこと（JSON配列維持・stderr空・非0）を回帰化（Impact: 3, Effort: 2, Evidence: yes）
-- [ ] P33: Quiet/Strict の終了コード契約（`2`）を selfcheck で single/all/json まとめて固定（Impact: 4, Effort: 2, Evidence: yes）
+- [ ] P33: Quiet/Strict の終了コード契約（`2`）を selfcheck で single/all/json まとめて固定（Impact: 5, Effort: 2, Evidence: yes）
+- [ ] P32: `--all --strict --quiet --no-entry-header --format json` 指定時に `--no-entry-header` がJSON出力へ影響しないこと（JSON配列維持・stderr空・終了コード2）を回帰化（Impact: 4, Effort: 2, Evidence: yes）
+- [ ] P31: Quiet mode節に「終了コード2維持」注記と strict節への相互リンクを追加し運用誤解を防止（Impact: 3, Effort: 1, Evidence: yes）
+- [ ] P34: `--strict --quiet`（single/markdown）の終了コード2を README の対応表にも明記し、運用受け入れ条件を1行化（Impact: 3, Effort: 1, Evidence: yes）
+- [ ] P35: strict失敗時の終了コード契約（2）を `examples/strict-missing.txt` ベースの再現コマンドとして README に追加（Impact: 2, Effort: 1, Evidence: yes）
 
 ## Next
-- P33実施: Quiet/Strict の終了コード契約（`2`）を single/all/json で selfcheck に追加し、READMEへ運用注記を同期する
+- P33実施: Quiet/Strict の終了コード契約（`2`）を single/all/json で selfcheck に追加し、完了後にP32へ進む
