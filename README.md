@@ -110,6 +110,30 @@ CLIヘルプと同じ注意書き（再掲）:
 
 # custom entry meta key names
 ./bin/shape-standup --all --format json --json-include-entry-meta --json-entry-meta-keys idx,name ./examples/patterns.txt
+
+# reproduce "name becomes empty when no header name is found"
+./bin/shape-standup --all --format json --json-include-entry-meta --json-entry-meta-keys idx,name --header-name-keys 'Owner|担当者' ./examples/patterns.txt
+```
+
+実出力例（上記コマンド、先頭2エントリのみ）:
+
+```json
+[
+  {
+    "idx": 1,
+    "name": "",
+    "yesterday": "APIモック作成",
+    "today": "ログインUI接続",
+    "blockers": "stagingの環境変数不足"
+  },
+  {
+    "idx": 2,
+    "name": "",
+    "yesterday": "fixed flaky test in auth module",
+    "today": "implement onboarding banner",
+    "blockers": "waiting for copy review"
+  }
+]
 ```
 
 `--json-entry-meta-keys` は **2つのキーをカンマ区切りで必須指定**します。
@@ -195,7 +219,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P8: `--all --header-name-keys` で名前未抽出時に `### Entry N` へフォールバックする回帰テストを追加（Impact: 4, Effort: 2, Evidence: yes）
 - [x] P9: `--all --format json --json-include-entry-meta --json-entry-meta-keys` と `--header-name-keys` 併用時の名前未抽出回帰テストを追加（Impact: 5, Effort: 3, Evidence: yes）
 - [x] P10: `--all --format json --json-include-entry-meta` のREADME例に `--header-name-keys` 併用サンプルを追記し、名前未抽出時に `name` が空文字になる仕様を明記（Impact: 4, Effort: 1, Evidence: yes）
-- [ ] P11: JSON output節に `entryName:""` を含む実出力サンプル（`--json-entry-meta-keys idx,name` 版）を追加して、仕様確認を1コマンドで再現できるようにする（Impact: 3, Effort: 1, Evidence: yes）
+- [x] P11: JSON output節に `entryName:""` を含む実出力サンプル（`--json-entry-meta-keys idx,name` 版）を追加して、仕様確認を1コマンドで再現できるようにする（Impact: 3, Effort: 1, Evidence: yes）
+- [ ] P12: `scripts/selfcheck.sh` に `--json-entry-meta-keys idx,name --header-name-keys 'Owner|担当者'` の出力で `"name":""` を検証する回帰テストを追加（Impact: 4, Effort: 2, Evidence: yes）
 
 ## Next
-- P11案: READMEのJSON output節に `--json-entry-meta-keys idx,name` 利用時の実出力例（`name:""` を含む）を追記する
+- P12案: `scripts/selfcheck.sh` に `--json-entry-meta-keys idx,name --header-name-keys 'Owner|担当者'` の `name:""` 検証ケースを追加する
