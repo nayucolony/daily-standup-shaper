@@ -147,6 +147,13 @@ else
   fail "--header-name-keys supports Owner/担当者 entry names" "contains Entry headers with Owner/担当者 names" "$actual_header_name_keys"
 fi
 
+actual_header_name_keys_spaced=$(printf "%s\n" "$header_name_keys_input" | "$CLI" --all --header-name-keys ' Owner | 担当者 ')
+if echo "$actual_header_name_keys_spaced" | grep -q "### Entry 1 (Carol)" && echo "$actual_header_name_keys_spaced" | grep -q "### Entry 2 (ダン)"; then
+  pass "--header-name-keys trims delimiter-side spaces"
+else
+  fail "--header-name-keys trims delimiter-side spaces" "contains Entry headers with Owner/担当者 names" "$actual_header_name_keys_spaced"
+fi
+
 header_name_keys_fallback_input=$(cat <<'IN'
 Owner: Eve
 Yesterday: E done

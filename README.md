@@ -78,6 +78,8 @@
 ./bin/shape-standup --all --header-name-keys 'Owner|担当者' ./examples/patterns.txt
 ```
 
+`--header-name-keys` は区切り文字 `|` の前後スペースを自動で無視します（例: `' Owner | 担当者 '` でも同じ結果）。
+
 Entry見出しが不要な場合は `--no-entry-header` を併用できます。
 
 ```bash
@@ -211,11 +213,11 @@ cp ./config/labels.example.json ./config/labels.local.json
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。
 
-- [ ] P14: `--json-entry-meta-keys idx,name` を指定しても `--json-include-entry-meta` なしでは metaキー自体が出力されないことを `scripts/selfcheck.sh` に追加（Impact: 4, Effort: 2, Evidence: yes）
-- [ ] P15: `--header-name-keys` の区切り文字前後スペース（例: `'Owner | 担当者'`）を正規化し、READMEとselfcheckで保証する（Impact: 4, Effort: 2, Evidence: yes）
+- [x] P14: `--json-entry-meta-keys idx,name` を指定しても `--json-include-entry-meta` なしでは metaキー自体が出力されないことを `scripts/selfcheck.sh` に追加（Impact: 4, Effort: 2, Evidence: yes）
+- [x] P15: `--header-name-keys` の区切り文字前後スペース（例: `'Owner | 担当者'`）を正規化し、READMEとselfcheckで保証する（Impact: 4, Effort: 2, Evidence: yes）
 - [ ] P16: `--json-keys` と `--json-entry-meta-keys` のキー重複（例: `yesterday,name`）を検出して明示エラー化（Impact: 5, Effort: 3, Evidence: yes）
 - [ ] P17: `--all --strict --format json` の失敗時メッセージに entry index と不足キーをJSON側仕様でも明記する回帰テストを追加（Impact: 3, Effort: 2, Evidence: yes）
 - [ ] P18: `examples/patterns.txt` に `Owner/担当者` 混在＋空値ケースを追加し、READMEから1コマンド再現できるようにする（Impact: 3, Effort: 2, Evidence: yes）
 
 ## Next
-- P14: `scripts/selfcheck.sh` に `--json-entry-meta-keys idx,name` + `--all --format json`（`--json-include-entry-meta` なし）で `idx/name` 不在を検証するケースを追加する
+- P16: `--json-keys` と `--json-entry-meta-keys` のキー重複（例: `yesterday,name`）を検出して明示エラー化し、READMEとselfcheckで保証する

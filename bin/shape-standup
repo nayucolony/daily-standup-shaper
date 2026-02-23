@@ -123,6 +123,19 @@ EOF
   esac
 done
 
+HEADER_NAME_KEYS=$(python3 - "$HEADER_NAME_KEYS" <<'PY'
+import sys
+raw = sys.argv[1]
+parts = [p.strip() for p in raw.split('|')]
+parts = [p for p in parts if p]
+print('|'.join(parts))
+PY
+)
+if [ -z "$HEADER_NAME_KEYS" ]; then
+  echo "--header-name-keys requires at least one key (e.g. Name|名前)" >&2
+  exit 1
+fi
+
 if [ "$FORMAT" != "markdown" ] && [ "$FORMAT" != "json" ]; then
   echo "unsupported format: $FORMAT (use markdown|json)" >&2
   exit 1
