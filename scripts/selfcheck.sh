@@ -453,6 +453,20 @@ else
 fi
 
 set +e
+strict_all_quiet_no_header_stdout=$(printf "%s\n" "$strict_all_input" | "$CLI" --all --strict --quiet --no-entry-header 2>/tmp/shape_strict_all_quiet_no_header_err.txt)
+strict_all_quiet_no_header_code=$?
+strict_all_quiet_no_header_err=$(cat /tmp/shape_strict_all_quiet_no_header_err.txt)
+set -e
+if [ "$strict_all_quiet_no_header_code" -ne 0 ] \
+  && [ -z "$strict_all_quiet_no_header_err" ] \
+  && ! echo "$strict_all_quiet_no_header_stdout" | grep -q "### Entry" \
+  && echo "$strict_all_quiet_no_header_stdout" | grep -q "## Yesterday"; then
+  pass "--all --strict --quiet --no-entry-header suppresses stderr and omits Entry headings"
+else
+  fail "--all --strict --quiet --no-entry-header suppresses stderr and omits Entry headings" "non-zero exit + empty stderr + no Entry heading + markdown output" "stdout=$strict_all_quiet_no_header_stdout | stderr=$strict_all_quiet_no_header_err | code=$strict_all_quiet_no_header_code"
+fi
+
+set +e
 strict_all_json_stdout=$(printf "%s\n" "$strict_all_input" | "$CLI" --all --strict --format json 2>/tmp/shape_strict_all_json_err.txt)
 strict_all_json_code=$?
 strict_all_json_err=$(cat /tmp/shape_strict_all_json_err.txt)
