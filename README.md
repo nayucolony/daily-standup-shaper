@@ -236,8 +236,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 06:10 JST)
-反復判定（直近5サイクル: P17→P21）では「同一作業ファミリ（selfcheck追加のみ）」比率は 3/5 で 0.60（閾値ちょうど）でしたが、直前サイクルでREADME計画更新（P20）を実施済みのため、このサイクルは計画上位のドキュメント改善（P22）を実行しました。
+## Update Plan (watchdog 2026-02-24 06:20 JST)
+反復判定（直近5サイクル: P18→P22）では同一作業ファミリ比率は 2/5 = 0.40 で閾値未満のため、計画上位のP23（READMEへ再現ワンライナー追加）を実行しました。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。
 
@@ -250,7 +250,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P20: README `Usage` に Pattern E の検証ワンライナーを追記し、手動再現性をCLIヘルプ導線からも辿れるようにする（Impact: 3, Effort: 1, Evidence: yes）
 - [x] P21: `--header-name-keys` 未指定時の Pattern E（Owner/担当者混在）挙動を `scripts/selfcheck.sh` へ追加し、name空文字フォールバックを明示化（Impact: 4, Effort: 2, Evidence: yes）
 - [x] P22: README `JSON output` に `--json-entry-meta-keys idx,name` の最小/推奨テンプレを追加し誤設定率を低減（Impact: 2, Effort: 1, Evidence: yes）
-- [ ] P23: `--all --strict --format json` の stderr 実例（entry単位）を `examples/` 入力付きでREADMEに追記し、運用者の再現手順を1コマンド化（Impact: 2, Effort: 1, Evidence: yes）
+- [x] P23: `--all --strict --format json` の stderr 実例（entry単位）を `examples/` 入力付きでREADMEに追記し、運用者の再現手順を1コマンド化（Impact: 2, Effort: 1, Evidence: yes）
+- [ ] P24: `examples/strict-missing.txt` を使った strict stderr 期待値を `scripts/selfcheck.sh` に追加し、README記載コマンドの回帰を自動検証化（Impact: 4, Effort: 2, Evidence: yes）
 
 ## Next
-- P23候補: `--all --strict --format json` の stderr 実例（entry単位）を `examples/` 入力付きでREADMEに追記し、運用者の再現手順を1コマンド化
+- P24候補: `examples/strict-missing.txt` を使った strict stderr 期待値を `scripts/selfcheck.sh` に追加し、README記載コマンドの回帰を自動検証化
