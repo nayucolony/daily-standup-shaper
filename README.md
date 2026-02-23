@@ -20,7 +20,7 @@
 - MP4: `./assets/demo/daily-standup-shaper-demo.mp4`
 - GIF: `./assets/demo/daily-standup-shaper-demo.gif`
 
-## Implemented (watchdog 2026-02-24 02:03 JST)
+## Implemented
 - 入力パターンを3系統追加（日本語ラベル / Englishラベル / Done-Plan-Risk）
 - 抽出失敗時のフォールバック文言を実装
 - `examples/patterns.txt` に Pattern D（ラベル直下の複数箇条書き）を追加
@@ -34,7 +34,7 @@
 - `scripts/selfcheck.sh` に `--labels` カスタムファイル読み込みテストを追加
 - `--labels` のJSON検証を追加（必須キー欠落・型不正を明示エラー化）
 - `--json-include-entry-meta` を追加（`--all --format json` で `entryIndex` / `entryName` を付与可能）
-- selfcheck PASS を確認（2026-02-24 02:03 JST, `./scripts/selfcheck.sh`）
+- selfcheck PASS を確認（`./scripts/selfcheck.sh`）
 
 ## Pattern D (multiline bullets)
 以下のような入力を 1 項目に連結して出力します。
@@ -174,10 +174,10 @@ cp ./config/labels.example.json ./config/labels.local.json
 ## Update Plan (watchdog 2026-02-24 02:12 JST)
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。
 
-- [ ] P1: READMEのwatchdog時刻更新ループを停止し、機能追加トリガー時のみ更新する運用へ変更（Impact: 5, Effort: 2, Evidence: yes）
+- [x] P1: READMEのwatchdog時刻更新ループを停止し、機能追加トリガー時のみ更新する運用へ変更（Impact: 5, Effort: 2, Evidence: yes）
 - [ ] P2: `scripts/selfcheck.sh` に実入力サンプルの回帰ケースを1件追加（Impact: 4, Effort: 2, Evidence: yes）
 - [ ] P3: `--all` 出力の見出し整形（名前欠落時の表示）仕様をREADMEに明文化（Impact: 3, Effort: 1, Evidence: yes）
 - [ ] P4: `config/labels.example.json` に日本語同義語セット例を追加（Impact: 3, Effort: 2, Evidence: yes）
 
 ## Next
-- P1を実施: READMEのwatchdog時刻更新を機能追加時のみ行う方針に変更し、不要な定常更新を止める
+- P2を実施: `scripts/selfcheck.sh` に実入力サンプルの回帰ケースを1件追加する
