@@ -236,8 +236,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 06:20 JST)
-反復判定（直近5サイクル: P18→P22）では同一作業ファミリ比率は 2/5 = 0.40 で閾値未満のため、計画上位のP23（READMEへ再現ワンライナー追加）を実行しました。
+## Update Plan (watchdog 2026-02-24 06:30 JST)
+反復判定（直近5サイクル: P19→P23）では同一作業ファミリ比率は 2/5 = 0.40 で閾値未満のため、計画上位のP24（strict-missing回帰テスト追加）を実行しました。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。
 
@@ -251,7 +251,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P21: `--header-name-keys` 未指定時の Pattern E（Owner/担当者混在）挙動を `scripts/selfcheck.sh` へ追加し、name空文字フォールバックを明示化（Impact: 4, Effort: 2, Evidence: yes）
 - [x] P22: README `JSON output` に `--json-entry-meta-keys idx,name` の最小/推奨テンプレを追加し誤設定率を低減（Impact: 2, Effort: 1, Evidence: yes）
 - [x] P23: `--all --strict --format json` の stderr 実例（entry単位）を `examples/` 入力付きでREADMEに追記し、運用者の再現手順を1コマンド化（Impact: 2, Effort: 1, Evidence: yes）
-- [ ] P24: `examples/strict-missing.txt` を使った strict stderr 期待値を `scripts/selfcheck.sh` に追加し、README記載コマンドの回帰を自動検証化（Impact: 4, Effort: 2, Evidence: yes）
+- [x] P24: `examples/strict-missing.txt` を使った strict stderr 期待値を `scripts/selfcheck.sh` に追加し、README記載コマンドの回帰を自動検証化（Impact: 4, Effort: 2, Evidence: yes）
+- [ ] P25: strictエラー文言の先頭プレフィックス（`strict mode: missing required fields in one or more entries`）まで selfcheck で固定し、stderr互換性を明示保証（Impact: 3, Effort: 2, Evidence: yes）
 
 ## Next
-- P24候補: `examples/strict-missing.txt` を使った strict stderr 期待値を `scripts/selfcheck.sh` に追加し、README記載コマンドの回帰を自動検証化
+- P25候補: strictエラー文言の先頭プレフィックス（`strict mode: missing required fields in one or more entries`）まで selfcheck で固定し、stderr互換性を明示保証

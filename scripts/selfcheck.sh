@@ -447,4 +447,17 @@ else
   fail "--all --strict --format json keeps JSON output and reports entry-wise missing fields" "non-zero exit + stderr includes entry1:blockers + stdout is valid JSON array" "stdout=$strict_all_json_stdout | stderr=$strict_all_json_err | code=$strict_all_json_code"
 fi
 
+set +e
+strict_missing_file_stdout=$("$CLI" --all --strict --format json "$ROOT_DIR/examples/strict-missing.txt" 2>/tmp/shape_strict_missing_file_err.txt)
+strict_missing_file_code=$?
+strict_missing_file_err=$(cat /tmp/shape_strict_missing_file_err.txt)
+set -e
+if [ "$strict_missing_file_code" -ne 0 ] \
+  && echo "$strict_missing_file_err" | grep -q "entry1:blockers;entry3:today,blockers" \
+  && printf "%s" "$strict_missing_file_stdout" | python3 -c 'import json,sys; d=json.load(sys.stdin); assert isinstance(d,list) and len(d)==3'; then
+  pass "examples/strict-missing.txt regression keeps JSON stdout and expected strict stderr details"
+else
+  fail "examples/strict-missing.txt regression keeps JSON stdout and expected strict stderr details" "non-zero exit + stderr includes entry1:blockers;entry3:today,blockers + stdout is valid JSON array" "stdout=$strict_missing_file_stdout | stderr=$strict_missing_file_err | code=$strict_missing_file_code"
+fi
+
 echo "All checks passed."
