@@ -220,11 +220,14 @@ printf 'Yesterday: done\nToday: plan\n' | ./bin/shape-standup --strict
 - stdout は JSON 配列を維持
 - stderr は空（完全無出力）
 
+受け入れ条件（P34, single/markdown）:
+- `--strict --quiet` で **stdout=Markdown維持 / stderr=空 / exit code=2** を同時に満たすこと
+
 対応表:
 
 | mode | stdout | exit code | stderr |
 |---|---|---|---|
-| `--strict --quiet` (single/markdown) | Markdown (`## Yesterday` など) | 2 | 空 |
+| `--strict --quiet` (single/markdown) | Markdown (`## Yesterday` など) | 2（strict失敗契約を維持） | 空 |
 | `--all --strict --quiet` (all/markdown) | Markdown（`### Entry N` を含む） | 2 | 空 |
 | `--all --strict --quiet --format json` (all/json) | JSON配列 | 2 | 空 |
 
@@ -283,10 +286,10 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P33: Quiet/Strict の終了コード契約（`2`）を selfcheck で single/all/json まとめて固定（Impact: 5, Effort: 2, Evidence: yes）
 - [x] P32: `--all --strict --quiet --no-entry-header --format json` 指定時に `--no-entry-header` がJSON出力へ影響しないこと（JSON配列維持・stderr空・終了コード2）を回帰化（Impact: 4, Effort: 2, Evidence: yes）
 - [x] P31: Quiet mode節に「終了コード2維持」注記と strict節への相互リンクを追加し運用誤解を防止（Impact: 3, Effort: 1, Evidence: yes）
-- [ ] P34: `--strict --quiet`（single/markdown）の終了コード2を README Quiet mode対応表の single/markdown 行へ明記し、受け入れ条件を1行化（Impact: 3, Effort: 1, Evidence: yes）
+- [x] P34: `--strict --quiet`（single/markdown）の終了コード2を README Quiet mode対応表の single/markdown 行へ明記し、受け入れ条件を1行化（Impact: 3, Effort: 1, Evidence: yes）
 - [ ] P36: Quiet mode対応表に `single/json`・`all/json` の「stderr空 + exit 2 + JSON維持」要約列を追加し、運用判断を表だけで完結させる（Impact: 3, Effort: 1, Evidence: yes）
 - [ ] P35: strict失敗時の終了コード契約（2）を `examples/strict-missing.txt` ベースの再現コマンドとして README に追加（Impact: 2, Effort: 1, Evidence: yes）
 - [ ] P37: README `Strict mode` 末尾に「quiet指定時はstderr抑制されても終了コード2は維持」の再確認チェックリストを追加（Impact: 2, Effort: 1, Evidence: yes）
 
 ## Next
-- P34実施: `--strict --quiet`（single/markdown）の終了コード2を README 対応表にも明記し、運用受け入れ条件を1行化
+- P36実施: Quiet mode対応表に `single/json`・`all/json` の「stderr空 + exit 2 + JSON維持」要約列を追加し、運用判断を表だけで完結させる
