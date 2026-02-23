@@ -210,6 +210,12 @@ printf 'Yesterday: done\nToday: plan\n' | ./bin/shape-standup --strict
 ./bin/shape-standup --strict --quiet ./examples/sample.txt
 ```
 
+`--all --strict --quiet --format json` でも契約は同じです。
+
+- 非0終了は維持
+- stdout は JSON 配列を維持
+- stderr は空（完全無出力）
+
 ## Label synonyms config
 `config/labels.json` でラベル同義語を拡張できます。必要なら `--labels` で別ファイルを指定可能です。
 
@@ -240,8 +246,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 06:50 JST)
-反復判定（直近5サイクル: P21→P25）では同一作業ファミリ比率は 2/5 = 0.40 で閾値未満のため、計画上位のP26（strict single/all のstderr先頭プレフィックス回帰固定）を実行しました。
+## Update Plan (watchdog 2026-02-24 07:00 JST)
+反復判定（直近5サイクル: P22→P26）では同一作業ファミリ比率は 3/5 = 0.60 で閾値到達のため、同系ループ回避として計画上位のP27（`--all --strict --quiet --format json` のstderr完全無出力契約）を実行しました。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。
 
@@ -258,6 +264,7 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P24: `examples/strict-missing.txt` を使った strict stderr 期待値を `scripts/selfcheck.sh` に追加し、README記載コマンドの回帰を自動検証化（Impact: 4, Effort: 2, Evidence: yes）
 - [x] P25: strictエラー文言の先頭プレフィックス（`strict mode: missing required fields in one or more entries`）まで selfcheck で固定し、stderr互換性を明示保証（Impact: 3, Effort: 2, Evidence: yes）
 - [x] P26: strict single/all のエラーメッセージ冒頭一致を `scripts/selfcheck.sh` で回帰化し、READMEへsingle/all両方の固定サンプルを追記（Impact: 2, Effort: 2, Evidence: yes）
+- [x] P27: `--all --strict --quiet --format json` の stderr 完全無出力（空）を `scripts/selfcheck.sh` で回帰固定し、README Quiet mode に契約を追記（Impact: 3, Effort: 2, Evidence: yes）
 
 ## Next
-- P27候補: `--all --strict --quiet --format json` でも stderr 完全無出力（空）を selfcheck で固定し、quiet契約を README に追記（Impact: 3, Effort: 2, Evidence: yes）
+- P28候補: `--all --strict --quiet`（markdown出力）でも stderr 完全無出力かつ非0終了を `scripts/selfcheck.sh` で固定し、Quiet mode 節へ single/json との対応表を追記（Impact: 3, Effort: 2, Evidence: yes）
