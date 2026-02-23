@@ -493,6 +493,19 @@ else
 fi
 
 set +e
+strict_all_json_quiet_no_header_stdout=$(printf "%s\n" "$strict_all_input" | "$CLI" --all --strict --quiet --no-entry-header --format json 2>/tmp/shape_strict_all_json_quiet_no_header_err.txt)
+strict_all_json_quiet_no_header_code=$?
+strict_all_json_quiet_no_header_err=$(cat /tmp/shape_strict_all_json_quiet_no_header_err.txt)
+set -e
+if [ "$strict_all_json_quiet_no_header_code" -eq 2 ] \
+  && [ -z "$strict_all_json_quiet_no_header_err" ] \
+  && printf "%s" "$strict_all_json_quiet_no_header_stdout" | python3 -c 'import json,sys; d=json.load(sys.stdin); assert isinstance(d,list) and len(d)==2 and d[0]["yesterday"]=="A done" and d[1]["today"]=="B plan" and all(set(e.keys())=={"yesterday","today","blockers"} for e in d)'; then
+  pass "--all --strict --quiet --no-entry-header --format json keeps JSON array, suppresses stderr, and exits 2"
+else
+  fail "--all --strict --quiet --no-entry-header --format json keeps JSON array, suppresses stderr, and exits 2" "exit code=2 + empty stderr + stdout is valid JSON array unaffected by --no-entry-header" "stdout=$strict_all_json_quiet_no_header_stdout | stderr=$strict_all_json_quiet_no_header_err | code=$strict_all_json_quiet_no_header_code"
+fi
+
+set +e
 strict_single_json_quiet_stdout=$(printf "%s\n" "$strict_missing_input" | "$CLI" --strict --quiet --format json 2>/tmp/shape_strict_single_json_quiet_err.txt)
 strict_single_json_quiet_code=$?
 strict_single_json_quiet_err=$(cat /tmp/shape_strict_single_json_quiet_err.txt)
