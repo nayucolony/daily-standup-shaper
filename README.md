@@ -181,7 +181,7 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P1: READMEのwatchdog時刻更新ループを停止し、機能追加トリガー時のみ更新する運用へ変更（Impact: 5, Effort: 2, Evidence: yes）
 - [x] P2: `scripts/selfcheck.sh` に実入力サンプルの回帰ケースを1件追加（Impact: 4, Effort: 2, Evidence: yes）
 - [x] P3: `--all` 出力の見出し整形（名前欠落時の表示）仕様をREADMEに明文化（Impact: 3, Effort: 1, Evidence: yes）
-- [ ] P4: `config/labels.example.json` に日本語同義語セット例を追加（Impact: 3, Effort: 2, Evidence: yes）
+- [x] P4: `config/labels.example.json` に日本語同義語セット例を追加（Impact: 3, Effort: 2, Evidence: yes）
 
 ## Next
-- P4を実施: `config/labels.example.json` に日本語同義語セット例を追加する
+- P5案: `--labels` 用のサンプル（labels.local.json）を examples に追加し、READMEに適用例を追記する
