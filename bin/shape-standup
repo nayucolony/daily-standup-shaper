@@ -142,15 +142,40 @@ if [ "$FORMAT" != "markdown" ] && [ "$FORMAT" != "json" ]; then
 fi
 
 IFS=',' read -r JSON_KEY_YESTERDAY JSON_KEY_TODAY JSON_KEY_BLOCKERS extra_key <<< "$JSON_KEYS"
+JSON_KEY_YESTERDAY="$(printf '%s' "$JSON_KEY_YESTERDAY" | xargs)"
+JSON_KEY_TODAY="$(printf '%s' "$JSON_KEY_TODAY" | xargs)"
+JSON_KEY_BLOCKERS="$(printf '%s' "$JSON_KEY_BLOCKERS" | xargs)"
 if [ -n "${extra_key:-}" ] || [ -z "${JSON_KEY_YESTERDAY:-}" ] || [ -z "${JSON_KEY_TODAY:-}" ] || [ -z "${JSON_KEY_BLOCKERS:-}" ]; then
   echo "invalid --json-keys: use exactly 3 comma-separated keys" >&2
   exit 1
 fi
 
 IFS=',' read -r JSON_META_KEY_INDEX JSON_META_KEY_NAME extra_meta_key <<< "$JSON_ENTRY_META_KEYS"
+JSON_META_KEY_INDEX="$(printf '%s' "$JSON_META_KEY_INDEX" | xargs)"
+JSON_META_KEY_NAME="$(printf '%s' "$JSON_META_KEY_NAME" | xargs)"
 if [ -n "${extra_meta_key:-}" ] || [ -z "${JSON_META_KEY_INDEX:-}" ] || [ -z "${JSON_META_KEY_NAME:-}" ]; then
   echo "invalid --json-entry-meta-keys: use exactly 2 comma-separated keys" >&2
   exit 1
+fi
+
+check_json_key_conflicts() {
+  python3 - "$JSON_KEY_YESTERDAY" "$JSON_KEY_TODAY" "$JSON_KEY_BLOCKERS" "$JSON_META_KEY_INDEX" "$JSON_META_KEY_NAME" <<'PY'
+import sys
+keys = [k.strip() for k in sys.argv[1:]]
+seen = set()
+dup = []
+for k in keys:
+    if k in seen and k not in dup:
+        dup.append(k)
+    seen.add(k)
+if dup:
+    print("json key conflict: duplicate key name(s): " + ",".join(dup), file=sys.stderr)
+    sys.exit(1)
+PY
+}
+
+if [ "$FORMAT" = "json" ] && [ "$MODE" = "all" ] && [ "$JSON_INCLUDE_ENTRY_META" -eq 1 ]; then
+  check_json_key_conflicts
 fi
 
 TEXT=$(cat "$INPUT")

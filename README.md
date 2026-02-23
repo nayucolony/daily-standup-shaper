@@ -144,6 +144,12 @@ CLIヘルプと同じ注意書き（再掲）:
 - 例: `idx,name`
 - 不正時: 非0終了 + `invalid --json-entry-meta-keys: use exactly 2 comma-separated keys`
 
+`--all --format json --json-include-entry-meta` で meta を有効化した場合、
+`--json-keys` と `--json-entry-meta-keys` のキー名重複は明示エラーで停止します。
+
+- 例: `--json-keys yesterday,today,name --json-entry-meta-keys idx,name`
+- エラー: `json key conflict: duplicate key name(s): name`
+
 不正値の例:
 - 1キー: `--json-entry-meta-keys idx`
 - 3キー: `--json-entry-meta-keys idx,name,person`
@@ -215,9 +221,9 @@ cp ./config/labels.example.json ./config/labels.local.json
 
 - [x] P14: `--json-entry-meta-keys idx,name` を指定しても `--json-include-entry-meta` なしでは metaキー自体が出力されないことを `scripts/selfcheck.sh` に追加（Impact: 4, Effort: 2, Evidence: yes）
 - [x] P15: `--header-name-keys` の区切り文字前後スペース（例: `'Owner | 担当者'`）を正規化し、READMEとselfcheckで保証する（Impact: 4, Effort: 2, Evidence: yes）
-- [ ] P16: `--json-keys` と `--json-entry-meta-keys` のキー重複（例: `yesterday,name`）を検出して明示エラー化（Impact: 5, Effort: 3, Evidence: yes）
+- [x] P16: `--json-keys` と `--json-entry-meta-keys` のキー重複（例: `yesterday,name`）を検出して明示エラー化（Impact: 5, Effort: 3, Evidence: yes）
 - [ ] P17: `--all --strict --format json` の失敗時メッセージに entry index と不足キーをJSON側仕様でも明記する回帰テストを追加（Impact: 3, Effort: 2, Evidence: yes）
 - [ ] P18: `examples/patterns.txt` に `Owner/担当者` 混在＋空値ケースを追加し、READMEから1コマンド再現できるようにする（Impact: 3, Effort: 2, Evidence: yes）
 
 ## Next
-- P16: `--json-keys` と `--json-entry-meta-keys` のキー重複（例: `yesterday,name`）を検出して明示エラー化し、READMEとselfcheckで保証する
+- P17: `--all --strict --format json` の失敗時メッセージに entry index と不足キーをJSON側仕様でも明記する回帰テストを追加し、READMEとselfcheckで保証する

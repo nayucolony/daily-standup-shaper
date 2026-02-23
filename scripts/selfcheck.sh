@@ -273,6 +273,11 @@ expect_fail_contains \
   "printf '%s\\n' \"$multi_people_named_input\" | \"$CLI\" --all --format=json --json-include-entry-meta --json-entry-meta-keys ''" \
   "requires comma-separated keys"
 
+expect_fail_contains \
+  "--json-keys and --json-entry-meta-keys reject duplicate key names" \
+  "printf '%s\\n' \"$multi_people_named_input\" | \"$CLI\" --all --format=json --json-include-entry-meta --json-keys yesterday,today,name --json-entry-meta-keys idx,name" \
+  "json key conflict: duplicate key name(s): name"
+
 imp_input=$(cat <<'IN'
 Done: close release checklist
 Plan: ship v0.1.0
