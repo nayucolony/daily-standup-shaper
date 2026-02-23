@@ -254,8 +254,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 07:00 JST)
-反復判定（直近5サイクル: P22→P26）では同一作業ファミリ比率は 3/5 = 0.60 で閾値到達のため、同系ループ回避として計画上位のP27（`--all --strict --quiet --format json` のstderr完全無出力契約）を実行しました。
+## Update Plan (watchdog 2026-02-24 07:10 JST)
+反復判定（直近5サイクル: P24→P28）では同一作業ファミリ比率は 4/5 = 0.80 で閾値超過のため、同系ループを可視化しつつ契約面を先に固定する方針でP28（`--all --strict --quiet` markdown出力のstderr完全無出力契約）を実行しました。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。
 
@@ -273,6 +273,10 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P25: strictエラー文言の先頭プレフィックス（`strict mode: missing required fields in one or more entries`）まで selfcheck で固定し、stderr互換性を明示保証（Impact: 3, Effort: 2, Evidence: yes）
 - [x] P26: strict single/all のエラーメッセージ冒頭一致を `scripts/selfcheck.sh` で回帰化し、READMEへsingle/all両方の固定サンプルを追記（Impact: 2, Effort: 2, Evidence: yes）
 - [x] P27: `--all --strict --quiet --format json` の stderr 完全無出力（空）を `scripts/selfcheck.sh` で回帰固定し、README Quiet mode に契約を追記（Impact: 3, Effort: 2, Evidence: yes）
+- [x] P28: `--all --strict --quiet`（markdown出力）でも stderr 完全無出力かつ非0終了を `scripts/selfcheck.sh` で固定し、README Quiet mode に対応表を追記（Impact: 3, Effort: 2, Evidence: yes）
+- [ ] P29: `--strict --quiet --format json`（single/json）の stderr 完全無出力 + 非0終了 + JSONオブジェクト維持を `scripts/selfcheck.sh` に追加（Impact: 4, Effort: 2, Evidence: yes）
+- [ ] P30: `--all --strict --quiet --no-entry-header` の markdown出力で Entry見出し非表示 + stderr空 + 非0終了を回帰化（Impact: 3, Effort: 2, Evidence: yes）
+- [ ] P31: Quiet mode節に「終了コード2維持」注記と strict節への相互リンクを追加し運用誤解を防止（Impact: 2, Effort: 1, Evidence: yes）
 
 ## Next
-- P28候補: `--all --strict --quiet`（markdown出力）でも stderr 完全無出力かつ非0終了を `scripts/selfcheck.sh` で固定し、Quiet mode 節へ single/json との対応表を追記（Impact: 3, Effort: 2, Evidence: yes）
+- P29実施: `--strict --quiet --format json`（single/json）の stderr 完全無出力 + 非0終了 + JSONオブジェクト維持を `scripts/selfcheck.sh` で固定する
