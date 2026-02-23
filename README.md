@@ -34,7 +34,7 @@
 - `scripts/selfcheck.sh` に `--labels` カスタムファイル読み込みテストを追加
 - `--labels` のJSON検証を追加（必須キー欠落・型不正を明示エラー化）
 - `--json-include-entry-meta` を追加（`--all --format json` で `entryIndex` / `entryName` を付与可能）
-- selfcheck PASS を確認（2026-02-23 16:23 JST, `./scripts/selfcheck.sh`）
+- selfcheck PASS を確認（2026-02-23 16:32 JST, `./scripts/selfcheck.sh`）
 
 ## Pattern D (multiline bullets)
 以下のような入力を 1 項目に連結して出力します。
