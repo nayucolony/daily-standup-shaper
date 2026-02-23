@@ -194,6 +194,10 @@ CLIヘルプと同じ注意書き（再掲）:
 ```bash
 ./bin/shape-standup --strict ./examples/sample.txt
 
+# single の stderr 先頭プレフィックス確認（missing blockers）
+printf 'Yesterday: done\nToday: plan\n' | ./bin/shape-standup --strict
+# stderr: strict mode: missing required fields (blockers)
+
 # --all + jsonでも、entry単位エラーをstderrに出しつつstdout JSON配列は維持
 ./bin/shape-standup --all --strict --format json ./examples/strict-missing.txt
 # stderr: strict mode: missing required fields in one or more entries (entry1:blockers;entry3:today,blockers)
@@ -236,8 +240,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 06:30 JST)
-反復判定（直近5サイクル: P19→P23）では同一作業ファミリ比率は 2/5 = 0.40 で閾値未満のため、計画上位のP24（strict-missing回帰テスト追加）を実行しました。
+## Update Plan (watchdog 2026-02-24 06:50 JST)
+反復判定（直近5サイクル: P21→P25）では同一作業ファミリ比率は 2/5 = 0.40 で閾値未満のため、計画上位のP26（strict single/all のstderr先頭プレフィックス回帰固定）を実行しました。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。
 
@@ -253,6 +257,7 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P23: `--all --strict --format json` の stderr 実例（entry単位）を `examples/` 入力付きでREADMEに追記し、運用者の再現手順を1コマンド化（Impact: 2, Effort: 1, Evidence: yes）
 - [x] P24: `examples/strict-missing.txt` を使った strict stderr 期待値を `scripts/selfcheck.sh` に追加し、README記載コマンドの回帰を自動検証化（Impact: 4, Effort: 2, Evidence: yes）
 - [x] P25: strictエラー文言の先頭プレフィックス（`strict mode: missing required fields in one or more entries`）まで selfcheck で固定し、stderr互換性を明示保証（Impact: 3, Effort: 2, Evidence: yes）
+- [x] P26: strict single/all のエラーメッセージ冒頭一致を `scripts/selfcheck.sh` で回帰化し、READMEへsingle/all両方の固定サンプルを追記（Impact: 2, Effort: 2, Evidence: yes）
 
 ## Next
-- P26候補: strict single/all のエラーメッセージ英語文言をREADMEに固定サンプル化し、`scripts/selfcheck.sh` で single/all それぞれ冒頭一致を回帰化（Impact: 2, Effort: 2, Evidence: yes）
+- P27候補: `--all --strict --quiet --format json` でも stderr 完全無出力（空）を selfcheck で固定し、quiet契約を README に追記（Impact: 3, Effort: 2, Evidence: yes）

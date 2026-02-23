@@ -388,10 +388,12 @@ set +e
 strict_out=$(printf "%s\n" "$strict_missing_input" | "$CLI" --strict 2>&1)
 strict_code=$?
 set -e
-if [ "$strict_code" -ne 0 ] && echo "$strict_out" | grep -qi "strict mode" && echo "$strict_out" | grep -q "blockers"; then
-  pass "--strict exits non-zero with missing field details"
+if [ "$strict_code" -ne 0 ] \
+  && echo "$strict_out" | grep -q "^strict mode: missing required fields (" \
+  && echo "$strict_out" | grep -q "blockers"; then
+  pass "--strict exits non-zero with stable stderr prefix and missing field details"
 else
-  fail "--strict exits non-zero with missing field details" "non-zero exit with strict mode message including blockers" "$strict_out (code=$strict_code)"
+  fail "--strict exits non-zero with stable stderr prefix and missing field details" "non-zero exit with strict mode prefix and blockers" "$strict_out (code=$strict_code)"
 fi
 
 set +e
@@ -428,10 +430,12 @@ set +e
 strict_all_out=$(printf "%s\n" "$strict_all_input" | "$CLI" --all --strict 2>&1)
 strict_all_code=$?
 set -e
-if [ "$strict_all_code" -ne 0 ] && echo "$strict_all_out" | grep -q "entry1:blockers"; then
-  pass "--all --strict reports missing fields with entry index"
+if [ "$strict_all_code" -ne 0 ] \
+  && echo "$strict_all_out" | grep -q "^strict mode: missing required fields in one or more entries" \
+  && echo "$strict_all_out" | grep -q "entry1:blockers"; then
+  pass "--all --strict reports missing fields with stable stderr prefix and entry index"
 else
-  fail "--all --strict reports missing fields with entry index" "strict message includes entry1:blockers" "$strict_all_out (code=$strict_all_code)"
+  fail "--all --strict reports missing fields with stable stderr prefix and entry index" "strict message starts with all-mode prefix and includes entry1:blockers" "$strict_all_out (code=$strict_all_code)"
 fi
 
 set +e
