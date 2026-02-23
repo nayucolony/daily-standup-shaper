@@ -1,0 +1,9 @@
+file '2026-02-23-14-00-01-standup-demo-01.png'
+duration 2
+file '2026-02-23-14-00-02-standup-demo-02.png'
+duration 2
+file '2026-02-23-14-00-03-standup-demo-03.png'
+duration 2
+file '2026-02-23-14-00-04-standup-demo-04.png'
+duration 2
+file '2026-02-23-14-00-04-standup-demo-04.png'
