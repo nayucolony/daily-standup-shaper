@@ -221,7 +221,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P10: `--all --format json --json-include-entry-meta` のREADME例に `--header-name-keys` 併用サンプルを追記し、名前未抽出時に `name` が空文字になる仕様を明記（Impact: 4, Effort: 1, Evidence: yes）
 - [x] P11: JSON output節に `entryName:""` を含む実出力サンプル（`--json-entry-meta-keys idx,name` 版）を追加して、仕様確認を1コマンドで再現できるようにする（Impact: 3, Effort: 1, Evidence: yes）
 - [x] P12: `scripts/selfcheck.sh` に `--json-entry-meta-keys idx,name --header-name-keys 'Owner|担当者'` の出力で `"name":""` を検証する回帰テストを追加（Impact: 4, Effort: 2, Evidence: yes）
-- [ ] P13: `scripts/selfcheck.sh` に `--json-entry-meta-keys idx,name` 指定時は `entryIndex/entryName` が出力されないことを検証する回帰テストを追加（Impact: 3, Effort: 2, Evidence: yes）
+- [x] P13: `scripts/selfcheck.sh` に `--json-entry-meta-keys idx,name` 指定時は `entryIndex/entryName` が出力されないことを検証する回帰テストを追加（Impact: 3, Effort: 2, Evidence: yes）
+- [ ] P14: `scripts/selfcheck.sh` に `--json-entry-meta-keys idx,name` を指定しても `--json-include-entry-meta` なしでは metaキー自体が出力されないことを検証する回帰テストを追加（Impact: 4, Effort: 2, Evidence: yes）
 
 ## Next
-- P13案: `scripts/selfcheck.sh` に `--json-entry-meta-keys idx,name` 使用時の非出力キー（`entryIndex/entryName` 不在）検証ケースを追加する
+- P14案: `scripts/selfcheck.sh` に `--json-entry-meta-keys idx,name` + `--all --format json`（`--json-include-entry-meta` なし）で `idx/name` 不在を検証するケースを追加する
