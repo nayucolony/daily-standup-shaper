@@ -206,23 +206,16 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 04:03 JST)
+## Update Plan (watchdog 2026-02-24 04:40 JST)
+反復判定（直近5サイクル想定）で「selfcheck回帰テスト追加」系が 3/5 となり閾値 0.60 以上のため、同系ループ回避として計画を再編しました。
+
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。
 
-- [x] P1: READMEのwatchdog時刻更新ループを停止し、機能追加トリガー時のみ更新する運用へ変更（Impact: 5, Effort: 2, Evidence: yes）
-- [x] P2: `scripts/selfcheck.sh` に実入力サンプルの回帰ケースを1件追加（Impact: 4, Effort: 2, Evidence: yes）
-- [x] P3: `--all` 出力の見出し整形（名前欠落時の表示）仕様をREADMEに明文化（Impact: 3, Effort: 1, Evidence: yes）
-- [x] P4: `config/labels.example.json` に日本語同義語セット例を追加（Impact: 3, Effort: 2, Evidence: yes）
-- [x] P5: `--labels` 用のサンプル（`examples/labels.local.json`）を追加し、READMEに適用例を追記（Impact: 3, Effort: 1, Evidence: yes）
-- [x] P6: `scripts/selfcheck.sh` に `examples/labels.local.json` を使った実ファイル回帰テストを1件追加（Impact: 4, Effort: 2, Evidence: yes）
-- [x] P7: `--header-name-keys` で `Owner|担当者` を使った名前抽出回帰テストを追加（Impact: 4, Effort: 2, Evidence: yes）
-- [x] P8: `--all --header-name-keys` で名前未抽出時に `### Entry N` へフォールバックする回帰テストを追加（Impact: 4, Effort: 2, Evidence: yes）
-- [x] P9: `--all --format json --json-include-entry-meta --json-entry-meta-keys` と `--header-name-keys` 併用時の名前未抽出回帰テストを追加（Impact: 5, Effort: 3, Evidence: yes）
-- [x] P10: `--all --format json --json-include-entry-meta` のREADME例に `--header-name-keys` 併用サンプルを追記し、名前未抽出時に `name` が空文字になる仕様を明記（Impact: 4, Effort: 1, Evidence: yes）
-- [x] P11: JSON output節に `entryName:""` を含む実出力サンプル（`--json-entry-meta-keys idx,name` 版）を追加して、仕様確認を1コマンドで再現できるようにする（Impact: 3, Effort: 1, Evidence: yes）
-- [x] P12: `scripts/selfcheck.sh` に `--json-entry-meta-keys idx,name --header-name-keys 'Owner|担当者'` の出力で `"name":""` を検証する回帰テストを追加（Impact: 4, Effort: 2, Evidence: yes）
-- [x] P13: `scripts/selfcheck.sh` に `--json-entry-meta-keys idx,name` 指定時は `entryIndex/entryName` が出力されないことを検証する回帰テストを追加（Impact: 3, Effort: 2, Evidence: yes）
-- [ ] P14: `scripts/selfcheck.sh` に `--json-entry-meta-keys idx,name` を指定しても `--json-include-entry-meta` なしでは metaキー自体が出力されないことを検証する回帰テストを追加（Impact: 4, Effort: 2, Evidence: yes）
+- [ ] P14: `--json-entry-meta-keys idx,name` を指定しても `--json-include-entry-meta` なしでは metaキー自体が出力されないことを `scripts/selfcheck.sh` に追加（Impact: 4, Effort: 2, Evidence: yes）
+- [ ] P15: `--header-name-keys` の区切り文字前後スペース（例: `'Owner | 担当者'`）を正規化し、READMEとselfcheckで保証する（Impact: 4, Effort: 2, Evidence: yes）
+- [ ] P16: `--json-keys` と `--json-entry-meta-keys` のキー重複（例: `yesterday,name`）を検出して明示エラー化（Impact: 5, Effort: 3, Evidence: yes）
+- [ ] P17: `--all --strict --format json` の失敗時メッセージに entry index と不足キーをJSON側仕様でも明記する回帰テストを追加（Impact: 3, Effort: 2, Evidence: yes）
+- [ ] P18: `examples/patterns.txt` に `Owner/担当者` 混在＋空値ケースを追加し、READMEから1コマンド再現できるようにする（Impact: 3, Effort: 2, Evidence: yes）
 
 ## Next
-- P14案: `scripts/selfcheck.sh` に `--json-entry-meta-keys idx,name` + `--all --format json`（`--json-include-entry-meta` なし）で `idx/name` 不在を検証するケースを追加する
+- P14: `scripts/selfcheck.sh` に `--json-entry-meta-keys idx,name` + `--all --format json`（`--json-include-entry-meta` なし）で `idx/name` 不在を検証するケースを追加する
