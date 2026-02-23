@@ -200,6 +200,24 @@ else
   fail "--json-entry-meta-keys customizes entry meta key names" "custom idx/name keys present" "$actual_json_all_meta_custom"
 fi
 
+json_meta_fallback_input=$(cat <<'IN'
+Owner: Eve
+Yesterday: E done
+Today: E plan
+Blockers: E blocker
+
+Yesterday: F done
+Today: F plan
+Blockers: F blocker
+IN
+)
+actual_json_meta_fallback=$(printf "%s\n" "$json_meta_fallback_input" | "$CLI" --all --format=json --json-include-entry-meta --json-entry-meta-keys idx,name --header-name-keys 'Owner|担当者')
+if printf "%s" "$actual_json_meta_fallback" | python3 -c 'import json,sys; d=json.load(sys.stdin); assert d[0]["idx"]==1 and d[0]["name"]=="Eve" and d[1]["idx"]==2 and d[1]["name"]==""'; then
+  pass "--json-entry-meta-keys keeps name key as empty string when entry name is missing"
+else
+  fail "--json-entry-meta-keys keeps name key as empty string when entry name is missing" "entry1 has Eve and entry2 has empty name string" "$actual_json_meta_fallback"
+fi
+
 expect_fail_contains \
   "--json-entry-meta-keys rejects 1-key input" \
   "printf '%s\\n' \"$multi_people_named_input\" | \"$CLI\" --all --format=json --json-include-entry-meta --json-entry-meta-keys idx" \
