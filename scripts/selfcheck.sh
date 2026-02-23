@@ -252,6 +252,19 @@ else
   fail "--labels rejects non-array/non-string key types with file path" "non-zero exit with type validation message including file path" "$bad_type_out (code=$bad_type_code)"
 fi
 
+labels_example_input=$(cat <<'IN'
+Y: custom done from examples
+T: custom plan from examples
+B: custom blocker from examples
+IN
+)
+actual_labels_example=$(printf "%s\n" "$labels_example_input" | "$CLI" --labels "$ROOT_DIR/examples/labels.local.json")
+if echo "$actual_labels_example" | grep -q "custom done from examples" && echo "$actual_labels_example" | grep -q "custom blocker from examples"; then
+  pass "examples/labels.local.json regression works with --labels"
+else
+  fail "examples/labels.local.json regression works with --labels" "contains values parsed via examples/labels.local.json" "$actual_labels_example"
+fi
+
 strict_missing_input=$(cat <<'IN'
 Yesterday: fixed flaky test
 Today: implement onboarding banner
