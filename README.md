@@ -156,6 +156,9 @@ CLIヘルプと同じ注意書き（再掲）:
 ```bash
 cp ./config/labels.example.json ./config/labels.local.json
 ./bin/shape-standup --labels ./config/labels.local.json ./examples/sample.txt
+
+# examples 付属のサンプルを使う場合
+./bin/shape-standup --labels ./examples/labels.local.json ./examples/sample.txt
 ```
 
 ### labels JSON schema (minimum)
@@ -182,6 +185,7 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P2: `scripts/selfcheck.sh` に実入力サンプルの回帰ケースを1件追加（Impact: 4, Effort: 2, Evidence: yes）
 - [x] P3: `--all` 出力の見出し整形（名前欠落時の表示）仕様をREADMEに明文化（Impact: 3, Effort: 1, Evidence: yes）
 - [x] P4: `config/labels.example.json` に日本語同義語セット例を追加（Impact: 3, Effort: 2, Evidence: yes）
+- [x] P5: `--labels` 用のサンプル（`examples/labels.local.json`）を追加し、READMEに適用例を追記（Impact: 3, Effort: 1, Evidence: yes）
 
 ## Next
-- P5案: `--labels` 用のサンプル（labels.local.json）を examples に追加し、READMEに適用例を追記する
+- P6案: `scripts/selfcheck.sh` に `examples/labels.local.json` を使った実ファイル回帰テストを1件追加する

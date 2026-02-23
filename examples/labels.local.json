@@ -1,0 +1,5 @@
+{
+  "yesterday": ["Y", "Yesterday", "昨日"],
+  "today": ["T", "Today", "今日"],
+  "blockers": ["B", "Blockers", "詰まり"]
+}
