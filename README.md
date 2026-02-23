@@ -102,6 +102,9 @@ CLIヘルプと同じ注意書き（再掲）:
 # all entries with meta
 ./bin/shape-standup --all --format json --json-include-entry-meta ./examples/patterns.txt
 
+# all entries with meta + custom header name keys
+./bin/shape-standup --all --format json --json-include-entry-meta --header-name-keys 'Owner|担当者' ./examples/patterns.txt
+
 # custom key names
 ./bin/shape-standup --format json --json-keys done,plan,impediments ./examples/sample.txt
 
@@ -123,6 +126,7 @@ CLIヘルプと同じ注意書き（再掲）:
 `--json-include-entry-meta` は **`--all --format json` のときだけ有効**です。
 
 - `single + json` で指定した場合は無視され、通常のsingle JSON（yesterday/today/blockersのみ）を返します。
+- `--header-name-keys` 併用時に名前抽出できなかった段落は、entry meta の名前キー（既定では `entryName`、`--json-entry-meta-keys` 指定時は第2キー）が空文字 `""` になります。
 
 ## Strict mode (CI向け)
 必須3項目（Yesterday / Today / Blockers）のいずれかが未抽出なら、出力後に非0で終了します。
@@ -178,7 +182,7 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 03:51 JST)
+## Update Plan (watchdog 2026-02-24 04:03 JST)
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。
 
 - [x] P1: READMEのwatchdog時刻更新ループを停止し、機能追加トリガー時のみ更新する運用へ変更（Impact: 5, Effort: 2, Evidence: yes）
@@ -190,7 +194,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P7: `--header-name-keys` で `Owner|担当者` を使った名前抽出回帰テストを追加（Impact: 4, Effort: 2, Evidence: yes）
 - [x] P8: `--all --header-name-keys` で名前未抽出時に `### Entry N` へフォールバックする回帰テストを追加（Impact: 4, Effort: 2, Evidence: yes）
 - [x] P9: `--all --format json --json-include-entry-meta --json-entry-meta-keys` と `--header-name-keys` 併用時の名前未抽出回帰テストを追加（Impact: 5, Effort: 3, Evidence: yes）
-- [ ] P10: `--all --format json --json-include-entry-meta` のREADME例に `--header-name-keys` 併用サンプルを追記し、名前未抽出時に `name` が空文字になる仕様を明記（Impact: 4, Effort: 1, Evidence: yes）
+- [x] P10: `--all --format json --json-include-entry-meta` のREADME例に `--header-name-keys` 併用サンプルを追記し、名前未抽出時に `name` が空文字になる仕様を明記（Impact: 4, Effort: 1, Evidence: yes）
+- [ ] P11: JSON output節に `entryName:""` を含む実出力サンプル（`--json-entry-meta-keys idx,name` 版）を追加して、仕様確認を1コマンドで再現できるようにする（Impact: 3, Effort: 1, Evidence: yes）
 
 ## Next
-- P10案: READMEのJSON output節に `--header-name-keys` 併用例と `name:""` 仕様注記を追記する
+- P11案: READMEのJSON output節に `--json-entry-meta-keys idx,name` 利用時の実出力例（`name:""` を含む）を追記する
