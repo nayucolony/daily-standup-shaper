@@ -147,6 +147,24 @@ else
   fail "--header-name-keys supports Owner/担当者 entry names" "contains Entry headers with Owner/担当者 names" "$actual_header_name_keys"
 fi
 
+header_name_keys_fallback_input=$(cat <<'IN'
+Owner: Eve
+Yesterday: E done
+Today: E plan
+Blockers: E blocker
+
+Yesterday: F done
+Today: F plan
+Blockers: F blocker
+IN
+)
+actual_header_name_keys_fallback=$(printf "%s\n" "$header_name_keys_fallback_input" | "$CLI" --all --header-name-keys 'Owner|担当者')
+if echo "$actual_header_name_keys_fallback" | grep -q "### Entry 1 (Eve)" && echo "$actual_header_name_keys_fallback" | grep -q "### Entry 2" && ! echo "$actual_header_name_keys_fallback" | grep -q "### Entry 2 ("; then
+  pass "--header-name-keys falls back to ### Entry N when name key is missing"
+else
+  fail "--header-name-keys falls back to ### Entry N when name key is missing" "contains Entry 1 with Eve and Entry 2 without name suffix" "$actual_header_name_keys_fallback"
+fi
+
 actual_json_single=$(printf "%s\n" "$en_input" | "$CLI" --format json)
 if echo "$actual_json_single" | grep -q '"yesterday":"fixed flaky test"' && echo "$actual_json_single" | grep -q '"blockers":"waiting for copy review"'; then
   pass "--format json outputs single object"
