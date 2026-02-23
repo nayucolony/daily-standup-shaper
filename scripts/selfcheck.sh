@@ -400,10 +400,10 @@ set +e
 quiet_err=$(printf "%s\n" "$strict_missing_input" | "$CLI" --strict --quiet >/dev/null 2>&1)
 quiet_code=$?
 set -e
-if [ "$quiet_code" -ne 0 ]; then
-  pass "--quiet keeps strict non-zero exit"
+if [ "$quiet_code" -eq 2 ]; then
+  pass "--quiet keeps strict exit code 2"
 else
-  fail "--quiet keeps strict non-zero exit" "non-zero exit" "code=$quiet_code"
+  fail "--quiet keeps strict exit code 2" "exit code=2" "code=$quiet_code"
 fi
 
 set +e
@@ -411,10 +411,10 @@ strict_stdout=$(printf "%s\n" "$strict_missing_input" | "$CLI" --strict --quiet 
 strict_stdout_code=$?
 strict_stderr=$(cat /tmp/shape_quiet_err.txt)
 set -e
-if [ "$strict_stdout_code" -ne 0 ] && echo "$strict_stdout" | grep -q "## Yesterday" && ! echo "$strict_stdout" | grep -qi "strict mode" && [ -z "$strict_stderr" ]; then
-  pass "--quiet suppresses strict warning message"
+if [ "$strict_stdout_code" -eq 2 ] && echo "$strict_stdout" | grep -q "## Yesterday" && ! echo "$strict_stdout" | grep -qi "strict mode" && [ -z "$strict_stderr" ]; then
+  pass "--quiet suppresses strict warning message and keeps exit code 2"
 else
-  fail "--quiet suppresses strict warning message" "non-zero exit + markdown output + empty stderr" "stdout=$strict_stdout | stderr=$strict_stderr | code=$strict_stdout_code"
+  fail "--quiet suppresses strict warning message and keeps exit code 2" "exit code=2 + markdown output + empty stderr" "stdout=$strict_stdout | stderr=$strict_stderr | code=$strict_stdout_code"
 fi
 
 strict_all_input=$(cat <<'IN'
@@ -443,13 +443,13 @@ strict_all_quiet_stdout=$(printf "%s\n" "$strict_all_input" | "$CLI" --all --str
 strict_all_quiet_code=$?
 strict_all_quiet_err=$(cat /tmp/shape_strict_all_quiet_err.txt)
 set -e
-if [ "$strict_all_quiet_code" -ne 0 ] \
+if [ "$strict_all_quiet_code" -eq 2 ] \
   && [ -z "$strict_all_quiet_err" ] \
   && echo "$strict_all_quiet_stdout" | grep -q "### Entry 1" \
   && echo "$strict_all_quiet_stdout" | grep -q "## Blockers"; then
-  pass "--all --strict --quiet suppresses stderr and keeps markdown output"
+  pass "--all --strict --quiet suppresses stderr, keeps markdown output, and exits 2"
 else
-  fail "--all --strict --quiet suppresses stderr and keeps markdown output" "non-zero exit + empty stderr + markdown output" "stdout=$strict_all_quiet_stdout | stderr=$strict_all_quiet_err | code=$strict_all_quiet_code"
+  fail "--all --strict --quiet suppresses stderr, keeps markdown output, and exits 2" "exit code=2 + empty stderr + markdown output" "stdout=$strict_all_quiet_stdout | stderr=$strict_all_quiet_err | code=$strict_all_quiet_code"
 fi
 
 set +e
@@ -484,12 +484,12 @@ strict_all_json_quiet_stdout=$(printf "%s\n" "$strict_all_input" | "$CLI" --all 
 strict_all_json_quiet_code=$?
 strict_all_json_quiet_err=$(cat /tmp/shape_strict_all_json_quiet_err.txt)
 set -e
-if [ "$strict_all_json_quiet_code" -ne 0 ] \
+if [ "$strict_all_json_quiet_code" -eq 2 ] \
   && [ -z "$strict_all_json_quiet_err" ] \
   && printf "%s" "$strict_all_json_quiet_stdout" | python3 -c 'import json,sys; d=json.load(sys.stdin); assert isinstance(d,list) and len(d)==2'; then
-  pass "--all --strict --quiet --format json suppresses stderr and keeps JSON output"
+  pass "--all --strict --quiet --format json suppresses stderr, keeps JSON output, and exits 2"
 else
-  fail "--all --strict --quiet --format json suppresses stderr and keeps JSON output" "non-zero exit + empty stderr + stdout is valid JSON array" "stdout=$strict_all_json_quiet_stdout | stderr=$strict_all_json_quiet_err | code=$strict_all_json_quiet_code"
+  fail "--all --strict --quiet --format json suppresses stderr, keeps JSON output, and exits 2" "exit code=2 + empty stderr + stdout is valid JSON array" "stdout=$strict_all_json_quiet_stdout | stderr=$strict_all_json_quiet_err | code=$strict_all_json_quiet_code"
 fi
 
 set +e
@@ -497,12 +497,12 @@ strict_single_json_quiet_stdout=$(printf "%s\n" "$strict_missing_input" | "$CLI"
 strict_single_json_quiet_code=$?
 strict_single_json_quiet_err=$(cat /tmp/shape_strict_single_json_quiet_err.txt)
 set -e
-if [ "$strict_single_json_quiet_code" -ne 0 ] \
+if [ "$strict_single_json_quiet_code" -eq 2 ] \
   && [ -z "$strict_single_json_quiet_err" ] \
   && printf "%s" "$strict_single_json_quiet_stdout" | python3 -c 'import json,sys; d=json.load(sys.stdin); assert isinstance(d,dict) and set(d.keys())=={"yesterday","today","blockers"} and d["yesterday"]=="fixed flaky test" and d["today"]=="implement onboarding banner"'; then
-  pass "--strict --quiet --format json suppresses stderr and keeps single JSON object"
+  pass "--strict --quiet --format json suppresses stderr, keeps single JSON object, and exits 2"
 else
-  fail "--strict --quiet --format json suppresses stderr and keeps single JSON object" "non-zero exit + empty stderr + stdout is valid JSON object" "stdout=$strict_single_json_quiet_stdout | stderr=$strict_single_json_quiet_err | code=$strict_single_json_quiet_code"
+  fail "--strict --quiet --format json suppresses stderr, keeps single JSON object, and exits 2" "exit code=2 + empty stderr + stdout is valid JSON object" "stdout=$strict_single_json_quiet_stdout | stderr=$strict_single_json_quiet_err | code=$strict_single_json_quiet_code"
 fi
 
 set +e
