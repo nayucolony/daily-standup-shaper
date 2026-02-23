@@ -258,6 +258,13 @@ else
   fail "--json-entry-meta-keys idx,name with --header-name-keys keeps explicit name key as empty string" "entry1 has Carol, entry2 has empty name string, and no default entryName key" "$actual_json_meta_owner_jp_fallback"
 fi
 
+actual_pattern_e_from_file=$("$CLI" --all --format=json --json-include-entry-meta --json-entry-meta-keys idx,name --header-name-keys 'Owner|担当者' "$ROOT_DIR/examples/patterns.txt")
+if printf "%s" "$actual_pattern_e_from_file" | python3 -c 'import json,sys; d=json.load(sys.stdin); assert d[4]["idx"]==5 and d[4]["name"]=="Carol" and d[5]["idx"]==6 and d[5]["name"]==""'; then
+  pass "Pattern E in examples/patterns.txt keeps idx/name expectation via README command"
+else
+  fail "Pattern E in examples/patterns.txt keeps idx/name expectation via README command" "entry5 has Carol and entry6 has empty name" "$actual_pattern_e_from_file"
+fi
+
 expect_fail_contains \
   "--json-entry-meta-keys rejects 1-key input" \
   "printf '%s\\n' \"$multi_people_named_input\" | \"$CLI\" --all --format=json --json-include-entry-meta --json-entry-meta-keys idx" \
