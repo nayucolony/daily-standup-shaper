@@ -479,6 +479,19 @@ else
 fi
 
 set +e
+strict_single_json_quiet_stdout=$(printf "%s\n" "$strict_missing_input" | "$CLI" --strict --quiet --format json 2>/tmp/shape_strict_single_json_quiet_err.txt)
+strict_single_json_quiet_code=$?
+strict_single_json_quiet_err=$(cat /tmp/shape_strict_single_json_quiet_err.txt)
+set -e
+if [ "$strict_single_json_quiet_code" -ne 0 ] \
+  && [ -z "$strict_single_json_quiet_err" ] \
+  && printf "%s" "$strict_single_json_quiet_stdout" | python3 -c 'import json,sys; d=json.load(sys.stdin); assert isinstance(d,dict) and set(d.keys())=={"yesterday","today","blockers"} and d["yesterday"]=="fixed flaky test" and d["today"]=="implement onboarding banner"'; then
+  pass "--strict --quiet --format json suppresses stderr and keeps single JSON object"
+else
+  fail "--strict --quiet --format json suppresses stderr and keeps single JSON object" "non-zero exit + empty stderr + stdout is valid JSON object" "stdout=$strict_single_json_quiet_stdout | stderr=$strict_single_json_quiet_err | code=$strict_single_json_quiet_code"
+fi
+
+set +e
 strict_missing_file_stdout=$("$CLI" --all --strict --format json "$ROOT_DIR/examples/strict-missing.txt" 2>/tmp/shape_strict_missing_file_err.txt)
 strict_missing_file_code=$?
 strict_missing_file_err=$(cat /tmp/shape_strict_missing_file_err.txt)

@@ -274,9 +274,9 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P26: strict single/all のエラーメッセージ冒頭一致を `scripts/selfcheck.sh` で回帰化し、READMEへsingle/all両方の固定サンプルを追記（Impact: 2, Effort: 2, Evidence: yes）
 - [x] P27: `--all --strict --quiet --format json` の stderr 完全無出力（空）を `scripts/selfcheck.sh` で回帰固定し、README Quiet mode に契約を追記（Impact: 3, Effort: 2, Evidence: yes）
 - [x] P28: `--all --strict --quiet`（markdown出力）でも stderr 完全無出力かつ非0終了を `scripts/selfcheck.sh` で固定し、README Quiet mode に対応表を追記（Impact: 3, Effort: 2, Evidence: yes）
-- [ ] P29: `--strict --quiet --format json`（single/json）の stderr 完全無出力 + 非0終了 + JSONオブジェクト維持を `scripts/selfcheck.sh` に追加（Impact: 4, Effort: 2, Evidence: yes）
+- [x] P29: `--strict --quiet --format json`（single/json）の stderr 完全無出力 + 非0終了 + JSONオブジェクト維持を `scripts/selfcheck.sh` に追加（Impact: 4, Effort: 2, Evidence: yes）
 - [ ] P30: `--all --strict --quiet --no-entry-header` の markdown出力で Entry見出し非表示 + stderr空 + 非0終了を回帰化（Impact: 3, Effort: 2, Evidence: yes）
 - [ ] P31: Quiet mode節に「終了コード2維持」注記と strict節への相互リンクを追加し運用誤解を防止（Impact: 2, Effort: 1, Evidence: yes）
 
 ## Next
-- P29実施: `--strict --quiet --format json`（single/json）の stderr 完全無出力 + 非0終了 + JSONオブジェクト維持を `scripts/selfcheck.sh` で固定する
+- P30実施: `--all --strict --quiet --no-entry-header` の markdown出力で Entry見出し非表示 + stderr空 + 非0終了を `scripts/selfcheck.sh` で固定する
