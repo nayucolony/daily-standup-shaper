@@ -218,6 +218,25 @@ else
   fail "--json-entry-meta-keys keeps name key as empty string when entry name is missing" "entry1 has Eve and entry2 has empty name string" "$actual_json_meta_fallback"
 fi
 
+json_meta_owner_jp_fallback_input=$(cat <<'IN'
+Owner: Carol
+Yesterday: C done
+Today: C plan
+Blockers: C blocker
+
+担当者: 
+昨日: D done
+今日: D plan
+詰まり: D blocker
+IN
+)
+actual_json_meta_owner_jp_fallback=$(printf "%s\n" "$json_meta_owner_jp_fallback_input" | "$CLI" --all --format=json --json-include-entry-meta --json-entry-meta-keys idx,name --header-name-keys 'Owner|担当者')
+if printf "%s" "$actual_json_meta_owner_jp_fallback" | python3 -c 'import json,sys; d=json.load(sys.stdin); assert d[0]["idx"]==1 and d[0]["name"]=="Carol" and d[1]["idx"]==2 and d[1]["name"]=="" and "entryName" not in d[0] and "entryName" not in d[1]'; then
+  pass "--json-entry-meta-keys idx,name with --header-name-keys keeps explicit name key as empty string"
+else
+  fail "--json-entry-meta-keys idx,name with --header-name-keys keeps explicit name key as empty string" "entry1 has Carol, entry2 has empty name string, and no default entryName key" "$actual_json_meta_owner_jp_fallback"
+fi
+
 expect_fail_contains \
   "--json-entry-meta-keys rejects 1-key input" \
   "printf '%s\\n' \"$multi_people_named_input\" | \"$CLI\" --all --format=json --json-include-entry-meta --json-entry-meta-keys idx" \
