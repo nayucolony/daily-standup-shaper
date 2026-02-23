@@ -128,6 +128,25 @@ else
   fail "--all reflects Name/名前 in entry header" "contains Entry headers with names" "$actual_multi_named"
 fi
 
+header_name_keys_input=$(cat <<'IN'
+Owner: Carol
+Yesterday: C done
+Today: C plan
+Blockers: C blocker
+
+担当者: ダン
+昨日: D done
+今日: D plan
+詰まり: D blocker
+IN
+)
+actual_header_name_keys=$(printf "%s\n" "$header_name_keys_input" | "$CLI" --all --header-name-keys 'Owner|担当者')
+if echo "$actual_header_name_keys" | grep -q "### Entry 1 (Carol)" && echo "$actual_header_name_keys" | grep -q "### Entry 2 (ダン)"; then
+  pass "--header-name-keys supports Owner/担当者 entry names"
+else
+  fail "--header-name-keys supports Owner/担当者 entry names" "contains Entry headers with Owner/担当者 names" "$actual_header_name_keys"
+fi
+
 actual_json_single=$(printf "%s\n" "$en_input" | "$CLI" --format json)
 if echo "$actual_json_single" | grep -q '"yesterday":"fixed flaky test"' && echo "$actual_json_single" | grep -q '"blockers":"waiting for copy review"'; then
   pass "--format json outputs single object"
