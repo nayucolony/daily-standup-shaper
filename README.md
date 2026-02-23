@@ -178,7 +178,7 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 02:12 JST)
+## Update Plan (watchdog 2026-02-24 03:51 JST)
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。
 
 - [x] P1: READMEのwatchdog時刻更新ループを停止し、機能追加トリガー時のみ更新する運用へ変更（Impact: 5, Effort: 2, Evidence: yes）
@@ -186,6 +186,11 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P3: `--all` 出力の見出し整形（名前欠落時の表示）仕様をREADMEに明文化（Impact: 3, Effort: 1, Evidence: yes）
 - [x] P4: `config/labels.example.json` に日本語同義語セット例を追加（Impact: 3, Effort: 2, Evidence: yes）
 - [x] P5: `--labels` 用のサンプル（`examples/labels.local.json`）を追加し、READMEに適用例を追記（Impact: 3, Effort: 1, Evidence: yes）
+- [x] P6: `scripts/selfcheck.sh` に `examples/labels.local.json` を使った実ファイル回帰テストを1件追加（Impact: 4, Effort: 2, Evidence: yes）
+- [x] P7: `--header-name-keys` で `Owner|担当者` を使った名前抽出回帰テストを追加（Impact: 4, Effort: 2, Evidence: yes）
+- [x] P8: `--all --header-name-keys` で名前未抽出時に `### Entry N` へフォールバックする回帰テストを追加（Impact: 4, Effort: 2, Evidence: yes）
+- [x] P9: `--all --format json --json-include-entry-meta --json-entry-meta-keys` と `--header-name-keys` 併用時の名前未抽出回帰テストを追加（Impact: 5, Effort: 3, Evidence: yes）
+- [ ] P10: `--all --format json --json-include-entry-meta` のREADME例に `--header-name-keys` 併用サンプルを追記し、名前未抽出時に `name` が空文字になる仕様を明記（Impact: 4, Effort: 1, Evidence: yes）
 
 ## Next
-- P6案: `scripts/selfcheck.sh` に `examples/labels.local.json` を使った実ファイル回帰テストを1件追加する
+- P10案: READMEのJSON output節に `--header-name-keys` 併用例と `name:""` 仕様注記を追記する
