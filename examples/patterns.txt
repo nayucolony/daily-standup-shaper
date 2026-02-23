@@ -21,3 +21,14 @@ Risk: production API rate limit unknown
 - ログインUI接続
 詰まり:
 - stagingの環境変数不足
+
+# Pattern E (Owner/担当者 mixed + empty)
+Owner: Carol
+Yesterday: C done
+Today: C plan
+Blockers: C blocker
+
+担当者:
+昨日: D done
+今日: D plan
+詰まり: D blocker
