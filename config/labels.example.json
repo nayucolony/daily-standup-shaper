@@ -1,0 +1,5 @@
+{
+  "yesterday": ["昨日やったこと", "昨日", "Yesterday", "Done"],
+  "today": ["今日やること", "今日", "Today", "Plan"],
+  "blockers": ["詰まり", "ブロッカー", "Blocker", "Blockers", "Risk", "Impediment", "Impediments"]
+}

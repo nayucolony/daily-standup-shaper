@@ -1,0 +1,23 @@
+# Pattern A (日本語)
+昨日: APIモック作成
+今日: ログインUI接続
+詰まり: stagingの環境変数不足
+
+# Pattern B (English)
+Yesterday: fixed flaky test in auth module
+Today: implement onboarding banner
+Blockers: waiting for copy review
+
+# Pattern C (short labels)
+Done: release note draft
+Plan: add retry to webhook worker
+Risk: production API rate limit unknown
+
+# Pattern D (multiline bullets)
+昨日:
+- APIモック作成
+- 認可テスト追加
+今日:
+- ログインUI接続
+詰まり:
+- stagingの環境変数不足

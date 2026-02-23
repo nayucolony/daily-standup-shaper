@@ -1,12 +1,454 @@
 #!/usr/bin/env bash
 set -euo pipefail
-INPUT="${1:-/dev/stdin}"
+
+MODE="single"
+FORMAT="markdown"
+STRICT=0
+QUIET=0
+ENTRY_HEADER=1
+HEADER_NAME_KEYS="Name|名前"
+JSON_KEYS="yesterday,today,blockers"
+JSON_INCLUDE_ENTRY_META=0
+JSON_ENTRY_META_KEYS="entryIndex,entryName"
+LABELS_FILE="$(cd "$(dirname "$0")/.." && pwd)/config/labels.json"
+INPUT="/dev/stdin"
+
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    --all)
+      MODE="all"
+      shift
+      ;;
+    --format)
+      FORMAT="${2:-}"
+      if [ -z "$FORMAT" ]; then
+        echo "--format requires a value: markdown|json" >&2
+        exit 1
+      fi
+      shift 2
+      ;;
+    --format=*)
+      FORMAT="${1#--format=}"
+      shift
+      ;;
+    --labels)
+      LABELS_FILE="${2:-}"
+      if [ -z "$LABELS_FILE" ]; then
+        echo "--labels requires a file path" >&2
+        exit 1
+      fi
+      shift 2
+      ;;
+    --labels=*)
+      LABELS_FILE="${1#--labels=}"
+      shift
+      ;;
+    --strict)
+      STRICT=1
+      shift
+      ;;
+    --quiet)
+      QUIET=1
+      shift
+      ;;
+    --no-entry-header)
+      ENTRY_HEADER=0
+      shift
+      ;;
+    --header-name-keys)
+      HEADER_NAME_KEYS="${2:-}"
+      if [ -z "$HEADER_NAME_KEYS" ]; then
+        echo "--header-name-keys requires regex text (e.g. Name|名前)" >&2
+        exit 1
+      fi
+      shift 2
+      ;;
+    --header-name-keys=*)
+      HEADER_NAME_KEYS="${1#--header-name-keys=}"
+      shift
+      ;;
+    --json-keys)
+      JSON_KEYS="${2:-}"
+      if [ -z "$JSON_KEYS" ]; then
+        echo "--json-keys requires comma-separated keys (e.g. done,plan,blockers)" >&2
+        exit 1
+      fi
+      shift 2
+      ;;
+    --json-keys=*)
+      JSON_KEYS="${1#--json-keys=}"
+      shift
+      ;;
+    --json-include-entry-meta)
+      JSON_INCLUDE_ENTRY_META=1
+      shift
+      ;;
+    --json-entry-meta-keys)
+      JSON_ENTRY_META_KEYS="${2:-}"
+      if [ -z "$JSON_ENTRY_META_KEYS" ]; then
+        echo "--json-entry-meta-keys requires comma-separated keys (e.g. idx,name)" >&2
+        exit 1
+      fi
+      shift 2
+      ;;
+    --json-entry-meta-keys=*)
+      JSON_ENTRY_META_KEYS="${1#--json-entry-meta-keys=}"
+      shift
+      ;;
+    -h|--help)
+      cat <<'EOF'
+Usage:
+  shape-standup [--all] [--format markdown|json] [input-file]
+  # JSON entry meta options are effective only with: --all --format json
+  # JSONエントリメタ系オプションは --all --format json のときのみ有効
+
+Options:
+  --all               Parse blank-line separated entries and output each entry.
+  --format <type>     markdown (default) or json
+  --labels <file>     JSON file for label synonyms
+  --strict            Exit non-zero when any of Yesterday/Today/Blockers is missing
+  --quiet             Suppress strict warning messages on stderr
+  --no-entry-header   In --all markdown output, omit "### Entry N" headings
+  --header-name-keys  Regex for name labels used in entry header (default: Name|名前)
+  --json-keys <a,b,c> Custom JSON keys for yesterday,today,blockers (json format only)
+  --json-include-entry-meta  Add entryIndex/entryName fields (effective with --all --format json; ignored in single/json)
+  --json-entry-meta-keys <a,b> Custom meta keys for entryIndex,entryName (effective with --all --format json)
+EOF
+      exit 0
+      ;;
+    *)
+      INPUT="$1"
+      shift
+      ;;
+  esac
+done
+
+if [ "$FORMAT" != "markdown" ] && [ "$FORMAT" != "json" ]; then
+  echo "unsupported format: $FORMAT (use markdown|json)" >&2
+  exit 1
+fi
+
+IFS=',' read -r JSON_KEY_YESTERDAY JSON_KEY_TODAY JSON_KEY_BLOCKERS extra_key <<< "$JSON_KEYS"
+if [ -n "${extra_key:-}" ] || [ -z "${JSON_KEY_YESTERDAY:-}" ] || [ -z "${JSON_KEY_TODAY:-}" ] || [ -z "${JSON_KEY_BLOCKERS:-}" ]; then
+  echo "invalid --json-keys: use exactly 3 comma-separated keys" >&2
+  exit 1
+fi
+
+IFS=',' read -r JSON_META_KEY_INDEX JSON_META_KEY_NAME extra_meta_key <<< "$JSON_ENTRY_META_KEYS"
+if [ -n "${extra_meta_key:-}" ] || [ -z "${JSON_META_KEY_INDEX:-}" ] || [ -z "${JSON_META_KEY_NAME:-}" ]; then
+  echo "invalid --json-entry-meta-keys: use exactly 2 comma-separated keys" >&2
+  exit 1
+fi
+
 TEXT=$(cat "$INPUT")
-echo "## Yesterday"
-echo "- $(echo "$TEXT" | grep -m1 '昨日' | sed 's/.*: *//')"
-echo
-echo "## Today"
-echo "- $(echo "$TEXT" | grep -m1 '今日' | sed 's/.*: *//')"
-echo
-echo "## Blockers"
-echo "- $(echo "$TEXT" | grep -m1 '詰まり' | sed 's/.*: *//')"
+
+validate_labels_file() {
+  python3 - "$LABELS_FILE" <<'PY'
+import json, sys
+path = sys.argv[1]
+required = ["yesterday", "today", "blockers"]
+try:
+    with open(path, encoding='utf-8') as f:
+        data = json.load(f)
+except Exception as e:
+    print(f"invalid labels JSON ({path}): {e}", file=sys.stderr)
+    sys.exit(1)
+
+if not isinstance(data, dict):
+    print(f"invalid labels JSON ({path}): root must be an object", file=sys.stderr)
+    sys.exit(1)
+
+missing = [k for k in required if k not in data]
+if missing:
+    print(f"invalid labels JSON ({path}): missing required keys: " + ",".join(missing), file=sys.stderr)
+    sys.exit(1)
+
+for k in required:
+    v = data[k]
+    if not isinstance(v, list) or not all(isinstance(x, str) for x in v):
+        print(f"invalid labels JSON ({path}): key '{k}' must be an array of strings", file=sys.stderr)
+        sys.exit(1)
+PY
+}
+
+build_pattern() {
+  local key="$1"
+  python3 - "$LABELS_FILE" "$key" <<'PY'
+import json, re, sys
+path, key = sys.argv[1], sys.argv[2]
+with open(path, encoding='utf-8') as f:
+    data = json.load(f)
+vals = data.get(key, [])
+print("|".join(re.escape(v) for v in vals if v))
+PY
+}
+
+if [ ! -f "$LABELS_FILE" ]; then
+  echo "labels file not found: $LABELS_FILE" >&2
+  exit 1
+fi
+
+validate_labels_file
+
+PATTERN_YESTERDAY=$(build_pattern "yesterday")
+PATTERN_TODAY=$(build_pattern "today")
+PATTERN_BLOCKERS=$(build_pattern "blockers")
+PATTERN_ANY="${PATTERN_YESTERDAY}|${PATTERN_TODAY}|${PATTERN_BLOCKERS}"
+
+json_escape() {
+  printf '%s' "$1" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))'
+}
+
+strict_warn() {
+  if [ "$QUIET" -ne 1 ]; then
+    echo "$1" >&2
+  fi
+}
+
+strict_missing_list() {
+  local missing=()
+  [ "$missing_yesterday" -eq 1 ] && missing+=("yesterday")
+  [ "$missing_today" -eq 1 ] && missing+=("today")
+  [ "$missing_blockers" -eq 1 ] && missing+=("blockers")
+
+  local IFS=','
+  echo "${missing[*]}"
+}
+
+extract_header_name() {
+  local section_text="$1"
+  echo "$section_text" | awk -v keys="$HEADER_NAME_KEYS" '
+    BEGIN { IGNORECASE=1 }
+    {
+      line=$0
+      if (line ~ "^[[:space:]]*(" keys ")[[:space:]]*[:：][[:space:]]*") {
+        sub("^[[:space:]]*(" keys ")[[:space:]]*[:：][[:space:]]*", "", line)
+        gsub(/^[[:space:]]+|[[:space:]]+$/, "", line)
+        print line
+        exit
+      }
+    }
+  '
+}
+
+extract_first() {
+  local pattern="$1"
+  echo "$TEXT" | awk -v pat="$pattern" '
+    BEGIN {
+      IGNORECASE=1
+      capture=0
+      printed=0
+      out=""
+    }
+    function append_item(v) {
+      gsub(/^[[:space:]]+|[[:space:]]+$/, "", v)
+      if (v == "") return
+      if (out == "") out = v
+      else out = out " / " v
+    }
+    {
+      line=$0
+
+      if (capture == 0 && line ~ "^[[:space:]]*(" pat ")[[:space:]]*:[[:space:]]*") {
+        capture=1
+        tmp=line
+        sub("^[[:space:]]*(" pat ")[[:space:]]*:[[:space:]]*", "", tmp)
+        append_item(tmp)
+        next
+      }
+
+      if (capture == 1) {
+        if (line ~ /^[[:space:]]*-[[:space:]]+/) {
+          sub(/^[[:space:]]*-[[:space:]]+/, "", line)
+          append_item(line)
+          next
+        }
+
+        if (line ~ /^[[:space:]]*$/) {
+          next
+        }
+
+        if (line ~ /^[[:space:]]*[^:：]+[：:][[:space:]]*/) {
+          print out
+          printed=1
+          exit
+        }
+
+        append_item(line)
+      }
+    }
+    END {
+      if (capture == 1 && printed == 0) print out
+    }
+  '
+}
+
+pick_first_non_empty() {
+  for value in "$@"; do
+    if [ -n "$value" ]; then
+      echo "$value"
+      return 0
+    fi
+  done
+  return 1
+}
+
+compute_fields() {
+  yesterday=$(extract_first "$PATTERN_YESTERDAY" || true)
+  today=$(extract_first "$PATTERN_TODAY" || true)
+  blockers=$(extract_first "$PATTERN_BLOCKERS" || true)
+
+  missing_yesterday=0
+  missing_today=0
+  missing_blockers=0
+
+  if [ -z "$yesterday" ]; then
+    missing_yesterday=1
+    yesterday="（抽出できませんでした。\`昨日:\` / \`Yesterday:\` 形式で入力してください）"
+  fi
+  if [ -z "$today" ]; then
+    missing_today=1
+    today="（抽出できませんでした。\`今日:\` / \`Today:\` 形式で入力してください）"
+  fi
+  if [ -z "$blockers" ]; then
+    missing_blockers=1
+    blockers="（抽出できませんでした。\`詰まり:\` / \`Blockers:\` 形式で入力してください）"
+  fi
+}
+
+render_markdown() {
+  echo "## Yesterday"
+  echo "- $yesterday"
+  echo
+  echo "## Today"
+  echo "- $today"
+  echo
+  echo "## Blockers"
+  echo "- $blockers"
+}
+
+render_json_object() {
+  local include_meta="${1:-0}"
+  local entry_index="${2:-}"
+  local entry_name="${3:-}"
+
+  y=$(json_escape "$yesterday")
+  t=$(json_escape "$today")
+  b=$(json_escape "$blockers")
+  ky=$(json_escape "$JSON_KEY_YESTERDAY")
+  kt=$(json_escape "$JSON_KEY_TODAY")
+  kb=$(json_escape "$JSON_KEY_BLOCKERS")
+
+  if [ "$include_meta" -eq 1 ]; then
+    kei=$(json_escape "$JSON_META_KEY_INDEX")
+    ken=$(json_escape "$JSON_META_KEY_NAME")
+    en=$(json_escape "$entry_name")
+    printf '{%s:%s,%s:%s,%s:%s,%s:%s,%s:%s}' "$kei" "$entry_index" "$ken" "$en" "$ky" "$y" "$kt" "$t" "$kb" "$b"
+  else
+    printf '{%s:%s,%s:%s,%s:%s}' "$ky" "$y" "$kt" "$t" "$kb" "$b"
+  fi
+}
+
+render_single() {
+  compute_fields
+  if [ "$FORMAT" = "json" ]; then
+    render_json_object 0
+  else
+    render_markdown
+  fi
+}
+
+if [ "$MODE" = "single" ]; then
+  render_single
+  if [ "$STRICT" -eq 1 ] && { [ "$missing_yesterday" -eq 1 ] || [ "$missing_today" -eq 1 ] || [ "$missing_blockers" -eq 1 ]; }; then
+    strict_warn "strict mode: missing required fields ($(strict_missing_list))"
+    exit 2
+  fi
+  exit 0
+fi
+
+# --all: 空行区切りの各セクションを順に整形（ラベルがある段落のみ対象）
+section_count=0
+strict_failed=0
+strict_failed_details=""
+json_items=""
+while IFS= read -r section_escaped; do
+  section=$(printf "%b" "$section_escaped")
+
+  if ! echo "$section" | grep -Eiq "($PATTERN_ANY)[[:space:]]*[:：]"; then
+    continue
+  fi
+
+  section_count=$((section_count + 1))
+  entry_name=$(extract_header_name "$section" || true)
+  TEXT="$section"
+  compute_fields
+
+  if [ "$STRICT" -eq 1 ] && { [ "$missing_yesterday" -eq 1 ] || [ "$missing_today" -eq 1 ] || [ "$missing_blockers" -eq 1 ]; }; then
+    strict_failed=1
+    entry_missing="entry${section_count}:$(strict_missing_list)"
+    if [ -n "$strict_failed_details" ]; then
+      strict_failed_details="$strict_failed_details;$entry_missing"
+    else
+      strict_failed_details="$entry_missing"
+    fi
+  fi
+
+  if [ "$FORMAT" = "json" ]; then
+    if [ "$JSON_INCLUDE_ENTRY_META" -eq 1 ]; then
+      entry_json=$(render_json_object 1 "$section_count" "$entry_name")
+    else
+      entry_json=$(render_json_object 0)
+    fi
+    if [ -n "$json_items" ]; then
+      json_items="$json_items,$entry_json"
+    else
+      json_items="$entry_json"
+    fi
+  else
+    if [ "$section_count" -gt 1 ]; then
+      echo
+      echo "---"
+      echo
+    fi
+    if [ "$ENTRY_HEADER" -eq 1 ]; then
+      if [ -n "$entry_name" ]; then
+        echo "### Entry $section_count ($entry_name)"
+      else
+        echo "### Entry $section_count"
+      fi
+      echo
+    fi
+    render_markdown
+  fi
+done < <(printf "%s" "$TEXT" | awk 'BEGIN{RS=""} {gsub(/\\/, "\\\\"); gsub(/\n/, "\\n"); print}')
+
+if [ "$FORMAT" = "json" ]; then
+  if [ "$section_count" -eq 0 ]; then
+    render_single
+    if [ "$STRICT" -eq 1 ] && { [ "$missing_yesterday" -eq 1 ] || [ "$missing_today" -eq 1 ] || [ "$missing_blockers" -eq 1 ]; }; then
+      strict_warn "strict mode: missing required fields ($(strict_missing_list))"
+      exit 2
+    fi
+  else
+    printf '[%s]' "$json_items"
+    if [ "$STRICT" -eq 1 ] && [ "$strict_failed" -eq 1 ]; then
+      strict_warn "strict mode: missing required fields in one or more entries ($strict_failed_details)"
+      exit 2
+    fi
+  fi
+  exit 0
+fi
+
+if [ "$section_count" -eq 0 ]; then
+  render_single
+  if [ "$STRICT" -eq 1 ] && { [ "$missing_yesterday" -eq 1 ] || [ "$missing_today" -eq 1 ] || [ "$missing_blockers" -eq 1 ]; }; then
+    strict_warn "strict mode: missing required fields ($(strict_missing_list))"
+    exit 2
+  fi
+else
+  if [ "$STRICT" -eq 1 ] && [ "$strict_failed" -eq 1 ]; then
+    strict_warn "strict mode: missing required fields in one or more entries ($strict_failed_details)"
+    exit 2
+  fi
+fi
