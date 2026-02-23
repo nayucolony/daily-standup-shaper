@@ -171,5 +171,13 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
+## Update Plan (watchdog 2026-02-24 02:12 JST)
+優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。
+
+- [ ] P1: READMEのwatchdog時刻更新ループを停止し、機能追加トリガー時のみ更新する運用へ変更（Impact: 5, Effort: 2, Evidence: yes）
+- [ ] P2: `scripts/selfcheck.sh` に実入力サンプルの回帰ケースを1件追加（Impact: 4, Effort: 2, Evidence: yes）
+- [ ] P3: `--all` 出力の見出し整形（名前欠落時の表示）仕様をREADMEに明文化（Impact: 3, Effort: 1, Evidence: yes）
+- [ ] P4: `config/labels.example.json` に日本語同義語セット例を追加（Impact: 3, Effort: 2, Evidence: yes）
+
 ## Next
-- `README` の Implemented タイムスタンプを最新watchdog時刻へ更新する
+- P1を実施: READMEのwatchdog時刻更新を機能追加時のみ行う方針に変更し、不要な定常更新を止める
