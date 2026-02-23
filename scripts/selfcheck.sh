@@ -207,6 +207,13 @@ else
   fail "--json-entry-meta-keys suppresses default entryIndex/entryName keys" "entryIndex/entryName keys are absent when idx,name is configured" "$actual_json_all_meta_custom_no_default"
 fi
 
+actual_json_all_meta_keys_without_include=$(printf "%s\n" "$multi_people_named_input" | "$CLI" --all --format=json --json-entry-meta-keys idx,name)
+if printf "%s" "$actual_json_all_meta_keys_without_include" | python3 -c 'import json,sys; d=json.load(sys.stdin); assert all("idx" not in item and "name" not in item and "entryIndex" not in item and "entryName" not in item for item in d)'; then
+  pass "--json-entry-meta-keys alone does not emit entry meta keys without --json-include-entry-meta"
+else
+  fail "--json-entry-meta-keys alone does not emit entry meta keys without --json-include-entry-meta" "idx/name and entryIndex/entryName are absent without --json-include-entry-meta" "$actual_json_all_meta_keys_without_include"
+fi
+
 json_meta_fallback_input=$(cat <<'IN'
 Owner: Eve
 Yesterday: E done
