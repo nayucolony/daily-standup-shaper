@@ -223,8 +223,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 04:40 JST)
-反復判定（直近5サイクル想定）で「selfcheck回帰テスト追加」系が 3/5 となり閾値 0.60 以上のため、同系ループ回避として計画を再編しました。
+## Update Plan (watchdog 2026-02-24 05:50 JST)
+反復判定（直近5サイクル: P15→P19）では「同一作業ファミリ（selfcheck追加のみ）」比率は 2/5 で 0.40、閾値 0.60 未満のため停滞判定なし。P19完了を反映し、次候補を Impact/Effort/Evidence で再優先付けしました。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。
 
@@ -233,6 +233,10 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P16: `--json-keys` と `--json-entry-meta-keys` のキー重複（例: `yesterday,name`）を検出して明示エラー化（Impact: 5, Effort: 3, Evidence: yes）
 - [x] P17: `--all --strict --format json` の失敗時メッセージに entry index と不足キーをJSON側仕様でも明記する回帰テストを追加（Impact: 3, Effort: 2, Evidence: yes）
 - [x] P18: `examples/patterns.txt` に `Owner/担当者` 混在＋空値ケースを追加し、READMEから1コマンド再現できるようにする（Impact: 3, Effort: 2, Evidence: yes）
+- [x] P19: Pattern E（`examples/patterns.txt`）の README記載コマンド期待値（idx/name）を `scripts/selfcheck.sh` で固定（Impact: 4, Effort: 2, Evidence: yes）
+- [ ] P20: README `Usage` に Pattern E の検証ワンライナーを追記し、手動再現性をCLIヘルプ導線からも辿れるようにする（Impact: 3, Effort: 1, Evidence: yes）
+- [ ] P21: `--header-name-keys` 未指定時の Pattern E（Owner/担当者混在）挙動を `scripts/selfcheck.sh` へ追加し、name空文字フォールバックを明示化（Impact: 4, Effort: 2, Evidence: yes）
+- [ ] P22: README `JSON output` に `--json-entry-meta-keys idx,name` の最小/推奨テンプレを追加し誤設定率を低減（Impact: 2, Effort: 1, Evidence: yes）
 
 ## Next
-- P19候補: `examples/patterns.txt` の Pattern E を selfcheck に取り込み、README記載コマンドの期待値（idx/name）を回帰テストで固定する
+- P20候補: README `Usage` に Pattern E 検証ワンライナーを追記し、既存コマンドから再現手順へ到達しやすくする
