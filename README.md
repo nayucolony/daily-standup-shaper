@@ -168,6 +168,7 @@ CLIヘルプと同じ注意書き（再掲）:
   - single: `strict mode: missing required fields (<csv>)`
   - all: `strict mode: missing required fields in one or more entries (entryN:<csv>;...)`
 - `<csv>` は `yesterday,today,blockers` の不足項目
+- `--all --strict --format json` でも同じ entry単位エラー（例: `entry1:blockers`）を stderr に出しつつ、stdout には JSON 配列を維持します
 
 例:
 - `strict mode: missing required fields (blockers)`
