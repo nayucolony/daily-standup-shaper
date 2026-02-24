@@ -369,8 +369,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 19:10 JST)
-反復判定（直近5サイクル）: `P82(回帰追加) -> P83(README追記) -> P84(回帰追加) -> stagnation(Plan更新) -> P85(回帰追加)` で同一ファミリ比率は `3/5=0.60`。閾値到達のため、このサイクルは README の Update Plan を再優先付けした。
+## Update Plan (watchdog 2026-02-24 19:20 JST)
+反復判定（直近5サイクル）: `P83(README追記) -> P84(回帰追加) -> stagnation(Plan更新) -> P85(回帰追加) -> P87(回帰追加)` で同一ファミリ比率は `3/5=0.60`。閾値到達中だが、このサイクルは selfcheck で `foo/bar` 拒否回帰を追加して1アクション前進した。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) の順。
 
@@ -380,10 +380,10 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P83: README Quick check に先頭数字許容（`0foo`）と先頭大文字拒否（`Foo`）を対で示す注記を追加し、受け入れ条件を1行化する（Impact: 1, Effort: 1, Evidence: yes）
 - [x] P84: scripts/selfcheck.sh に `0foo` 許容と `Foo` 拒否を同一ブロックで対比検証する回帰を追加し、READMEの1行受け入れ条件と実装契約を1:1で結びつける（Impact: 2, Effort: 2, Evidence: yes）
 - [x] P85: scripts/selfcheck.sh に `fooA`（末尾大文字）拒否の回帰を追加し、`[a-z0-9._-]+` が全位置で大文字非許容であることを固定する（Impact: 3, Effort: 2, Evidence: yes）
-- [ ] P87: scripts/selfcheck.sh に `foo/bar`（スラッシュ含み）拒否の回帰を追加し、運用時に混入しやすい区切り文字のNG境界を固定する（Impact: 3, Effort: 2, Evidence: yes）
+- [x] P87: scripts/selfcheck.sh に `foo/bar`（スラッシュ含み）拒否の回帰を追加し、運用時に混入しやすい区切り文字のNG境界を固定する（Impact: 3, Effort: 2, Evidence: yes）
 - [ ] P86: README Quick check に `fooA` 拒否を `0foo` 許容 / `Foo` 拒否の並びへ追記し、受け入れ条件1行の例示を3点セット化する（Impact: 2, Effort: 1, Evidence: yes）
 - [ ] P89: README Quick check の1行受け入れ条件に「英大文字・スラッシュは全位置で拒否」を追記し、境界説明を実装と同期する（Impact: 2, Effort: 1, Evidence: yes）
 - [ ] P88: scripts/selfcheck.sh に `foo/bar` と `fooA` を同一ブロックで対比検証する回帰を追加し、NG境界の網羅性を一括で固定する（Impact: 2, Effort: 2, Evidence: yes）
 
 ## Next
-- P87を実施する: scripts/selfcheck.sh に `foo/bar`（スラッシュ含み）拒否の回帰を追加し、運用時に混入しやすい区切り文字のNG境界を selfcheck で固定する
+- P86を実施する: README Quick check に `fooA` 拒否を `0foo` 許容 / `Foo` 拒否の並びへ追記し、受け入れ条件1行の例示を3点セット化する
