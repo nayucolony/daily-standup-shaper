@@ -366,17 +366,15 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 17:40 JST)
-反復判定（直近5サイクル）: `P74(回帰追加) -> P75(回帰追加) -> plan更新 -> P77(README追記) -> P79(回帰追加)` を評価。同系比率は `1/5=0.20` で閾値未満のため、計画更新ではなく README の具体タスクを前進。
+## Update Plan (watchdog 2026-02-24 17:50 JST)
+反復判定（直近5サイクル + 今回予定）: `plan更新 -> P77(README追記) -> P79(回帰追加) -> P76(README追記) -> P78予定(README追記)` で README追記ファミリ比率が `3/5=0.60` に到達。閾値以上のため、このサイクルは計画更新を1アクションとして実施。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) の順。
 
-- [x] P74: `extract_failed_case_from_summary_line` の先頭大文字（例: `Foo`）拒否をselfcheck回帰へ追加し、`[a-z0-9._-]+` 契約との整合を固定する（Impact: 3, Effort: 2, Evidence: yes）
-- [x] P75: `extract_failed_case_from_summary_line` の先頭数字（例: `0foo`）許容をselfcheck回帰へ追加し、許可集合の下限を明示する（Impact: 2, Effort: 1, Evidence: yes）
-- [x] P77: README Quick check に failed_case 抽出のNG例（`)foo` / `foo)`）を1行追記し、許容境界と拒否境界の対比を明示する（Impact: 3, Effort: 1, Evidence: yes）
-- [x] P79: scripts/selfcheck.sh に failed_case 末尾数字（`foo0`）保持の回帰を追加し、英数字混在ケースの抽出契約を固定する（Impact: 3, Effort: 2, Evidence: yes）
-- [x] P76: README Quick check に `SELF_CHECK_FORCE_FAIL_CASE` の命名テンプレ（kebab/dot/underscore）を1行で追加し、運用時のケース名設計を統一する（Impact: 2, Effort: 1, Evidence: yes）
-- [ ] P78: README Quick check に「先頭大文字は抽出拒否」の1行注記を追加し、P74テスト意図を利用者向けに可視化する（Impact: 1, Effort: 1, Evidence: yes）
+- [ ] P80: scripts/selfcheck.sh に failed_case 先頭数字＋末尾数字（`0foo0`）保持の回帰を追加し、数値境界の両端同時ケースを固定する（Impact: 3, Effort: 2, Evidence: yes）
+- [ ] P81: README Quick check に failed_case 正常系の最小例（`foo-1`）を1行追加し、NG例との対比を完成させる（Impact: 2, Effort: 1, Evidence: yes）
+- [ ] P82: scripts/selfcheck.sh に failed_case 単一文字（`a` / `0`）保持の回帰を追加し、最小長境界を固定する（Impact: 2, Effort: 2, Evidence: yes）
+- [ ] P83: README Quick check に先頭数字許容（`0foo`）と先頭大文字拒否（`Foo`）を対で示す注記を追加し、受け入れ条件を1行化する（Impact: 1, Effort: 1, Evidence: yes）
 
 ## Next
-- P78を実施する: README Quick check に「先頭大文字は抽出拒否」の1行注記を追加し、P74テスト意図を利用者向けに可視化する
+- P80を実施する: scripts/selfcheck.sh に failed_case `0foo0` 保持の回帰を追加し、`./scripts/selfcheck.sh --summary` で検証する
