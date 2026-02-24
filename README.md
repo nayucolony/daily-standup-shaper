@@ -56,6 +56,9 @@
 ```bash
 ./scripts/selfcheck.sh
 
+# README/スナップショット同期（help/options + one-line contract + test-links を1コマンドで揃える）
+./scripts/sync-help-to-readme.sh --all
+
 # CI向け1行サマリ
 ./scripts/selfcheck.sh --summary
 
@@ -375,16 +378,17 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-25 01:00 JST)
-反復判定（実行前の直近5サイクル）: `P111(script+selfcheck) -> P109(snapshot+selfcheck) -> P113(sync-script+selfcheck) -> P114(selfcheck拡張) -> plan-only更新` で同系（README契約ブロック同期/検証）比率は `5/5=1.00`（閾値0.60）。
-閾値超過のため、同系ループ回避として Update Plan を再更新し、Impact/Effort/Evidence で優先順位を再構成。
+## Update Plan (watchdog 2026-02-25 01:20 JST)
+反復判定（実行前の直近5サイクル）: `P113(sync-script+selfcheck) -> P114(selfcheck拡張) -> plan-only更新 -> P115(selfcheck整理) -> README導線更新` で同系（README同期/検証）比率は `5/5=1.00`（閾値0.60）。
+閾値超過のため、Update Plan を再優先付け（Impact/Effort/Evidence）して plan-only 連打を回避。
 
 - [x] P114: selfcheck に `sync-help-to-readme.sh --all` 実行時の test-links 行/スナップショット冪等性検証を追加し、1コマンド同期の自己検証を成立（Impact: 3, Effort: 1, Evidence: yes）
 - [x] P115: selfcheck の `--all` 同期検証（help/options + one-line contract + test-links）を単一ヘルパー化して失敗メッセージを統一（Impact: 3, Effort: 2, Evidence: yes）
-- [ ] P116: README Quick check に `./scripts/sync-help-to-readme.sh --all` の単一同期手順を明示し、運用導線を一本化（Impact: 2, Effort: 1, Evidence: yes）
+- [x] P116: README Quick check に `./scripts/sync-help-to-readme.sh --all` の単一同期手順を追記し、運用導線を一本化（Impact: 2, Effort: 1, Evidence: yes）
 - [ ] P118: tests/snapshots/readme-quick-check-one-line-contract-links.md の更新手順を README に追記して、差分発生時の復旧手順を固定（Impact: 2, Effort: 1, Evidence: yes）
 - [ ] P117: `sync-help-to-readme.sh --help` の使用例へ test-links 統合例を追記し、CLIガイドと実装の乖離を防止（Impact: 1, Effort: 1, Evidence: yes）
 - [ ] P119: `./scripts/selfcheck.sh --summary` の直前に `./scripts/sync-help-to-readme.sh --all` を入れるローカル検証ワンライナーを README に追加（Impact: 1, Effort: 1, Evidence: yes）
+- [ ] P120: `sync-help-to-readme.sh --all && ./scripts/selfcheck.sh --summary` を Quick check の推奨順として1行追記し、同期忘れを予防（Impact: 1, Effort: 1, Evidence: yes）
 
 ## Next
-- P116を実施する: README Quick check に `./scripts/sync-help-to-readme.sh --all` の単一同期手順を追記し、運用導線を一本化する
+- P118を実施する: tests/snapshots/readme-quick-check-one-line-contract-links.md の更新手順を README Quick check に追記し、差分発生時の復旧導線を固定する
