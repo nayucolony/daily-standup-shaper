@@ -372,15 +372,16 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 21:50 JST)
-反復判定（実行前の直近5サイクル）: `P94(selfcheck) -> P95(README) -> stagnation(plan) -> P96(selfcheck) -> P97(selfcheck)` で同系比率は `3/5=0.60`（閾値到達）。
-このサイクルは P98 を実施し、README側リンク語彙と selfcheck 側テスト名の対応を snapshot で固定した。
+## Update Plan (watchdog 2026-02-24 22:00 JST)
+反復判定（実行前の直近5サイクル）: `P95(README) -> stagnation(plan) -> P96(selfcheck) -> P97(selfcheck) -> P98(selfcheck)` で同系比率は `4/5=0.80`（閾値0.60超え）。
+同系3連続（P96→P97→P98）も満たしたため、このサイクルは実装前に Plan 更新を優先した。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) の順。
 
-- [x] P98: README 側の4リンクラベル（accepts/rejects）と selfcheck テスト名の対応語彙を snapshot 検証し、文言ドリフトを検知する（Impact: 2, Effort: 3, Evidence: yes）
-- [ ] P99: README Quick check の failed_case 受け入れ条件1行を strict/quiet 契約節へ相互リンクし、参照の迷子を減らす（Impact: 1, Effort: 1, Evidence: yes）
-- [ ] P100: README の `# 受け入れ条件（1行）` と strict/quiet 節の相互リンク先アンカーを selfcheck で snapshot 固定し、リンク切れを予防する（Impact: 1, Effort: 2, Evidence: yes）
+- [ ] P99: README Quick check の failed_case 受け入れ条件1行に [Strict mode (CI向け)](#strict-mode-ci向け) / [Quiet mode](#quiet-mode) 相互リンクを追加する（Impact: 2, Effort: 1, Evidence: yes）
+- [ ] P100: `# 受け入れ条件（1行）` に strict/quiet 参照リンクが両方含まれることを selfcheck で検証する（Impact: 2, Effort: 2, Evidence: yes）
+- [ ] P101: strict/quiet 節から Quick check 受け入れ条件行へ逆リンクを追加し、往復導線を完成させる（Impact: 1, Effort: 1, Evidence: yes）
+- [ ] P102: 受け入れ条件1行と対応テスト行の近接2行ルールに「相互リンク追記後も維持」を selfcheck へ明示追加する（Impact: 1, Effort: 2, Evidence: yes）
 
 ## Next
-- P99を実施する: README Quick check の failed_case 受け入れ条件1行を strict/quiet 契約節へ相互リンクし、参照の迷子を減らす
+- P99を実施する: README Quick check の failed_case 受け入れ条件1行へ Strict/Quiet 契約節の相互リンクを追加する
