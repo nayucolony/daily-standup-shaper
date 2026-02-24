@@ -377,9 +377,9 @@ cp ./config/labels.example.json ./config/labels.local.json
 
 - [x] Plan更新: `## Update Plan` を再編し、README偏重から selfcheck 回帰追加を最上位に昇格（Impact: 3, Effort: 1, Evidence: yes）
 - [ ] P88: scripts/selfcheck.sh に `foo/bar` と `fooA` を同一ブロックで対比検証する回帰を追加し、NG境界の網羅性を一括で固定する（Impact: 3, Effort: 2, Evidence: yes）
-- [ ] P91: scripts/selfcheck.sh に `foo/bar`・`Foo`・`fooA` の3点を1ケース群で検証するヘルパー化を追加し、境界回帰追加時の重複を減らす（Impact: 2, Effort: 2, Evidence: yes）
+- [x] P91: scripts/selfcheck.sh に `foo/bar`・`Foo`・`fooA` の3点を1ケース群で検証するヘルパー化を追加し、境界回帰追加時の重複を減らす（Impact: 2, Effort: 2, Evidence: yes）
 - [ ] P90: README Quick check に `foo/bar` 拒否の最小再現例を1行追加し、`fooA` と並べて NG 文字種の対比を即時確認可能にする（Impact: 2, Effort: 1, Evidence: yes）
 - [ ] P92: README Quick check の受け入れ条件1行を `scripts/selfcheck.sh` の該当テスト名へリンクし、仕様と回帰テストの対応追跡を容易にする（Impact: 1, Effort: 1, Evidence: yes）
 
 ## Next
-- P88を実施する: scripts/selfcheck.sh に `foo/bar` と `fooA` を同一ブロックで対比検証する回帰を追加し、README受け入れ条件のNG境界を1テストで検証できる状態へ進める
+- P90を実施する: README Quick check に `foo/bar` 拒否の最小再現例を1行追加し、`fooA` と並べて NG 文字種の対比を即時確認可能にする
