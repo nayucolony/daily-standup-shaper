@@ -863,6 +863,10 @@ else
   fail "README one-line acceptance and test-link lines stay adjacent" "README keeps '# 受け入れ条件（1行）:' immediately followed by '# 対応テスト:'" "acceptance_line=${readme_acceptance_line_no:-missing} test_line=${readme_test_line_no:-missing}"
 fi
 
+readme_boundary_vocab_line_normalized=$(printf "%s\n" "$readme_boundary_link_line" | sed -E 's/#L[0-9]+/#L<line>/g')
+readme_boundary_vocab_expected='# 対応テスト: [`accepts 0foo (README one-line acceptance)`](./scripts/selfcheck.sh#L<line>), [`rejects Foo (README one-line acceptance)`](./scripts/selfcheck.sh#L<line>), [`rejects fooA (uppercase suffix, README one-line acceptance)`](./scripts/selfcheck.sh#L<line>), [`rejects foo/bar (slash delimiter, README one-line acceptance)`](./scripts/selfcheck.sh#L<line>)'
+assert_eq "README boundary link labels snapshot keeps accepts/rejects vocabulary mapping" "$readme_boundary_vocab_expected" "$readme_boundary_vocab_line_normalized"
+
 assert_eq "extract_failed_case_from_summary_line keeps leading digit" "0summary-failcase-contract-sentinel" "$(extract_failed_case_from_summary_line "$summary_line_leading_digit")"
 assert_eq "extract_failed_case_from_summary_line keeps trailing digit" "summary-failcase-contract-sentinel0" "$(extract_failed_case_from_summary_line "$summary_line_trailing_digit")"
 assert_eq "extract_failed_case_from_summary_line keeps both-edge digits" "0summary-failcase-contract-sentinel0" "$(extract_failed_case_from_summary_line "$summary_line_both_edge_digits")"

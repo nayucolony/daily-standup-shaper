@@ -372,17 +372,15 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 21:20 JST)
-反復判定（実行前の直近5サイクル）: `P93(selfcheck) -> stagnation(plan) -> P94(selfcheck) -> P95(README) -> P96(selfcheck予定)` で同系比率は `3/5=0.60`（閾値到達）。
-このサイクルは同系ループ回避のため、**Update Plan の再優先付け**を1アクション前進として実施。
+## Update Plan (watchdog 2026-02-24 21:50 JST)
+反復判定（実行前の直近5サイクル）: `P94(selfcheck) -> P95(README) -> stagnation(plan) -> P96(selfcheck) -> P97(selfcheck)` で同系比率は `3/5=0.60`（閾値到達）。
+このサイクルは P98 を実施し、README側リンク語彙と selfcheck 側テスト名の対応を snapshot で固定した。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) の順。
 
-- [x] Plan更新: `## Update Plan` を再編し、候補施策を Impact/Effort/Evidence で再優先付け（Impact: 3, Effort: 1, Evidence: yes）
-- [ ] P96: scripts/selfcheck.sh で README の対応テストリンク数が4件ちょうど（不足/過剰NG）を検証し、README更新漏れ検知を強化する（Impact: 3, Effort: 2, Evidence: yes）
-- [ ] P97: README Quick check の受け入れ条件1行と対応テスト行の近接配置（連続2行）を selfcheck で固定し、可読性劣化を防ぐ（Impact: 2, Effort: 2, Evidence: yes）
-- [ ] P98: README 側の4リンクラベル（accepts/rejects）と selfcheck テスト名の対応語彙を snapshot 検証し、文言ドリフトを検知する（Impact: 2, Effort: 3, Evidence: yes）
+- [x] P98: README 側の4リンクラベル（accepts/rejects）と selfcheck テスト名の対応語彙を snapshot 検証し、文言ドリフトを検知する（Impact: 2, Effort: 3, Evidence: yes）
 - [ ] P99: README Quick check の failed_case 受け入れ条件1行を strict/quiet 契約節へ相互リンクし、参照の迷子を減らす（Impact: 1, Effort: 1, Evidence: yes）
+- [ ] P100: README の `# 受け入れ条件（1行）` と strict/quiet 節の相互リンク先アンカーを selfcheck で snapshot 固定し、リンク切れを予防する（Impact: 1, Effort: 2, Evidence: yes）
 
 ## Next
-- P96を実施する: scripts/selfcheck.sh で README の対応テストリンク数が4件ちょうど（不足/過剰NG）を検証し、README更新漏れ検知を強化する
+- P99を実施する: README Quick check の failed_case 受け入れ条件1行を strict/quiet 契約節へ相互リンクし、参照の迷子を減らす
