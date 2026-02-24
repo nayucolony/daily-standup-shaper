@@ -198,7 +198,7 @@ SYNC_HELP_ALL_GIT_DIFF_TEMPLATE_FAILCASE="sync-help-all-git-diff-template"
 sync_help_all_invariant_expected_no_diff_line() {
   local labels_csv
   labels_csv=$(IFS=', '; echo "${SYNC_HELP_ALL_INVARIANT_LABELS[*]}")
-  printf "no diff after --all for: %s" "$labels_csv"
+  printf "no diff after --all for: %s (includes failure-heading/template)" "$labels_csv"
 }
 
 sync_help_all_retry_template() {
@@ -1298,6 +1298,10 @@ readme_help_examples_snapshot_after_all=$(cat "$ROOT_DIR/tests/snapshots/sync-he
 readme_optional_block_snapshot_after_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-sync-help-optional-block.md")
 readme_optional_order_snapshot_after_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-sync-help-optional-order.md")
 git_diff_after_all=$(git diff --name-only -- README.md tests/snapshots)
+assert_eq \
+  "sync_help_all_invariant_expected_no_diff_line includes failure-heading/template wording" \
+  "1" \
+  "$(printf "%s" "$(sync_help_all_invariant_expected_no_diff_line)" | grep -F -c -- 'includes failure-heading/template')"
 assert_sync_help_all_invariants \
   "$readme_help_block_before" "$readme_help_block_after" \
   "$sync_contract_before_all" "$sync_contract_after_all" \
