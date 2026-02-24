@@ -212,6 +212,9 @@ set -e
 echo "$code"  # 2
 ```
 
+再確認チェックリスト（quiet併用時）:
+- [ ] `--strict --quiet` 実行時に stderr が空でも、終了コード `2` を維持している
+- [ ] `--all --strict --quiet --format json` 実行時に stdout JSON を維持したまま、終了コード `2` を維持している
 
 ## Quiet mode
 `--strict` と併用して、警告メッセージ（stderr）を抑制したい時に使います。
