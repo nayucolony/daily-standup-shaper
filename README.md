@@ -288,37 +288,17 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 09:20 JST)
-反復判定（直近5サイクル）では plan更新系の比率が 0/5 で閾値未満のため、selfcheckで検証可能なドキュメント前進（P38）を実施しました。
+## Update Plan (watchdog 2026-02-24 09:40 JST)
+反復判定（直近5サイクル）: plan更新系 0/5 のため stagnation は閾値未満。selfcheckで検証可能な前進を維持します。
 
-優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。未完了候補は上から着手。
+優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。
 
-- [x] P14: `--json-entry-meta-keys idx,name` を指定しても `--json-include-entry-meta` なしでは metaキー自体が出力されないことを `scripts/selfcheck.sh` に追加（Impact: 4, Effort: 2, Evidence: yes）
-- [x] P15: `--header-name-keys` の区切り文字前後スペース（例: `'Owner | 担当者'`）を正規化し、READMEとselfcheckで保証する（Impact: 4, Effort: 2, Evidence: yes）
-- [x] P16: `--json-keys` と `--json-entry-meta-keys` のキー重複（例: `yesterday,name`）を検出して明示エラー化（Impact: 5, Effort: 3, Evidence: yes）
-- [x] P17: `--all --strict --format json` の失敗時メッセージに entry index と不足キーをJSON側仕様でも明記する回帰テストを追加（Impact: 3, Effort: 2, Evidence: yes）
-- [x] P18: `examples/patterns.txt` に `Owner/担当者` 混在＋空値ケースを追加し、READMEから1コマンド再現できるようにする（Impact: 3, Effort: 2, Evidence: yes）
-- [x] P19: Pattern E（`examples/patterns.txt`）の README記載コマンド期待値（idx/name）を `scripts/selfcheck.sh` で固定（Impact: 4, Effort: 2, Evidence: yes）
-- [x] P20: README `Usage` に Pattern E の検証ワンライナーを追記し、手動再現性をCLIヘルプ導線からも辿れるようにする（Impact: 3, Effort: 1, Evidence: yes）
-- [x] P21: `--header-name-keys` 未指定時の Pattern E（Owner/担当者混在）挙動を `scripts/selfcheck.sh` へ追加し、name空文字フォールバックを明示化（Impact: 4, Effort: 2, Evidence: yes）
-- [x] P22: README `JSON output` に `--json-entry-meta-keys idx,name` の最小/推奨テンプレを追加し誤設定率を低減（Impact: 2, Effort: 1, Evidence: yes）
-- [x] P23: `--all --strict --format json` の stderr 実例（entry単位）を `examples/` 入力付きでREADMEに追記し、運用者の再現手順を1コマンド化（Impact: 2, Effort: 1, Evidence: yes）
-- [x] P24: `examples/strict-missing.txt` を使った strict stderr 期待値を `scripts/selfcheck.sh` に追加し、README記載コマンドの回帰を自動検証化（Impact: 4, Effort: 2, Evidence: yes）
-- [x] P25: strictエラー文言の先頭プレフィックス（`strict mode: missing required fields in one or more entries`）まで selfcheck で固定し、stderr互換性を明示保証（Impact: 3, Effort: 2, Evidence: yes）
-- [x] P26: strict single/all のエラーメッセージ冒頭一致を `scripts/selfcheck.sh` で回帰化し、READMEへsingle/all両方の固定サンプルを追記（Impact: 2, Effort: 2, Evidence: yes）
-- [x] P27: `--all --strict --quiet --format json` の stderr 完全無出力（空）を `scripts/selfcheck.sh` で回帰固定し、README Quiet mode に契約を追記（Impact: 3, Effort: 2, Evidence: yes）
-- [x] P28: `--all --strict --quiet`（markdown出力）でも stderr 完全無出力かつ非0終了を `scripts/selfcheck.sh` で固定し、README Quiet mode に対応表を追記（Impact: 3, Effort: 2, Evidence: yes）
-- [x] P29: `--strict --quiet --format json`（single/json）の stderr 完全無出力 + 非0終了 + JSONオブジェクト維持を `scripts/selfcheck.sh` に追加（Impact: 4, Effort: 2, Evidence: yes）
-- [x] P30: `--all --strict --quiet --no-entry-header` の markdown出力で Entry見出し非表示 + stderr空 + 非0終了を `scripts/selfcheck.sh` に追加（Impact: 3, Effort: 2, Evidence: yes）
-- [x] P33: Quiet/Strict の終了コード契約（`2`）を selfcheck で single/all/json まとめて固定（Impact: 5, Effort: 2, Evidence: yes）
-- [x] P32: `--all --strict --quiet --no-entry-header --format json` 指定時に `--no-entry-header` がJSON出力へ影響しないこと（JSON配列維持・stderr空・終了コード2）を回帰化（Impact: 4, Effort: 2, Evidence: yes）
-- [x] P31: Quiet mode節に「終了コード2維持」注記と strict節への相互リンクを追加し運用誤解を防止（Impact: 3, Effort: 1, Evidence: yes）
-- [x] P34: `--strict --quiet`（single/markdown）の終了コード2を README Quiet mode対応表の single/markdown 行へ明記し、受け入れ条件を1行化（Impact: 3, Effort: 1, Evidence: yes）
-- [x] P36: Quiet mode対応表に `single/json`・`all/json` の「stderr空 + exit 2 + JSON維持」要約列を追加し、運用判断を表だけで完結させる（Impact: 3, Effort: 1, Evidence: yes）
-- [x] P35: strict失敗時の終了コード契約（2）を `examples/strict-missing.txt` ベースの再現コマンドとして README に追加（Impact: 2, Effort: 1, Evidence: yes）
-- [x] P37: README `Strict mode` 末尾に「quiet指定時はstderr抑制されても終了コード2は維持」の再確認チェックリストを追加（Impact: 2, Effort: 1, Evidence: yes）
-- [x] P38: README Quiet mode に「運用確認ワンライナー（single/all の exit code=2 と stderr空を同時検証）」を追加し、手動確認の手順を1コマンド化する（Impact: 2, Effort: 1, Evidence: yes）
-- [ ] P39: `scripts/selfcheck.sh` に Quiet mode 契約ワンライナー相当（single/all の exit=2 + stderr空）を `for mode in ...` で1ブロック検証する節を追加し、README手順との同型性を高める（Impact: 2, Effort: 2, Evidence: yes）
+- [x] P39: `scripts/selfcheck.sh` に Quiet mode 契約ワンライナー相当（single/all の exit=2 + stderr空）を `for mode in ...` で1ブロック検証する節を追加し、README手順との同型性を高める（Impact: 2, Effort: 2, Evidence: yes）
+- [ ] P40: `scripts/selfcheck.sh` の Quiet/Strict検証ブロックを関数化して重複を削減し、失敗時ログ（mode/code/stderr）を1形式に統一する（Impact: 4, Effort: 2, Evidence: yes）
+- [ ] P41: `--strict --quiet` の single/all/json を `examples/strict-missing.txt` と標準入力の両系統で再検証し、入力経路差分がないことを回帰化する（Impact: 4, Effort: 3, Evidence: yes）
+- [ ] P42: README Quiet mode 対応表に「入力経路（file/stdin）」列を追加し、運用時の再現コマンドを各行へ1つずつ明示する（Impact: 3, Effort: 1, Evidence: yes）
+- [ ] P43: `./bin/shape-standup --help` の quiet/strict説明と README 文言の差分を selfcheck で検知する簡易スナップショット比較を追加（Impact: 3, Effort: 3, Evidence: yes）
+- [ ] P44: CI向けに `./scripts/selfcheck.sh` 実行結果の要約（checks passed / failed case）を1行出力するオプションを追加（Impact: 2, Effort: 3, Evidence: yes）
 
 ## Next
-- P39実施: scripts/selfcheck.sh に Quiet mode の single/all 同型チェック（exit code=2 + stderr空）を1ブロックで追加する
+- P40実施: scripts/selfcheck.sh の Quiet/Strict 検証ブロックを関数化し、失敗時ログ形式を mode/code/stderr に統一する
