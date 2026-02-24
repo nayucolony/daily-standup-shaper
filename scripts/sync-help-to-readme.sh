@@ -11,12 +11,13 @@ END_MARK='<!-- AUTO_SYNC_HELP_OPTIONS:END -->'
 
 usage() {
   cat <<'USAGE'
-Usage: ./scripts/sync-help-to-readme.sh [--update-one-line-contract-snapshot|--update-one-line-contract-test-links|--all]
+Usage: ./scripts/sync-help-to-readme.sh [--update-one-line-contract-snapshot|--update-one-line-contract-test-links|--update-recommended-sequence-snapshot|--all]
 
 Options:
   --update-one-line-contract-snapshot   Update tests/snapshots/readme-quick-check-one-line-contract.md only.
   --update-one-line-contract-test-links Update README '# 対応テスト' links + tests/snapshots/readme-quick-check-one-line-contract-links.md.
-  --all                                 Sync README help options + one-line contract snapshot + test-link line/snapshot.
+  --update-recommended-sequence-snapshot Update tests/snapshots/readme-quick-check-recommended-sequence.md from README Quick check.
+  --all                                 Sync README help options + one-line contract snapshot + test-link line/snapshot + recommended sequence snapshot.
 
 Examples:
   ./scripts/sync-help-to-readme.sh --update-one-line-contract-test-links
@@ -27,6 +28,7 @@ USAGE
 update_help_options=false
 update_one_line_contract=false
 update_one_line_contract_test_links=false
+update_recommended_sequence_snapshot=false
 
 case "${1:-}" in
   "")
@@ -38,10 +40,14 @@ case "${1:-}" in
   --update-one-line-contract-test-links)
     update_one_line_contract_test_links=true
     ;;
+  --update-recommended-sequence-snapshot)
+    update_recommended_sequence_snapshot=true
+    ;;
   --all)
     update_help_options=true
     update_one_line_contract=true
     update_one_line_contract_test_links=true
+    update_recommended_sequence_snapshot=true
     ;;
   -h|--help)
     usage
@@ -115,4 +121,8 @@ fi
 
 if [ "$update_one_line_contract_test_links" = true ]; then
   "$ROOT_DIR/scripts/update-one-line-contract-test-links.sh"
+fi
+
+if [ "$update_recommended_sequence_snapshot" = true ]; then
+  "$ROOT_DIR/scripts/update-recommended-sequence-snapshot.sh"
 fi
