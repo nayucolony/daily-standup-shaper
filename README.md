@@ -62,6 +62,11 @@
 # test-links だけ個別同期（--help Examples と同一手順）
 ./scripts/sync-help-to-readme.sh --update-one-line-contract-test-links
 
+# sync-help単体行スナップショットだけ更新
+./scripts/sync-help-to-readme.sh --update-sync-line-snapshot
+
+# --help Examples ブロック最小スナップショット更新（help/README二重編集差分を検知）
+./scripts/sync-help-to-readme.sh --update-help-examples-snapshot
 
 # ローカル検証ワンライナー（同期→summary、直後のCI向け1行サマリと同順）
 ./scripts/sync-help-to-readme.sh --all && ./scripts/selfcheck.sh --summary
@@ -83,7 +88,7 @@
 # extract_failed_case_from_summary_line も同じ許容境界で抽出し、境界文字を削らずに返す。
 <a id="quick-check-one-line-acceptance"></a>
 # 受け入れ条件（1行）: failed_case は `[a-z0-9._-]+` を満たし、`0foo` は許容・`Foo`/`fooA`/`foo/bar` は拒否（英大文字・スラッシュは全位置で規約外）。契約詳細は [Strict mode (CI向け)](#strict-mode-ci向け) / [Quiet mode](#quiet-mode) を参照。
-# 対応テスト: [`accepts 0foo (README one-line acceptance)`](./scripts/selfcheck.sh#L870), [`rejects Foo (README one-line acceptance)`](./scripts/selfcheck.sh#L871), [`rejects fooA (uppercase suffix, README one-line acceptance)`](./scripts/selfcheck.sh#L871), [`rejects foo/bar (slash delimiter, README one-line acceptance)`](./scripts/selfcheck.sh#L871)
+# 対応テスト: [`accepts 0foo (README one-line acceptance)`](./scripts/selfcheck.sh#L899), [`rejects Foo (README one-line acceptance)`](./scripts/selfcheck.sh#L900), [`rejects fooA (uppercase suffix, README one-line acceptance)`](./scripts/selfcheck.sh#L900), [`rejects foo/bar (slash delimiter, README one-line acceptance)`](./scripts/selfcheck.sh#L900)
 # 補足: 上記4リンクは selfcheck 内の「README one-line acceptance」境界テスト群（0foo許容 / Foo・fooA・foo/bar拒否）を指す。
 # 2行契約ブロックスナップショット更新: ./scripts/update-one-line-contract-snapshot.sh
 # 対応テスト4リンク行の同期（README行番号ズレ防止）: ./scripts/update-one-line-contract-test-links.sh
@@ -391,10 +396,10 @@ cp ./config/labels.example.json ./config/labels.local.json
 閾値超過のため、`## Update Plan` を再優先付けしつつ、1アクション前進として P124（単体sync行スナップショット化 + 順序スナップショット比較）を完了。
 
 - [x] P124: README Quick check の `./scripts/sync-help-to-readme.sh --all` 単体行を `tests/snapshots/readme-quick-check-sync-line.md` に分離し、推奨順行との順序差分を selfcheck のスナップショット比較で検知可能にした（Impact: 3, Effort: 2, Evidence: yes）
-- [ ] P126: `sync-help-to-readme.sh --help` の Examples ブロックを README へ自動同期する最小スナップショットを追加し、ヘルプ/README二重編集の再発を防ぐ（Impact: 4, Effort: 3, Evidence: yes）
+- [x] P126: `sync-help-to-readme.sh --help` の Examples ブロック最小スナップショット（`tests/snapshots/sync-help-examples.md`）と更新コマンド（`--update-help-examples-snapshot`）を追加し、README Quick check 記載との一致を selfcheck で固定した（Impact: 4, Effort: 3, Evidence: yes）
 - [ ] P127: `sync-help-to-readme.sh --help` の Examples に推奨順/単体syncスナップショット更新導線（`--update-recommended-sequence-snapshot` / `--update-sync-line-snapshot`）を追記し、README Quick check 記載との一致を selfcheck で固定（Impact: 3, Effort: 2, Evidence: yes）
 - [ ] P125: README Quick check の「ローカル検証ワンライナー」見出しと実コマンドの組を専用スナップショットへ固定し、見出し変更時の差分検知を追加（Impact: 2, Effort: 2, Evidence: yes）
 - [ ] P128: `sync-help-to-readme.sh --all` の同期対象一覧（help/options + one-line contract + links + recommended + sync-line）を README Quick check に1行で明示し、selfcheck で文言固定（Impact: 2, Effort: 1, Evidence: yes）
 
 ## Next
-- P126を実施する: `sync-help-to-readme.sh --help` の Examples ブロック最小スナップショットを追加し、help/READMEの二重編集差分を selfcheck で検知する
+- P127を実施する: `sync-help-to-readme.sh --help` の Examples に推奨順/単体syncスナップショット更新導線（`--update-recommended-sequence-snapshot` / `--update-sync-line-snapshot`）を追記し、README Quick check 記載との一致を selfcheck で固定する

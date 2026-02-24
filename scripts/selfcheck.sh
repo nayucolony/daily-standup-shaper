@@ -807,12 +807,41 @@ readme_strict_line=$(grep -F -- '- `--strict`:' "$ROOT_DIR/README.md" | head -n 
 readme_quiet_line=$(grep -F -- '- `--quiet`:' "$ROOT_DIR/README.md" | head -n 1 | sed -E 's/^- `--quiet`: //')
 
 sync_help_text=$("$ROOT_DIR/scripts/sync-help-to-readme.sh" --help)
+sync_help_examples_actual=$(printf "%s\n" "$sync_help_text" | awk '
+  /^Examples:/ { in_examples=1; next }
+  in_examples && NF==0 { exit }
+  in_examples { print }
+')
+assert_readme_snapshot \
+  "sync-help-to-readme --help Examples snapshot matches expected" \
+  "$ROOT_DIR/tests/snapshots/sync-help-examples.md" \
+  "$sync_help_examples_actual"
 if printf "%s\n" "$sync_help_text" | grep -Fx -- '  ./scripts/sync-help-to-readme.sh --update-one-line-contract-test-links' >/dev/null \
   && printf "%s\n" "$sync_help_text" | grep -Fx -- '  ./scripts/sync-help-to-readme.sh --update-sync-line-snapshot' >/dev/null \
+  && printf "%s\n" "$sync_help_text" | grep -Fx -- '  ./scripts/sync-help-to-readme.sh --update-help-examples-snapshot' >/dev/null \
   && printf "%s\n" "$sync_help_text" | grep -Fx -- '  ./scripts/sync-help-to-readme.sh --all' >/dev/null; then
-  pass "sync-help-to-readme --help includes test-links/sync-line/--all examples"
+  pass "sync-help-to-readme --help includes test-links/sync-line/help-examples/--all examples"
 else
-  fail "sync-help-to-readme --help includes test-links/sync-line/--all examples" "--help Examples contain test-links, sync-line, and --all commands" "$sync_help_text"
+  fail "sync-help-to-readme --help includes test-links/sync-line/help-examples/--all examples" "--help Examples contain test-links, sync-line, help-examples, and --all commands" "$sync_help_text"
+fi
+
+missing_sync_help_examples_line=""
+while IFS= read -r help_example_line; do
+  [ -z "$help_example_line" ] && continue
+  help_example_line_trimmed=$(printf "%s" "$help_example_line" | sed -E 's/^[[:space:]]+//')
+  if ! grep -Fx -- "$help_example_line_trimmed" "$ROOT_DIR/README.md" >/dev/null; then
+    if [ -n "$missing_sync_help_examples_line" ]; then
+      missing_sync_help_examples_line="$missing_sync_help_examples_line, $help_example_line"
+    else
+      missing_sync_help_examples_line="$help_example_line"
+    fi
+  fi
+done < "$ROOT_DIR/tests/snapshots/sync-help-examples.md"
+
+if [ -z "$missing_sync_help_examples_line" ]; then
+  pass "README Quick check includes all sync-help --help Examples commands"
+else
+  fail "README Quick check includes all sync-help --help Examples commands" "README contains every command listed in tests/snapshots/sync-help-examples.md" "missing: $missing_sync_help_examples_line"
 fi
 
 readme_sync_help_example_count=$(grep -Fxc -- './scripts/sync-help-to-readme.sh --update-one-line-contract-test-links' "$ROOT_DIR/README.md" || true)

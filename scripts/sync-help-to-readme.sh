@@ -11,18 +11,20 @@ END_MARK='<!-- AUTO_SYNC_HELP_OPTIONS:END -->'
 
 usage() {
   cat <<'USAGE'
-Usage: ./scripts/sync-help-to-readme.sh [--update-one-line-contract-snapshot|--update-one-line-contract-test-links|--update-recommended-sequence-snapshot|--update-sync-line-snapshot|--all]
+Usage: ./scripts/sync-help-to-readme.sh [--update-one-line-contract-snapshot|--update-one-line-contract-test-links|--update-recommended-sequence-snapshot|--update-sync-line-snapshot|--update-help-examples-snapshot|--all]
 
 Options:
   --update-one-line-contract-snapshot   Update tests/snapshots/readme-quick-check-one-line-contract.md only.
   --update-one-line-contract-test-links Update README '# 対応テスト' links + tests/snapshots/readme-quick-check-one-line-contract-links.md.
   --update-recommended-sequence-snapshot Update tests/snapshots/readme-quick-check-recommended-sequence.md from README Quick check.
   --update-sync-line-snapshot          Update tests/snapshots/readme-quick-check-sync-line.md from README Quick check.
-  --all                                 Sync README help options + one-line contract snapshot + test-link line/snapshot + recommended sequence snapshot + sync-help single-line snapshot.
+  --update-help-examples-snapshot      Update tests/snapshots/sync-help-examples.md from sync-help-to-readme.sh --help Examples.
+  --all                                 Sync README help options + one-line contract snapshot + test-link line/snapshot + recommended sequence snapshot + sync-help single-line snapshot + sync-help --help Examples snapshot.
 
 Examples:
   ./scripts/sync-help-to-readme.sh --update-one-line-contract-test-links
   ./scripts/sync-help-to-readme.sh --update-sync-line-snapshot
+  ./scripts/sync-help-to-readme.sh --update-help-examples-snapshot
   ./scripts/sync-help-to-readme.sh --all
 USAGE
 }
@@ -32,6 +34,7 @@ update_one_line_contract=false
 update_one_line_contract_test_links=false
 update_recommended_sequence_snapshot=false
 update_sync_line_snapshot=false
+update_help_examples_snapshot=false
 
 case "${1:-}" in
   "")
@@ -49,12 +52,16 @@ case "${1:-}" in
   --update-sync-line-snapshot)
     update_sync_line_snapshot=true
     ;;
+  --update-help-examples-snapshot)
+    update_help_examples_snapshot=true
+    ;;
   --all)
     update_help_options=true
     update_one_line_contract=true
     update_one_line_contract_test_links=true
     update_recommended_sequence_snapshot=true
     update_sync_line_snapshot=true
+    update_help_examples_snapshot=true
     ;;
   -h|--help)
     usage
@@ -136,4 +143,8 @@ fi
 
 if [ "$update_sync_line_snapshot" = true ]; then
   "$ROOT_DIR/scripts/update-sync-line-snapshot.sh"
+fi
+
+if [ "$update_help_examples_snapshot" = true ]; then
+  "$ROOT_DIR/scripts/update-sync-help-examples-snapshot.sh"
 fi
