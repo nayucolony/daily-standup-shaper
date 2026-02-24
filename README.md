@@ -340,8 +340,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 13:50 JST)
-反復判定（直近5サイクル）: summary契約系の実装は継続中だが、今回は外部CI移植の即効性が高い最小 `grep -E` 例（P58）を追加して前進。
+## Update Plan (watchdog 2026-02-24 14:00 JST)
+反復判定（直近5サイクル）: 直近は P62→P58→P63 と同一ファミリ（README/selfcheck連携）を3件継続。反復閾値到達として Update Plan を更新し、次は実装修正コストの低い P61 を優先して前進する。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。
 
@@ -350,8 +350,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P60: README Quick check に summary失敗時の triage 手順（`summary_code`→`summary_lines`→`first_line`）を3手順で追加し、一次切り分けを短縮する（Impact: 3, Effort: 1, Evidence: yes）
 - [x] P62: `./bin/shape-standup --help` の全オプションを README へ機械同期する `scripts/sync-help-to-readme.sh` を追加し、README/実装の乖離を防ぐ（Impact: 4, Effort: 3, Evidence: yes）
 - [x] P58: README に `grep -E` 1本で回せる summary契約の最小CI例を追加し、外部CI移植を容易にする（Impact: 2, Effort: 1, Evidence: yes）
-- [ ] P63: `--strict --quiet` 契約を README の対応表から自動検証する markdownテーブルスナップショットテストを追加し、運用文書の回帰検知を強化する（Impact: 3, Effort: 3, Evidence: yes）
+- [x] P63: `--strict --quiet` 契約を README の対応表から自動検証する markdownテーブルスナップショットテストを追加し、運用文書の回帰検知を強化する（Impact: 3, Effort: 3, Evidence: yes）
 - [ ] P61: `scripts/selfcheck.sh` の summary失敗系検証を1関数1責務（実行/抽出/判定）に分割し、今後の失敗ケース追加の改修コストを下げる（Impact: 2, Effort: 2, Evidence: yes）
 
 ## Next
-- P63実施: `--strict --quiet` 契約を README 対応表から自動検証する markdownテーブルスナップショットテストを追加する
+- P61実施: `scripts/selfcheck.sh` の summary失敗系検証を1関数1責務（実行/抽出/判定）に分割する

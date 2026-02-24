@@ -721,6 +721,19 @@ readme_quiet_line=$(grep -F -- '- `--quiet`:' "$ROOT_DIR/README.md" | head -n 1 
 assert_eq "README strict snapshot matches --help" "$help_strict_line" "$readme_strict_line"
 assert_eq "README quiet snapshot matches --help" "$help_quiet_line" "$readme_quiet_line"
 
+readme_quiet_table_actual=$(awk '
+  /^\| mode \| 入力経路（file\/stdin） \| stdout \| exit code \| stderr \| 再現コマンド（1行） \| 要約（運用判断） \|$/ {capture=1}
+  capture {
+    if ($0 ~ /^\|/) {
+      print
+    } else {
+      exit
+    }
+  }
+' "$ROOT_DIR/README.md")
+readme_quiet_table_expected=$(cat "$ROOT_DIR/tests/snapshots/readme-strict-quiet-matrix.md")
+assert_eq "README strict/quiet matrix snapshot matches expected markdown table" "$readme_quiet_table_expected" "$readme_quiet_table_actual"
+
 if [ "$SKIP_SUMMARY_FAILCASE_TEST" != "1" ]; then
   summary_fail_case="summary-failcase-contract-sentinel"
 
