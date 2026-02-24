@@ -712,7 +712,9 @@ if [ "$SKIP_SUMMARY_FAILCASE_TEST" != "1" ]; then
   normal_fail_name=$(printf "%s\n" "$normal_out" | sed -n 's/^FAIL: //p' | head -n 1)
   summary_fail_name=$(printf "%s\n" "$summary_out" | sed -n 's/^SELF_CHECK_SUMMARY: .*failed_case=//p' | head -n 1)
   normal_passed_count=$(printf "%s\n" "$normal_out" | grep -c '^PASS: ' | tr -d ' ')
+  normal_total_count=$(printf "%s\n" "$normal_out" | grep -E -c '^(PASS|FAIL): ' | tr -d ' ')
   summary_passed_count=$(printf "%s\n" "$summary_out" | sed -n 's/^SELF_CHECK_SUMMARY: passed=\([0-9][0-9]*\)\/[0-9][0-9]* failed_case=.*/\1/p' | head -n 1)
+  summary_total_count=$(printf "%s\n" "$summary_out" | sed -n 's/^SELF_CHECK_SUMMARY: passed=[0-9][0-9]*\/\([0-9][0-9]*\) failed_case=.*/\1/p' | head -n 1)
 
   if [ "$normal_code" -ne 0 ] \
     && [ "$summary_code" -ne 0 ] \
@@ -727,6 +729,12 @@ if [ "$SKIP_SUMMARY_FAILCASE_TEST" != "1" ]; then
     pass "--summary failure passed count matches normal-mode PASS count before failure"
   else
     fail "--summary failure passed count matches normal-mode PASS count before failure" "normal PASS count equals summary passed=<n>/<m> numerator" "normal_passed=$normal_passed_count | summary_passed=$summary_passed_count"
+  fi
+
+  if [ -n "$summary_total_count" ] && [ "$normal_total_count" = "$summary_total_count" ]; then
+    pass "--summary failure total count denominator matches normal-mode total checks"
+  else
+    fail "--summary failure total count denominator matches normal-mode total checks" "normal total PASS+FAIL count equals summary passed=<n>/<m> denominator" "normal_total=$normal_total_count | summary_total=$summary_total_count"
   fi
 fi
 
