@@ -61,6 +61,28 @@ assert_eq() {
   fi
 }
 
+STRICT_QUIET_DEBUG=""
+run_strict_quiet_case() {
+  local mode="$1" input="$2" args="$3" expect_pattern="$4"
+  local stderr_file="/tmp/shape_strict_${mode}_quiet_case_err.txt"
+
+  set +e
+  local stdout
+  stdout=$(printf "%s\n" "$input" | "$CLI" $args 2>"$stderr_file")
+  local code=$?
+  set -e
+
+  local stderr
+  stderr=$(cat "$stderr_file")
+
+  if [ "$code" -eq 2 ] && [ -z "$stderr" ] && echo "$stdout" | grep -q "$expect_pattern"; then
+    return 0
+  fi
+
+  STRICT_QUIET_DEBUG="mode=${mode} code=${code} stderr=${stderr:-<empty>}"
+  return 1
+}
+
 expect_fail_contains() {
   local name="$1" cmd="$2" expected="$3"
   set +e
@@ -463,33 +485,11 @@ Blockers: B blocker
 IN
 )
 
-set +e
-quiet_modes_ok=true
-for quiet_mode in single all; do
-  quiet_args="--strict --quiet"
-  quiet_input="$strict_missing_input"
-  quiet_expect='## Yesterday'
-  if [ "$quiet_mode" = "all" ]; then
-    quiet_args="--all --strict --quiet"
-    quiet_input="$strict_all_input"
-    quiet_expect='### Entry 1'
-  fi
-
-  quiet_stdout=$(printf "%s\n" "$quiet_input" | "$CLI" $quiet_args 2>/tmp/shape_strict_${quiet_mode}_quiet_err.txt)
-  quiet_code=$?
-  quiet_stderr=$(cat /tmp/shape_strict_${quiet_mode}_quiet_err.txt)
-
-  if [ "$quiet_code" -ne 2 ] || [ -n "$quiet_stderr" ] || ! echo "$quiet_stdout" | grep -q "$quiet_expect"; then
-    quiet_modes_ok=false
-    quiet_modes_debug="mode=$quiet_mode stdout=$quiet_stdout | stderr=$quiet_stderr | code=$quiet_code"
-    break
-  fi
-done
-set -e
-if [ "$quiet_modes_ok" = true ]; then
+if run_strict_quiet_case "single" "$strict_missing_input" "--strict --quiet" "## Yesterday" \
+  && run_strict_quiet_case "all" "$strict_all_input" "--all --strict --quiet" "### Entry 1"; then
   pass "--strict --quiet keeps exit code 2 and empty stderr in single/all markdown modes"
 else
-  fail "--strict --quiet keeps exit code 2 and empty stderr in single/all markdown modes" "single/all: code=2 + empty stderr + markdown output" "$quiet_modes_debug"
+  fail "--strict --quiet keeps exit code 2 and empty stderr in single/all markdown modes" "single/all: code=2 + empty stderr + markdown output" "$STRICT_QUIET_DEBUG"
 fi
 
 set +e
