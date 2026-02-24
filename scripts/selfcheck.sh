@@ -562,4 +562,62 @@ else
   fail "examples/strict-missing.txt regression keeps strict stderr prefix compatibility and expected entry details" "non-zero exit + stderr starts with strict prefix and includes entry1:blockers;entry3:today,blockers + stdout is valid JSON array" "stdout=$strict_missing_file_stdout | stderr=$strict_missing_file_err | code=$strict_missing_file_code"
 fi
 
+strict_single_temp=$(mktemp)
+printf "%s\n" "$strict_missing_input" > "$strict_single_temp"
+set +e
+strict_single_stdin_out=$(printf "%s\n" "$strict_missing_input" | "$CLI" --strict --quiet 2>/tmp/shape_strict_single_stdin_route_err.txt)
+strict_single_stdin_code=$?
+strict_single_stdin_err=$(cat /tmp/shape_strict_single_stdin_route_err.txt)
+strict_single_file_out=$("$CLI" --strict --quiet "$strict_single_temp" 2>/tmp/shape_strict_single_file_route_err.txt)
+strict_single_file_code=$?
+strict_single_file_err=$(cat /tmp/shape_strict_single_file_route_err.txt)
+set -e
+rm -f "$strict_single_temp"
+if [ "$strict_single_stdin_code" -eq 2 ] \
+  && [ "$strict_single_file_code" -eq 2 ] \
+  && [ -z "$strict_single_stdin_err" ] \
+  && [ -z "$strict_single_file_err" ] \
+  && [ "$strict_single_stdin_out" = "$strict_single_file_out" ]; then
+  pass "--strict --quiet single markdown keeps same result on stdin/file routes"
+else
+  fail "--strict --quiet single markdown keeps same result on stdin/file routes" "stdin/file both code=2 + empty stderr + same markdown" "stdin: code=$strict_single_stdin_code stderr=$strict_single_stdin_err stdout=$strict_single_stdin_out | file: code=$strict_single_file_code stderr=$strict_single_file_err stdout=$strict_single_file_out"
+fi
+
+set +e
+strict_all_stdin_out=$(cat "$ROOT_DIR/examples/strict-missing.txt" | "$CLI" --all --strict --quiet 2>/tmp/shape_strict_all_stdin_route_err.txt)
+strict_all_stdin_code=$?
+strict_all_stdin_err=$(cat /tmp/shape_strict_all_stdin_route_err.txt)
+strict_all_file_out=$("$CLI" --all --strict --quiet "$ROOT_DIR/examples/strict-missing.txt" 2>/tmp/shape_strict_all_file_route_err.txt)
+strict_all_file_code=$?
+strict_all_file_err=$(cat /tmp/shape_strict_all_file_route_err.txt)
+set -e
+if [ "$strict_all_stdin_code" -eq 2 ] \
+  && [ "$strict_all_file_code" -eq 2 ] \
+  && [ -z "$strict_all_stdin_err" ] \
+  && [ -z "$strict_all_file_err" ] \
+  && [ "$strict_all_stdin_out" = "$strict_all_file_out" ]; then
+  pass "--all --strict --quiet markdown keeps same result on stdin/file routes"
+else
+  fail "--all --strict --quiet markdown keeps same result on stdin/file routes" "stdin/file both code=2 + empty stderr + same markdown" "stdin: code=$strict_all_stdin_code stderr=$strict_all_stdin_err stdout=$strict_all_stdin_out | file: code=$strict_all_file_code stderr=$strict_all_file_err stdout=$strict_all_file_out"
+fi
+
+set +e
+strict_all_json_stdin_out=$(cat "$ROOT_DIR/examples/strict-missing.txt" | "$CLI" --all --strict --quiet --format json 2>/tmp/shape_strict_all_json_stdin_route_err.txt)
+strict_all_json_stdin_code=$?
+strict_all_json_stdin_err=$(cat /tmp/shape_strict_all_json_stdin_route_err.txt)
+strict_all_json_file_out=$("$CLI" --all --strict --quiet --format json "$ROOT_DIR/examples/strict-missing.txt" 2>/tmp/shape_strict_all_json_file_route_err.txt)
+strict_all_json_file_code=$?
+strict_all_json_file_err=$(cat /tmp/shape_strict_all_json_file_route_err.txt)
+set -e
+if [ "$strict_all_json_stdin_code" -eq 2 ] \
+  && [ "$strict_all_json_file_code" -eq 2 ] \
+  && [ -z "$strict_all_json_stdin_err" ] \
+  && [ -z "$strict_all_json_file_err" ] \
+  && [ "$strict_all_json_stdin_out" = "$strict_all_json_file_out" ] \
+  && printf "%s" "$strict_all_json_stdin_out" | python3 -c 'import json,sys; d=json.load(sys.stdin); assert isinstance(d,list) and len(d)==3'; then
+  pass "--all --strict --quiet --format json keeps same result on stdin/file routes"
+else
+  fail "--all --strict --quiet --format json keeps same result on stdin/file routes" "stdin/file both code=2 + empty stderr + same JSON array" "stdin: code=$strict_all_json_stdin_code stderr=$strict_all_json_stdin_err stdout=$strict_all_json_stdin_out | file: code=$strict_all_json_file_code stderr=$strict_all_json_file_err stdout=$strict_all_json_file_out"
+fi
+
 echo "All checks passed."

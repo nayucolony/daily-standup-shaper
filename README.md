@@ -295,10 +295,10 @@ cp ./config/labels.example.json ./config/labels.local.json
 
 - [x] P39: `scripts/selfcheck.sh` に Quiet mode 契約ワンライナー相当（single/all の exit=2 + stderr空）を `for mode in ...` で1ブロック検証する節を追加し、README手順との同型性を高める（Impact: 2, Effort: 2, Evidence: yes）
 - [ ] P40: `scripts/selfcheck.sh` の Quiet/Strict検証ブロックを関数化して重複を削減し、失敗時ログ（mode/code/stderr）を1形式に統一する（Impact: 4, Effort: 2, Evidence: yes）
-- [ ] P41: `--strict --quiet` の single/all/json を `examples/strict-missing.txt` と標準入力の両系統で再検証し、入力経路差分がないことを回帰化する（Impact: 4, Effort: 3, Evidence: yes）
+- [x] P41: `--strict --quiet` の single/all/json を `examples/strict-missing.txt` と標準入力の両系統で再検証し、入力経路差分がないことを回帰化する（Impact: 4, Effort: 3, Evidence: yes）
 - [ ] P42: README Quiet mode 対応表に「入力経路（file/stdin）」列を追加し、運用時の再現コマンドを各行へ1つずつ明示する（Impact: 3, Effort: 1, Evidence: yes）
 - [ ] P43: `./bin/shape-standup --help` の quiet/strict説明と README 文言の差分を selfcheck で検知する簡易スナップショット比較を追加（Impact: 3, Effort: 3, Evidence: yes）
 - [ ] P44: CI向けに `./scripts/selfcheck.sh` 実行結果の要約（checks passed / failed case）を1行出力するオプションを追加（Impact: 2, Effort: 3, Evidence: yes）
 
 ## Next
-- P40実施: scripts/selfcheck.sh の Quiet/Strict 検証ブロックを関数化し、失敗時ログ形式を mode/code/stderr に統一する
+- P42実施: README Quiet mode 対応表に「入力経路（file/stdin）」列を追加し、各モードの再現コマンドを1行ずつ併記する
