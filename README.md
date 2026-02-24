@@ -75,6 +75,11 @@ head -n 1 /tmp/dss-summary-fail.out  # SELF_CHECK_SUMMARY: passed=<n>/<m> failed
 - `summary_lines=<number>`（summary出力行数）
 - `first_line='SELF_CHECK_SUMMARY: ...'`（先頭行スナップショット）
 
+triage 手順（summary失敗時の一次切り分け）:
+1. `summary_code` を確認し、`0` 以外であることを先に確定する（失敗契約が発火しているか）。
+2. `summary_lines` を確認し、`1` であることを確認する（SUMMARY行の重複/混在がないか）。
+3. `first_line` を確認し、`SELF_CHECK_SUMMARY:` で始まり `failed_case=<name>` が入っているかを確認する（失敗ケース名の特定）。
+
 補足: `scripts/selfcheck.sh` は失敗系検証を `expect_fail_contains` ヘルパーで共通化しており、
 不正引数ケースの追加時に重複を減らせる構成です。
 
@@ -321,9 +326,9 @@ cp ./config/labels.example.json ./config/labels.local.json
 
 - [ ] P57: `scripts/selfcheck.sh` に summary契約テスト用ヘルパー（成功/失敗実行 + `summary_code/summary_lines/first_line` 抽出）を追加し、既存の重複コマンド列を関数化する（Impact: 4, Effort: 2, Evidence: yes）
 - [x] P59: `scripts/selfcheck.sh --summary` 失敗時に `summary_code=<number>` の数値契約を単独回帰で固定し、機械処理の型崩れを防ぐ（Impact: 3, Effort: 2, Evidence: yes）
-- [ ] P60: README Quick check に summary失敗時の triage 手順（`summary_code`→`summary_lines`→`first_line`）を3手順で追加し、一次切り分けを短縮する（Impact: 3, Effort: 1, Evidence: yes）
+- [x] P60: README Quick check に summary失敗時の triage 手順（`summary_code`→`summary_lines`→`first_line`）を3手順で追加し、一次切り分けを短縮する（Impact: 3, Effort: 1, Evidence: yes）
 - [ ] P58: README に `grep -E` 1本で回せる summary契約の最小CI例を追加し、外部CI移植を容易にする（Impact: 2, Effort: 1, Evidence: yes）
 - [ ] P61: `scripts/selfcheck.sh` の summary失敗系検証を1関数1責務（実行/抽出/判定）に分割し、今後の失敗ケース追加の改修コストを下げる（Impact: 2, Effort: 2, Evidence: yes）
 
 ## Next
-- P60実施: README Quick check に summary失敗時の triage 手順（`summary_code`→`summary_lines`→`first_line`）を3手順で追加する
+- P58実施: README Quick check に `grep -E` 1本で回せる summary契約の最小CI例を追加する
