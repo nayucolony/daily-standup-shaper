@@ -846,12 +846,13 @@ else
 fi
 
 readme_boundary_link_line=$(grep -F -- '# 対応テスト:' "$ROOT_DIR/README.md" | head -n 1)
+readme_boundary_link_total_count=$(printf "%s\n" "$readme_boundary_link_line" | grep -oE '\[[^]]+\]\([^)]*\)' | sed '/^$/d' | wc -l | tr -d ' ')
 readme_boundary_link_refs=$(printf "%s\n" "$readme_boundary_link_line" | grep -oE '\(\./scripts/selfcheck\.sh#L[0-9]+\)')
 readme_boundary_link_ref_count=$(printf "%s\n" "$readme_boundary_link_refs" | sed '/^$/d' | wc -l | tr -d ' ')
-if [ "$readme_boundary_link_ref_count" -eq 4 ] && [ -n "$readme_boundary_link_refs" ] && ! printf "%s\n" "$readme_boundary_link_refs" | grep -qvE '^\(\./scripts/selfcheck\.sh#L[0-9]+\)$'; then
-  pass "README one-line acceptance links keep exactly four ./scripts/selfcheck.sh#L... refs"
+if [ "$readme_boundary_link_total_count" -eq 4 ] && [ "$readme_boundary_link_ref_count" -eq 4 ] && [ -n "$readme_boundary_link_refs" ] && ! printf "%s\n" "$readme_boundary_link_refs" | grep -qvE '^\(\./scripts/selfcheck\.sh#L[0-9]+\)$'; then
+  pass "README one-line acceptance links keep exactly four links (no extra/missing)"
 else
-  fail "README one-line acceptance links keep exactly four ./scripts/selfcheck.sh#L... refs" "4 refs with ./scripts/selfcheck.sh#L<line> format" "$readme_boundary_link_line"
+  fail "README one-line acceptance links keep exactly four links (no extra/missing)" "exactly 4 markdown links and all refs use ./scripts/selfcheck.sh#L<line> format" "$readme_boundary_link_line"
 fi
 
 assert_eq "extract_failed_case_from_summary_line keeps leading digit" "0summary-failcase-contract-sentinel" "$(extract_failed_case_from_summary_line "$summary_line_leading_digit")"
