@@ -77,6 +77,7 @@
 # 受け入れ条件（1行）: failed_case は `[a-z0-9._-]+` を満たし、`0foo` は許容・`Foo`/`fooA`/`foo/bar` は拒否（英大文字・スラッシュは全位置で規約外）。契約詳細は [Strict mode (CI向け)](#strict-mode-ci向け) / [Quiet mode](#quiet-mode) を参照。
 # 対応テスト: [`accepts 0foo (README one-line acceptance)`](./scripts/selfcheck.sh#L821), [`rejects Foo (README one-line acceptance)`](./scripts/selfcheck.sh#L822), [`rejects fooA (uppercase suffix, README one-line acceptance)`](./scripts/selfcheck.sh#L822), [`rejects foo/bar (slash delimiter, README one-line acceptance)`](./scripts/selfcheck.sh#L822)
 # 補足: 上記4リンクは selfcheck 内の「README one-line acceptance」境界テスト群（0foo許容 / Foo・fooA・foo/bar拒否）を指す。
+# 2行契約ブロックスナップショット更新: awk '/# 受け入れ条件（1行）:/{print; if (getline nextline > 0 && nextline ~ /^# 対応テスト:/) print nextline; exit}' ./README.md | sed -E 's/#L[0-9]+/#L<line>/g' > ./tests/snapshots/readme-quick-check-one-line-contract.md
 # SELF_CHECK_FORCE_FAIL_CASE に空白など規約外文字を渡した場合は、
 # failed_case=invalid-self-check-force-fail-case で明示的に拒否される。
 
@@ -373,15 +374,15 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 23:20 JST)
-反復判定（実行前の直近5サイクル）: `stagnation(plan) -> P103(selfcheck) -> P104(selfcheck) -> P105(selfcheck) -> P106(selfcheck)` で同系（README+selfcheck契約固定）比率は `4/5=0.80`（閾値0.60）。
+## Update Plan (watchdog 2026-02-24 23:30 JST)
+反復判定（実行前の直近5サイクル）: `P103(selfcheck) -> P104(selfcheck) -> P105(selfcheck) -> P106(selfcheck) -> P107(README+selfcheck)` で同系（README契約ブロック固定）比率は `5/5=1.00`（閾値0.60）。
 閾値超過のため Update Plan を再優先付け（Impact / Effort / Evidence）して次候補を整理。
 
-- [x] P106: Quick check の2行契約ブロックを `tests/snapshots/readme-quick-check-one-line-contract.md` に固定し、selfcheck で差分検知を追加（2026-02-24: `#L<line>` 正規化付きで比較）
-- [ ] P107: 2行契約ブロックスナップショット生成コマンドを README に追記（Impact: 2, Effort: 1, Evidence: yes）
-- [ ] P108: selfcheck の README 契約スナップショット群（matrix + one-line contract）を1ヘルパーへ集約（Impact: 2, Effort: 2, Evidence: yes）
-- [ ] P109: 2行契約ブロックのリンク4件が重複なく一意であることを専用スナップショットで固定（Impact: 1, Effort: 2, Evidence: yes）
+- [x] P107: 2行契約ブロックスナップショット生成コマンドを README Quick check に追記（Impact: 2, Effort: 1, Evidence: yes）
 - [ ] P110: `scripts/sync-help-to-readme.sh` に one-line contract snapshot 更新モードを追加（Impact: 3, Effort: 3, Evidence: yes）
+- [ ] P108: selfcheck の README 契約スナップショット群（matrix + one-line contract）を1ヘルパーへ集約（Impact: 2, Effort: 2, Evidence: yes）
+- [ ] P111: 2行契約ブロック抽出awk式を scripts/update-one-line-contract-snapshot.sh に切り出し、READMEから再利用する（Impact: 2, Effort: 2, Evidence: yes）
+- [ ] P109: 2行契約ブロックのリンク4件が重複なく一意であることを専用スナップショットで固定（Impact: 1, Effort: 2, Evidence: yes）
 
 ## Next
-- P107を実施する: 2行契約ブロックスナップショット生成コマンドを README に追記し、更新手順を固定する
+- P110を実施する: `scripts/sync-help-to-readme.sh` に one-line contract snapshot 更新モードを追加し、README同期と同じ導線で更新できるようにする
