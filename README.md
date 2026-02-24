@@ -62,6 +62,11 @@
 # 最小CI例（grep -E 1本で summary 契約を検証）
 ./scripts/selfcheck.sh --summary | grep -E '^SELF_CHECK_SUMMARY: passed=[0-9]+/[0-9]+ failed_case=(none|[a-z0-9._-]+)$'
 
+# failed_case の命名規約: [a-z0-9._-]+ のみを許容
+# 理由: grep -E / POSIX sh / GitHub Actions log 上で追加エスケープなしに安全に抽出・再利用でき、
+# triage時に "どのケースが落ちたか" を機械判定で一意に追跡しやすくするため。
+# 運用では lower_snake / kebab / dot 区切りを使い、空白や日本語、記号（: , / など）は使わない。
+
 # jq 非依存の POSIX sh 例（summary行の形式 + passed 分子/分母整合）
 summary_line=$(./scripts/selfcheck.sh --summary)
 case "$summary_line" in
@@ -372,9 +377,9 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P67: summary失敗時の `failed_case` が `.` と `_` を含むケース名でも末尾まで保持されることを回帰追加する（Impact: 3, Effort: 2, Evidence: yes）
 - [x] P66: README Quick check に `--summary` 契約を jq 非依存で検証する POSIX sh 例を追記する（Impact: 2, Effort: 1, Evidence: yes）
 - [x] P68: `failed_case` 抽出ロジックを `summary_failed_case_name` のE2E依存から分離し、正規表現の境界条件（末尾記号）を単体関数で固定する（Impact: 4, Effort: 2, Evidence: yes）
-- [ ] P69: README Quick check に `failed_case` 許容文字集合（`[a-z0-9._-]+`）の契約理由を1段落追記し、運用時の命名ルールを明文化する（Impact: 3, Effort: 1, Evidence: yes）
+- [x] P69: README Quick check に `failed_case` 許容文字集合（`[a-z0-9._-]+`）の契約理由を1段落追記し、運用時の命名ルールを明文化する（Impact: 3, Effort: 1, Evidence: yes）
 - [ ] P70: `SELF_CHECK_FORCE_FAIL_CASE` へ空白含み文字列を与えた際の取り扱い（拒否 or エスケープ）を仕様化し、selfcheckで固定する（Impact: 2, Effort: 3, Evidence: yes）
 - [ ] P71: summary失敗ケース名の許容境界（先頭/末尾の `.` `-` `_`）をREADMEに追記し、抽出関数の期待値を明文化する（Impact: 2, Effort: 1, Evidence: yes）
 
 ## Next
-- P69実施: README Quick check に `failed_case` 許容文字集合（`[a-z0-9._-]+`）の契約理由を1段落追記し、運用時の命名ルールを明文化する
+- P70実施: `SELF_CHECK_FORCE_FAIL_CASE` に空白含みケース名を与えたときの扱い（拒否 or エスケープ）を決め、selfcheckで契約を固定する
