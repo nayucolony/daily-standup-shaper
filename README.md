@@ -352,9 +352,9 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P58: README に `grep -E` 1本で回せる summary契約の最小CI例を追加し、外部CI移植を容易にする（Impact: 2, Effort: 1, Evidence: yes）
 - [x] P63: `--strict --quiet` 契約を README の対応表から自動検証する markdownテーブルスナップショットテストを追加し、運用文書の回帰検知を強化する（Impact: 3, Effort: 3, Evidence: yes）
 - [x] P61: `scripts/selfcheck.sh` の summary失敗系検証を1関数1責務（実行/抽出/判定）に分割し、今後の失敗ケース追加の改修コストを下げる（Impact: 2, Effort: 2, Evidence: yes）
-- [ ] P64: `--summary` 出力行に余分な前後空白が混入しない契約（先頭/末尾trim不要）を失敗系で固定する（Impact: 3, Effort: 2, Evidence: yes）
+- [x] P64: `--summary` 出力行に余分な前後空白が混入しない契約（先頭/末尾trim不要）を失敗系で固定する（Impact: 3, Effort: 2, Evidence: yes）
 - [ ] P65: summary失敗時の `failed_case` が `--` を含むケース名でも壊れないことを回帰追加する（Impact: 3, Effort: 2, Evidence: yes）
 - [ ] P66: README Quick check に `--summary` 契約を jq 非依存で検証する POSIX sh 例を追記する（Impact: 2, Effort: 1, Evidence: yes）
 
 ## Next
-- P64実施: `--summary` 出力行の前後空白混入を失敗系で回帰固定する
+- P65実施: summary失敗時の `failed_case` が `--` を含むケース名でも壊れないことを回帰追加する

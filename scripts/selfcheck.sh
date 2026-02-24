@@ -821,6 +821,13 @@ if [ "$SKIP_SUMMARY_FAILCASE_TEST" != "1" ]; then
     fail "--summary failure keeps SELF_CHECK_SUMMARY as the first output line" "first non-empty output line is SELF_CHECK_SUMMARY" "$(summary_contract_actual "$summary_code" "$summary_failure_line_count" "$summary_first_line")"
   fi
 
+  summary_line_trimmed=$(printf "%s" "$summary_line" | sed -E 's/^[[:space:]]+//; s/[[:space:]]+$//')
+  if [ "$summary_code" -ne 0 ] && [ "$summary_line" = "$summary_line_trimmed" ]; then
+    pass "--summary failure SELF_CHECK_SUMMARY line has no leading/trailing spaces"
+  else
+    fail "--summary failure SELF_CHECK_SUMMARY line has no leading/trailing spaces" "summary line equals its trimmed form" "$(summary_contract_actual "$summary_code" "$summary_failure_line_count" "$summary_first_line")"
+  fi
+
   if is_numeric "$summary_code"; then
     pass "--summary failure contract keeps summary_code as numeric"
   else
