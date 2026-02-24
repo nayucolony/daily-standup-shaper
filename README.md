@@ -340,8 +340,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 14:20 JST)
-反復判定（直近5サイクル）: P58→P63→P61→P64 と README/selfcheck ファミリが 4/5 を占め、閾値（>=0.6）超過。ループ固定化を避けるため Update Plan を再優先付けし、次は failed_case 文字種境界の回帰を優先する。
+## Update Plan (watchdog 2026-02-24 14:30 JST)
+反復判定（直近5サイクル）: P58→P63→P61→P64→P65 と README/selfcheck ファミリが 5/5 を占め、閾値（>=0.6）超過。ループ固定化を避けるため Update Plan を更新し、残タスクは Impact/Effort/Evidence で P67 > P66 を優先する。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。
 
