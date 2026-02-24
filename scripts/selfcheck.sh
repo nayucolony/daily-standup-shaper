@@ -773,6 +773,12 @@ if [ "$SKIP_SUMMARY_FAILCASE_TEST" != "1" ]; then
     fail "--summary failure keeps SELF_CHECK_SUMMARY as the first output line" "first non-empty output line is SELF_CHECK_SUMMARY" "$(summary_contract_actual "$summary_code" "$summary_failure_line_count" "$summary_first_line")"
   fi
 
+  if echo "$summary_code" | grep -Eq '^[0-9]+$'; then
+    pass "--summary failure contract keeps summary_code as numeric"
+  else
+    fail "--summary failure contract keeps summary_code as numeric" "summary_code=<number>" "$(summary_contract_actual "$summary_code" "$summary_failure_line_count" "$summary_first_line")"
+  fi
+
   if [ "$summary_code" -ne 0 ] && [ "$summary_failure_line_count" -eq 1 ]; then
     pass "--summary failure emits exactly one SELF_CHECK_SUMMARY line"
   else
