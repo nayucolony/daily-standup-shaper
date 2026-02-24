@@ -845,6 +845,15 @@ else
   fail "README one-line acceptance links include all four failed_case boundary tests" "README contains 4 link labels for 0foo/Foo/fooA/foo-bar tests" "missing: $readme_boundary_link_missing"
 fi
 
+readme_boundary_link_line=$(grep -F -- '# 対応テスト:' "$ROOT_DIR/README.md" | head -n 1)
+readme_boundary_link_refs=$(printf "%s\n" "$readme_boundary_link_line" | grep -oE '\(\./scripts/selfcheck\.sh#L[0-9]+\)')
+readme_boundary_link_ref_count=$(printf "%s\n" "$readme_boundary_link_refs" | sed '/^$/d' | wc -l | tr -d ' ')
+if [ "$readme_boundary_link_ref_count" -eq 4 ] && [ -n "$readme_boundary_link_refs" ] && ! printf "%s\n" "$readme_boundary_link_refs" | grep -qvE '^\(\./scripts/selfcheck\.sh#L[0-9]+\)$'; then
+  pass "README one-line acceptance links keep exactly four ./scripts/selfcheck.sh#L... refs"
+else
+  fail "README one-line acceptance links keep exactly four ./scripts/selfcheck.sh#L... refs" "4 refs with ./scripts/selfcheck.sh#L<line> format" "$readme_boundary_link_line"
+fi
+
 assert_eq "extract_failed_case_from_summary_line keeps leading digit" "0summary-failcase-contract-sentinel" "$(extract_failed_case_from_summary_line "$summary_line_leading_digit")"
 assert_eq "extract_failed_case_from_summary_line keeps trailing digit" "summary-failcase-contract-sentinel0" "$(extract_failed_case_from_summary_line "$summary_line_trailing_digit")"
 assert_eq "extract_failed_case_from_summary_line keeps both-edge digits" "0summary-failcase-contract-sentinel0" "$(extract_failed_case_from_summary_line "$summary_line_both_edge_digits")"
