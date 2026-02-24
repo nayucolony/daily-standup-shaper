@@ -355,8 +355,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 14:40 JST)
-反復判定（直近5サイクル）: P63→P61→P64→P65→P67 と README/selfcheck ファミリが 5/5 を占め、閾値（>=0.6）超過。3連続同系を越えたため Update Plan を再更新し、残タスクは Impact/Effort/Evidence で P66 > P68 > P69 > P70 を優先する。
+## Update Plan (watchdog 2026-02-24 15:00 JST)
+反復判定（直近5サイクル）: P61→P64→P65→P67→P66 はいずれも summary契約（README/selfcheck）ファミリで similar ratio = 1.00（>=0.60）。同系3連続を超過しているため、今サイクルは Update Plan を更新し、Impact/Effort/Evidence で優先度を再編した。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。
 
@@ -371,9 +371,10 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P65: summary失敗時の `failed_case` が `--` を含むケース名でも壊れないことを回帰追加する（Impact: 3, Effort: 2, Evidence: yes）
 - [x] P67: summary失敗時の `failed_case` が `.` と `_` を含むケース名でも末尾まで保持されることを回帰追加する（Impact: 3, Effort: 2, Evidence: yes）
 - [x] P66: README Quick check に `--summary` 契約を jq 非依存で検証する POSIX sh 例を追記する（Impact: 2, Effort: 1, Evidence: yes）
-- [ ] P68: `failed_case` 抽出ロジックを `summary_failed_case_name` のE2E依存から分離し、正規表現の境界条件（末尾記号）を単体関数で固定する（Impact: 3, Effort: 2, Evidence: yes）
-- [ ] P69: README Quick check に `failed_case` 許容文字集合（`[a-z0-9._-]+`）の契約理由を1段落追記し、運用時の命名ルールを明文化する（Impact: 2, Effort: 1, Evidence: yes）
+- [ ] P68: `failed_case` 抽出ロジックを `summary_failed_case_name` のE2E依存から分離し、正規表現の境界条件（末尾記号）を単体関数で固定する（Impact: 4, Effort: 2, Evidence: yes）
+- [ ] P69: README Quick check に `failed_case` 許容文字集合（`[a-z0-9._-]+`）の契約理由を1段落追記し、運用時の命名ルールを明文化する（Impact: 3, Effort: 1, Evidence: yes）
 - [ ] P70: `SELF_CHECK_FORCE_FAIL_CASE` へ空白含み文字列を与えた際の取り扱い（拒否 or エスケープ）を仕様化し、selfcheckで固定する（Impact: 2, Effort: 3, Evidence: yes）
+- [ ] P71: summary失敗ケース名の許容境界（先頭/末尾の `.` `-` `_`）をREADMEに追記し、抽出関数の期待値を明文化する（Impact: 2, Effort: 1, Evidence: yes）
 
 ## Next
 - P68実施: `failed_case` 抽出ロジックを `summary_failed_case_name` のE2E依存から分離し、正規表現の境界条件（末尾記号）を単体関数で固定する
