@@ -234,6 +234,21 @@ echo "$code"  # 2
 受け入れ条件（P34, single/markdown）:
 - `--strict --quiet` で **stdout=Markdown維持 / stderr=空 / exit code=2** を同時に満たすこと
 
+運用確認ワンライナー（P38）:
+```bash
+for mode in single all; do
+  err=$(mktemp)
+  if [ "$mode" = "single" ]; then
+    printf 'Yesterday: done\nToday: do\n' | \
+      ./bin/shape-standup --strict --quiet /dev/stdin >/dev/null 2>"$err"; code=$?
+  else
+    ./bin/shape-standup --all --strict --quiet ./examples/strict-missing.txt >/dev/null 2>"$err"; code=$?
+  fi
+  [ "$code" -eq 2 ] && [ ! -s "$err" ] && echo "PASS $mode" || echo "FAIL $mode code=$code stderr=$(cat "$err")"
+  rm -f "$err"
+done
+```
+
 対応表:
 
 | mode | stdout | exit code | stderr | 要約（運用判断） |
@@ -273,8 +288,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 09:10 JST)
-反復判定（直近5サイクル）では plan更新系の比率が 1/5 で閾値未満のため、selfcheckで検証可能なドキュメント前進（P37）を実施しました。
+## Update Plan (watchdog 2026-02-24 09:20 JST)
+反復判定（直近5サイクル）では plan更新系の比率が 0/5 で閾値未満のため、selfcheckで検証可能なドキュメント前進（P38）を実施しました。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。未完了候補は上から着手。
 
@@ -302,7 +317,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P36: Quiet mode対応表に `single/json`・`all/json` の「stderr空 + exit 2 + JSON維持」要約列を追加し、運用判断を表だけで完結させる（Impact: 3, Effort: 1, Evidence: yes）
 - [x] P35: strict失敗時の終了コード契約（2）を `examples/strict-missing.txt` ベースの再現コマンドとして README に追加（Impact: 2, Effort: 1, Evidence: yes）
 - [x] P37: README `Strict mode` 末尾に「quiet指定時はstderr抑制されても終了コード2は維持」の再確認チェックリストを追加（Impact: 2, Effort: 1, Evidence: yes）
-- [ ] P38: README Quiet mode に「運用確認ワンライナー（single/all の exit code=2 と stderr空を同時検証）」を追加し、手動確認の手順を1コマンド化する（Impact: 2, Effort: 1, Evidence: yes）
+- [x] P38: README Quiet mode に「運用確認ワンライナー（single/all の exit code=2 と stderr空を同時検証）」を追加し、手動確認の手順を1コマンド化する（Impact: 2, Effort: 1, Evidence: yes）
+- [ ] P39: `scripts/selfcheck.sh` に Quiet mode 契約ワンライナー相当（single/all の exit=2 + stderr空）を `for mode in ...` で1ブロック検証する節を追加し、README手順との同型性を高める（Impact: 2, Effort: 2, Evidence: yes）
 
 ## Next
-- P38実施: README Quiet mode に single/all の exit code=2 + stderr空を同時確認できる運用ワンライナーを追記する
+- P39実施: scripts/selfcheck.sh に Quiet mode の single/all 同型チェック（exit code=2 + stderr空）を1ブロックで追加する
