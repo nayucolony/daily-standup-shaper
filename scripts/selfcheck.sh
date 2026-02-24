@@ -794,6 +794,7 @@ summary_line_trailing_dash='SELF_CHECK_SUMMARY: passed=3/7 failed_case=summary-f
 summary_line_trailing_underscore='SELF_CHECK_SUMMARY: passed=3/7 failed_case=summary-failcase-contract-sentinel_'
 summary_line_leading_paren='SELF_CHECK_SUMMARY: passed=3/7 failed_case=)summary-failcase-contract-sentinel'
 summary_line_leading_upper='SELF_CHECK_SUMMARY: passed=3/7 failed_case=Foo'
+summary_line_leading_digit='SELF_CHECK_SUMMARY: passed=3/7 failed_case=0summary-failcase-contract-sentinel'
 summary_line_trailing_paren='SELF_CHECK_SUMMARY: passed=3/7 failed_case=summary-failcase-contract-sentinel)'
 
 assert_eq "extract_failed_case_from_summary_line keeps leading dot" ".summary-failcase-contract-sentinel" "$(extract_failed_case_from_summary_line "$summary_line_leading_dot")"
@@ -804,6 +805,7 @@ assert_eq "extract_failed_case_from_summary_line keeps trailing dash" "summary-f
 assert_eq "extract_failed_case_from_summary_line keeps trailing underscore" "summary-failcase-contract-sentinel_" "$(extract_failed_case_from_summary_line "$summary_line_trailing_underscore")"
 assert_eq "extract_failed_case_from_summary_line rejects invalid leading punctuation" "" "$(extract_failed_case_from_summary_line "$summary_line_leading_paren")"
 assert_eq "extract_failed_case_from_summary_line rejects uppercase leading character" "" "$(extract_failed_case_from_summary_line "$summary_line_leading_upper")"
+assert_eq "extract_failed_case_from_summary_line keeps leading digit" "0summary-failcase-contract-sentinel" "$(extract_failed_case_from_summary_line "$summary_line_leading_digit")"
 assert_eq "extract_failed_case_from_summary_line rejects invalid trailing punctuation" "" "$(extract_failed_case_from_summary_line "$summary_line_trailing_paren")"
 
 if [ "$SKIP_SUMMARY_FAILCASE_TEST" != "1" ]; then
