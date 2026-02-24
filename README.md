@@ -70,6 +70,11 @@ head -n 1 /tmp/dss-summary-fail.out  # SELF_CHECK_SUMMARY: passed=<n>/<m> failed
 [ "$code" -ne 0 ] && echo "PASS: summary failure contract"
 ```
 
+受け入れ条件（summary失敗ログの固定形式）:
+- `summary_code=<number>`（数値の終了コード）
+- `summary_lines=<number>`（summary出力行数）
+- `first_line='SELF_CHECK_SUMMARY: ...'`（先頭行スナップショット）
+
 補足: `scripts/selfcheck.sh` は失敗系検証を `expect_fail_contains` ヘルパーで共通化しており、
 不正引数ケースの追加時に重複を減らせる構成です。
 
