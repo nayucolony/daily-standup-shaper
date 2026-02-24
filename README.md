@@ -58,6 +58,9 @@
 
 # README/スナップショット同期（help/options + one-line contract + links + recommended + sync-line + summary-line + help-examples + optional-order を1コマンドで揃える）
 ./scripts/sync-help-to-readme.sh --all
+# 失敗時はこの2行テンプレで復旧/確認
+# retry: ./scripts/sync-help-to-readme.sh --all
+# diff: git diff -- README.md tests/snapshots
 
 # 必要時のみ: 個別同期（推奨順で実行）
 # 個別同期5コマンドの順序スナップショットだけを1コマンドで復旧
@@ -93,7 +96,7 @@
 # extract_failed_case_from_summary_line も同じ許容境界で抽出し、境界文字を削らずに返す。
 <a id="quick-check-one-line-acceptance"></a>
 # 受け入れ条件（1行）: failed_case は `[a-z0-9._-]+` を満たし、`0foo` は許容・`Foo`/`fooA`/`foo/bar` は拒否（英大文字・スラッシュは全位置で規約外）。契約詳細は [Strict mode (CI向け)](#strict-mode-ci向け) / [Quiet mode](#quiet-mode) を参照。
-# 対応テスト: [`accepts 0foo (README one-line acceptance)`](./scripts/selfcheck.sh#L998), [`rejects Foo (README one-line acceptance)`](./scripts/selfcheck.sh#L999), [`rejects fooA (uppercase suffix, README one-line acceptance)`](./scripts/selfcheck.sh#L999), [`rejects foo/bar (slash delimiter, README one-line acceptance)`](./scripts/selfcheck.sh#L999)
+# 対応テスト: [`accepts 0foo (README one-line acceptance)`](./scripts/selfcheck.sh#L1006), [`rejects Foo (README one-line acceptance)`](./scripts/selfcheck.sh#L1007), [`rejects fooA (uppercase suffix, README one-line acceptance)`](./scripts/selfcheck.sh#L1007), [`rejects foo/bar (slash delimiter, README one-line acceptance)`](./scripts/selfcheck.sh#L1007)
 # 補足: 上記4リンクは selfcheck 内の「README one-line acceptance」境界テスト群（0foo許容 / Foo・fooA・foo/bar拒否）を指す。
 # 2行契約ブロックスナップショット更新: ./scripts/update-one-line-contract-snapshot.sh
 # 対応テスト4リンク行の同期（README行番号ズレ防止）: ./scripts/update-one-line-contract-test-links.sh
@@ -396,14 +399,15 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-25 06:40 JST)
-反復判定（実行前の直近5サイクル）: `P139 -> Plan更新 -> P141 -> P142 -> P137` で README/sync-help/selfcheck の同系比率は `2/5=0.40`（閾値0.60未満）。
-selfcheckで即検証できる前進を優先し、Impact優先・同ImpactはEffort低い順・Evidence-ready優先で継続。
+## Update Plan (watchdog 2026-02-25 06:53 JST)
+反復判定（実行前の直近5サイクル）: `Plan更新 -> P141 -> P142 -> P137 -> P143` で README/sync-help/selfcheck の同系比率は `3/5=0.60`（閾値0.60到達）。
+同系3連続ループ抑止ルールに基づき、Update PlanをImpact/Effort/Evidenceで再優先付け。
 
-- [x] P141: `sync-help-to-readme.sh --all` 実行後に `git diff --quiet README.md tests/snapshots` を使った不変チェック関数を追加し、差分時に `changed_count=<n> changed=<labels...>` を1行で出す（Impact: 3, Effort: 2, Evidence: yes）
-- [x] P142: `assert_sync_help_all_invariants` のラベル配列と期待メッセージ（`no diff after --all for: ...`）を単一定義に統一し、差分対象追加時の更新漏れを防ぐ（Impact: 3, Effort: 2, Evidence: yes）
-- [x] P137: `tests/snapshots/sync-help-examples.md` から README 個別同期コマンド群を抽出する `scripts/extract-sync-help-update-commands.sh` を追加し、`update-sync-help-optional-order-snapshot.sh` を snapshotソースへ切替（Impact: 2, Effort: 3, Evidence: yes）
-- [ ] P143: `sync-help-to-readme.sh --all` 検証失敗時の案内を「再同期コマンド+差分確認コマンド」の2行テンプレで統一し、README Quick check と selfcheck の失敗導線を一致させる（Impact: 2, Effort: 2, Evidence: yes）
+- [x] P143: `sync-help-to-readme.sh --all` 検証失敗時の案内を「再同期コマンド+差分確認コマンド」の2行テンプレで統一し、README Quick check と selfcheck の失敗導線を一致させる（Impact: 2, Effort: 2, Evidence: yes）
+- [ ] P144: `scripts/selfcheck.sh` の `sync-help-to-readme --all keeps README.md and tests/snapshots unchanged (git diff --quiet)` 失敗系自己再現テストを追加し、2行テンプレ（retry/diff）が必ず出ることを回帰固定する（Impact: 3, Effort: 2, Evidence: yes）
+- [ ] P145: README Quick check の2行テンプレを `tests/snapshots/readme-sync-help-failure-template.md` に固定し、文言ずれを selfcheck で検知する（Impact: 3, Effort: 2, Evidence: yes）
+- [ ] P146: `sync-help-to-readme.sh --help` に失敗時2行テンプレ節を追加し、README/selfcheck/helpの3点一致をスナップショット化する（Impact: 2, Effort: 3, Evidence: yes）
+- [ ] P147: README Quick check の `--all` 直下にある復旧テンプレの位置（`--all` の直後2行）を selfcheck で順序契約化する（Impact: 2, Effort: 2, Evidence: yes）
 
 ## Next
-- P143を実施する: `sync-help-to-readme.sh --all` 検証失敗時の案内を「再同期コマンド+差分確認コマンド」の2行テンプレで統一する
+- P144を実施する: selfcheckに `sync-help-to-readme --all` 失敗系自己再現を追加し、retry/diff 2行テンプレの常時出力を回帰固定する

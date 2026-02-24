@@ -191,6 +191,13 @@ sync_help_all_invariant_expected_no_diff_line() {
   printf "no diff after --all for: %s" "$labels_csv"
 }
 
+sync_help_all_retry_template() {
+  cat <<'EOF'
+retry: ./scripts/sync-help-to-readme.sh --all
+diff: git diff -- README.md tests/snapshots
+EOF
+}
+
 assert_sync_help_all_invariants() {
   local -a labels=("${SYNC_HELP_ALL_INVARIANT_LABELS[@]}")
   local -a before_values=(
@@ -247,7 +254,8 @@ assert_sync_help_git_diff_invariants() {
   else
     changed_count=$(printf "%s\n" "$after_diff" | sed '/^$/d' | wc -l | tr -d ' ')
     changed_labels=$(printf "%s\n" "$after_diff" | sed '/^$/d' | tr '\n' ',' | sed 's/,$//')
-    fail "sync-help-to-readme --all keeps README.md and tests/snapshots unchanged (git diff --quiet)" "changed_count=0 changed=none" "changed_count=${changed_count:-0} changed=${changed_labels:-none}"
+    fail "sync-help-to-readme --all keeps README.md and tests/snapshots unchanged (git diff --quiet)" "$(sync_help_all_retry_template)" "$(sync_help_all_retry_template)
+changed_count=${changed_count:-0} changed=${changed_labels:-none}"
   fi
 }
 
