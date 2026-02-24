@@ -73,7 +73,7 @@
 # 最小再現（NG文字種の対比）: SELF_CHECK_FORCE_FAIL_CASE=fooA ./scripts/selfcheck.sh --summary && SELF_CHECK_FORCE_FAIL_CASE='foo/bar' ./scripts/selfcheck.sh --summary
 # 拒否境界（抽出NG例）: ')foo' / 'foo)' は failed_case として抽出されない（先頭/末尾の ')' は規約外）。
 # extract_failed_case_from_summary_line も同じ許容境界で抽出し、境界文字を削らずに返す。
-# 受け入れ条件（1行）: failed_case は `[a-z0-9._-]+` を満たし、`0foo` は許容・`Foo`/`fooA`/`foo/bar` は拒否（英大文字・スラッシュは全位置で規約外）。
+# 受け入れ条件（1行）: failed_case は `[a-z0-9._-]+` を満たし、`0foo` は許容・`Foo`/`fooA`/`foo/bar` は拒否（英大文字・スラッシュは全位置で規約外）。契約詳細は [Strict mode (CI向け)](#strict-mode-ci向け) / [Quiet mode](#quiet-mode) を参照。
 # 対応テスト: [`accepts 0foo (README one-line acceptance)`](./scripts/selfcheck.sh#L821), [`rejects Foo (README one-line acceptance)`](./scripts/selfcheck.sh#L822), [`rejects fooA (uppercase suffix, README one-line acceptance)`](./scripts/selfcheck.sh#L822), [`rejects foo/bar (slash delimiter, README one-line acceptance)`](./scripts/selfcheck.sh#L822)
 # 補足: 上記4リンクは selfcheck 内の「README one-line acceptance」境界テスト群（0foo許容 / Foo・fooA・foo/bar拒否）を指す。
 # SELF_CHECK_FORCE_FAIL_CASE に空白など規約外文字を渡した場合は、
@@ -372,16 +372,17 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 22:00 JST)
-反復判定（実行前の直近5サイクル）: `P95(README) -> stagnation(plan) -> P96(selfcheck) -> P97(selfcheck) -> P98(selfcheck)` で同系比率は `4/5=0.80`（閾値0.60超え）。
-同系3連続（P96→P97→P98）も満たしたため、このサイクルは実装前に Plan 更新を優先した。
+## Update Plan (watchdog 2026-02-24 22:10 JST)
+反復判定（実行前の直近5サイクル）: `P96(selfcheck) -> P97(selfcheck) -> P98(selfcheck) -> stagnation(plan) -> P99(README+selfcheck)` で同系比率は `4/5=0.80`（閾値0.60超え）。
+閾値到達のため、`## Update Plan` を更新して次候補を再優先付けした。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) の順。
 
-- [ ] P99: README Quick check の failed_case 受け入れ条件1行に [Strict mode (CI向け)](#strict-mode-ci向け) / [Quiet mode](#quiet-mode) 相互リンクを追加する（Impact: 2, Effort: 1, Evidence: yes）
-- [ ] P100: `# 受け入れ条件（1行）` に strict/quiet 参照リンクが両方含まれることを selfcheck で検証する（Impact: 2, Effort: 2, Evidence: yes）
+- [x] P99: README Quick check の failed_case 受け入れ条件1行に [Strict mode (CI向け)](#strict-mode-ci向け) / [Quiet mode](#quiet-mode) 相互リンクを追加する（Impact: 2, Effort: 1, Evidence: yes）
+- [x] P100: `# 受け入れ条件（1行）` に strict/quiet 参照リンクが両方含まれることを selfcheck で検証する（Impact: 2, Effort: 2, Evidence: yes）
 - [ ] P101: strict/quiet 節から Quick check 受け入れ条件行へ逆リンクを追加し、往復導線を完成させる（Impact: 1, Effort: 1, Evidence: yes）
 - [ ] P102: 受け入れ条件1行と対応テスト行の近接2行ルールに「相互リンク追記後も維持」を selfcheck へ明示追加する（Impact: 1, Effort: 2, Evidence: yes）
+- [ ] P103: `# 対応テスト` 行の4リンク語彙スナップショットが相互リンク追記後も不変であることを selfcheck で再固定する（Impact: 1, Effort: 2, Evidence: yes）
 
 ## Next
-- P99を実施する: README Quick check の failed_case 受け入れ条件1行へ Strict/Quiet 契約節の相互リンクを追加する
+- P101を実施する: Strict mode / Quiet mode 節から Quick check の受け入れ条件1行への逆リンクを追加する

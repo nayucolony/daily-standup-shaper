@@ -855,6 +855,14 @@ else
   fail "README one-line acceptance links keep exactly four links (no extra/missing)" "exactly 4 markdown links and all refs use ./scripts/selfcheck.sh#L<line> format" "$readme_boundary_link_line"
 fi
 
+readme_acceptance_line=$(grep -F -- '# 受け入れ条件（1行）:' "$ROOT_DIR/README.md" | head -n 1)
+if echo "$readme_acceptance_line" | grep -F -- '[Strict mode (CI向け)](#strict-mode-ci向け)' >/dev/null \
+  && echo "$readme_acceptance_line" | grep -F -- '[Quiet mode](#quiet-mode)' >/dev/null; then
+  pass "README one-line acceptance line links to Strict/Quiet contract sections"
+else
+  fail "README one-line acceptance line links to Strict/Quiet contract sections" "contains [Strict mode (CI向け)](#strict-mode-ci向け) and [Quiet mode](#quiet-mode) links" "$readme_acceptance_line"
+fi
+
 readme_acceptance_line_no=$(grep -n -F -- '# 受け入れ条件（1行）:' "$ROOT_DIR/README.md" | head -n 1 | cut -d: -f1)
 readme_test_line_no=$(grep -n -F -- '# 対応テスト:' "$ROOT_DIR/README.md" | head -n 1 | cut -d: -f1)
 if [ -n "$readme_acceptance_line_no" ] && [ -n "$readme_test_line_no" ] && [ $((readme_test_line_no - readme_acceptance_line_no)) -eq 1 ]; then
