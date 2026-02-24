@@ -11,16 +11,18 @@ END_MARK='<!-- AUTO_SYNC_HELP_OPTIONS:END -->'
 
 usage() {
   cat <<'USAGE'
-Usage: ./scripts/sync-help-to-readme.sh [--update-one-line-contract-snapshot|--all]
+Usage: ./scripts/sync-help-to-readme.sh [--update-one-line-contract-snapshot|--update-one-line-contract-test-links|--all]
 
 Options:
-  --update-one-line-contract-snapshot  Update tests/snapshots/readme-quick-check-one-line-contract.md only.
-  --all                                Sync README help options and one-line contract snapshot.
+  --update-one-line-contract-snapshot   Update tests/snapshots/readme-quick-check-one-line-contract.md only.
+  --update-one-line-contract-test-links Update README '# 対応テスト' links + tests/snapshots/readme-quick-check-one-line-contract-links.md.
+  --all                                 Sync README help options + one-line contract snapshot + test-link line/snapshot.
 USAGE
 }
 
 update_help_options=false
 update_one_line_contract=false
+update_one_line_contract_test_links=false
 
 case "${1:-}" in
   "")
@@ -29,9 +31,13 @@ case "${1:-}" in
   --update-one-line-contract-snapshot)
     update_one_line_contract=true
     ;;
+  --update-one-line-contract-test-links)
+    update_one_line_contract_test_links=true
+    ;;
   --all)
     update_help_options=true
     update_one_line_contract=true
+    update_one_line_contract_test_links=true
     ;;
   -h|--help)
     usage
@@ -101,4 +107,8 @@ fi
 
 if [ "$update_one_line_contract" = true ]; then
   "$ROOT_DIR/scripts/update-one-line-contract-snapshot.sh"
+fi
+
+if [ "$update_one_line_contract_test_links" = true ]; then
+  "$ROOT_DIR/scripts/update-one-line-contract-test-links.sh"
 fi

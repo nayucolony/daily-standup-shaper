@@ -75,9 +75,10 @@
 # extract_failed_case_from_summary_line も同じ許容境界で抽出し、境界文字を削らずに返す。
 <a id="quick-check-one-line-acceptance"></a>
 # 受け入れ条件（1行）: failed_case は `[a-z0-9._-]+` を満たし、`0foo` は許容・`Foo`/`fooA`/`foo/bar` は拒否（英大文字・スラッシュは全位置で規約外）。契約詳細は [Strict mode (CI向け)](#strict-mode-ci向け) / [Quiet mode](#quiet-mode) を参照。
-# 対応テスト: [`accepts 0foo (README one-line acceptance)`](./scripts/selfcheck.sh#L821), [`rejects Foo (README one-line acceptance)`](./scripts/selfcheck.sh#L822), [`rejects fooA (uppercase suffix, README one-line acceptance)`](./scripts/selfcheck.sh#L822), [`rejects foo/bar (slash delimiter, README one-line acceptance)`](./scripts/selfcheck.sh#L822)
+# 対応テスト: [`accepts 0foo (README one-line acceptance)`](./scripts/selfcheck.sh#L830), [`rejects Foo (README one-line acceptance)`](./scripts/selfcheck.sh#L831), [`rejects fooA (uppercase suffix, README one-line acceptance)`](./scripts/selfcheck.sh#L831), [`rejects foo/bar (slash delimiter, README one-line acceptance)`](./scripts/selfcheck.sh#L831)
 # 補足: 上記4リンクは selfcheck 内の「README one-line acceptance」境界テスト群（0foo許容 / Foo・fooA・foo/bar拒否）を指す。
 # 2行契約ブロックスナップショット更新: ./scripts/update-one-line-contract-snapshot.sh
+# 対応テスト4リンク行の同期（README行番号ズレ防止）: ./scripts/update-one-line-contract-test-links.sh
 # SELF_CHECK_FORCE_FAIL_CASE に空白など規約外文字を渡した場合は、
 # failed_case=invalid-self-check-force-fail-case で明示的に拒否される。
 
@@ -374,15 +375,15 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 23:50 JST)
-反復判定（実行前の直近5サイクル）: `P105(selfcheck) -> P106(selfcheck) -> P107(README+selfcheck) -> P110(sync+selfcheck) -> plan-update` で同系（README契約ブロック運用）比率は `5/5=1.00`（閾値0.60）。
-同系3連続回避ルールにより、このサイクルは **plan更新を1アクション** として再優先付けのみ実施。
+## Update Plan (watchdog 2026-02-25 00:40 JST)
+反復判定（実行前の直近5サイクル）: `P110(sync+selfcheck) -> plan-update -> P108(selfcheck) -> P112(sync+selfcheck) -> P111(script+selfcheck)` で同系（README契約ブロック同期/検証）比率は `4/5=0.80`（閾値0.60）。
+閾値到達のため Update Plan を更新し、Impact/Effort/Evidence で再優先付け。
 
-- [x] P108: selfcheck の README 契約スナップショット検証（matrix + one-line contract）を `assert_readme_snapshot()` ヘルパーへ集約（Impact: 3, Effort: 2, Evidence: yes）
-- [x] P112: `scripts/sync-help-to-readme.sh --all` を selfcheck で検証し、help同期+contract同期の一括導線を固定（Impact: 2, Effort: 2, Evidence: yes）
-- [x] P111: 2行契約ブロック抽出 awk 式を `scripts/update-one-line-contract-snapshot.sh` に切り出し、README手順と同一実装へ寄せる（Impact: 2, Effort: 3, Evidence: yes）
-- [x] P109: 2行契約ブロックのリンク4件を `tests/snapshots/readme-quick-check-one-line-contract-links.md` へ分離固定し、selfcheckで重複なし（unique=4）を検証（Impact: 1, Effort: 2, Evidence: yes）
-- [ ] P113: README `# 対応テスト` の4リンク行を自動整形する同期スクリプトを追加し、行番号更新漏れを防止（Impact: 1, Effort: 3, Evidence: yes）
+- [x] P113: README `# 対応テスト` の4リンク行を自動整形する `scripts/update-one-line-contract-test-links.sh` を追加し、リンク行と専用スナップショットを同時更新（Impact: 3, Effort: 2, Evidence: yes）
+- [ ] P114: `scripts/sync-help-to-readme.sh --all` に test-links 同期導線を組み込み、READMEの同期手順を1コマンドへ統一（Impact: 2, Effort: 1, Evidence: yes）
+- [ ] P115: selfcheck に `--update-one-line-contract-test-links` の冪等性検証を追加し、行番号ズレ修復導線を固定（Impact: 2, Effort: 2, Evidence: yes）
+- [ ] P116: README Quick check に test-links 同期コマンドを明示し、運用手順の見落としを削減（Impact: 1, Effort: 1, Evidence: yes）
+- [ ] P117: `sync-help-to-readme.sh --help` の使用例へ test-links オプションを追記し、CLIガイドと実装の乖離を防止（Impact: 1, Effort: 1, Evidence: yes）
 
 ## Next
-- P113を実施する: README `# 対応テスト` の4リンク行を自動整形する同期スクリプトを追加し、行番号更新漏れを防止する
+- P114を検証する: `./scripts/sync-help-to-readme.sh --all` で help options / one-line contract snapshot / test-links 行・スナップショットが同時同期されることを selfcheck で確認する
