@@ -885,6 +885,18 @@ else
   fail "README one-line acceptance and test-link lines stay adjacent" "README keeps '# 受け入れ条件（1行）:' immediately followed by '# 対応テスト:'" "acceptance_line=${readme_acceptance_line_no:-missing} test_line=${readme_test_line_no:-missing}"
 fi
 
+readme_acceptance_test_block_count=$(awk '
+  /# 受け入れ条件（1行）:/ {
+    if (getline nextline > 0 && nextline ~ /^# 対応テスト:/) count++
+  }
+  END { print count+0 }
+' "$ROOT_DIR/README.md")
+if [ "$readme_acceptance_test_block_count" -eq 1 ]; then
+  pass "README one-line acceptance/test two-line block is defined exactly once"
+else
+  fail "README one-line acceptance/test two-line block is defined exactly once" "exactly one adjacent '# 受け入れ条件（1行）:' + '# 対応テスト:' block" "count=$readme_acceptance_test_block_count"
+fi
+
 if [ -n "$readme_acceptance_line_no" ] && [ -n "$readme_test_line_no" ] \
   && [ $((readme_test_line_no - readme_acceptance_line_no)) -eq 1 ] \
   && echo "$readme_acceptance_line" | grep -F -- '[Strict mode (CI向け)](#strict-mode-ci向け)' >/dev/null \
