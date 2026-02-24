@@ -396,14 +396,15 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-25 05:00 JST)
-反復判定（実行前の直近5サイクル）: `P125 -> P133 -> P134 -> P135 -> P136` で README/sync-help/selfcheck の同系比率は `5/5=1.00`（閾値0.60）。
-閾値超過のため、このサイクルは **Plan更新を強制しつつ P132 を実施**（Impact優先、同ImpactではEffort低い順、Evidence-ready優先）。
+## Update Plan (watchdog 2026-02-25 05:10 JST)
+反復判定（実行前の直近5サイクル）: `P133 -> P134 -> P135 -> P136 -> P132` で README/sync-help/selfcheck の同系比率は `5/5=1.00`（閾値0.60）。
+同系3連続ルールを満たすため、このサイクルは **Plan更新を強制**（Impact優先、同ImpactではEffort低い順、Evidence-ready優先）。
 
-- [x] P132: sync-help 個別更新5コマンド（summary含む）を `scripts/update-sync-help-optional-order-snapshot.sh` に集約し、`./scripts/sync-help-to-readme.sh --update-sync-help-optional-order-snapshot` で差分復旧を1コマンド化（Impact: 3, Effort: 2, Evidence: yes）
 - [ ] P138: `sync-help-to-readme.sh --all` の不変条件検証を summary-line/help-examples まで拡張し、`assert_sync_help_all_invariants` を完全に `--all` 対象と一致させる（Impact: 3, Effort: 3, Evidence: yes）
-- [ ] P137: `tests/snapshots/sync-help-examples.md` から README 個別同期コマンド群を自動抽出するヘルパーを追加し、help→README同期を単一ソース化（Impact: 2, Effort: 3, Evidence: yes）
+- [ ] P140: `assert_sync_help_all_invariants` で検証している対象一覧（help/options/one-line contract/links/recommended/sync-line/summary/help-examples/optional-order）を配列化し、差分比較ログを1行サマリで出す（Impact: 3, Effort: 3, Evidence: yes）
 - [ ] P139: README Quick check の個別同期ブロック（見出し+6コマンド）を専用スナップショット化し、文言崩れを1テストで検知する（Impact: 2, Effort: 2, Evidence: yes）
+- [ ] P137: `tests/snapshots/sync-help-examples.md` から README 個別同期コマンド群を自動抽出するヘルパーを追加し、help→README同期を単一ソース化（Impact: 2, Effort: 3, Evidence: yes）
+- [ ] P141: `sync-help-to-readme.sh --all` 実行後に `git diff --quiet README.md tests/snapshots` を使った不変チェック関数を追加し、変化時のみ失敗理由を提示する（Impact: 2, Effort: 2, Evidence: yes）
 
 ## Next
 - P138を実施する: `sync-help-to-readme.sh --all` の不変条件検証に summary-line + help-examples を追加し、`--all` 1回で同期対象が全て不変であることを selfcheck で固定する
