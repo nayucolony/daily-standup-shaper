@@ -62,16 +62,16 @@
 # 必要時のみ: 個別同期（推奨順で実行）
 # 個別同期5コマンドの順序スナップショットだけを1コマンドで復旧
 ./scripts/sync-help-to-readme.sh --update-sync-help-optional-order-snapshot
-# 1) test-links だけ個別同期（--help Examples と同一手順）
-./scripts/sync-help-to-readme.sh --update-one-line-contract-test-links
-# 2) 推奨順1行スナップショットだけ更新
+# 1) 推奨順1行スナップショットだけ更新
 ./scripts/sync-help-to-readme.sh --update-recommended-sequence-snapshot
-# 3) sync-help単体行スナップショットだけ更新
+# 2) sync-help単体行スナップショットだけ更新
 ./scripts/sync-help-to-readme.sh --update-sync-line-snapshot
-# 4) --help Examples ブロック最小スナップショット更新（help/README二重編集差分を検知）
-./scripts/sync-help-to-readme.sh --update-help-examples-snapshot
-# 5) summary単体行スナップショットだけ更新（READMEを1ソース化）
+# 3) summary単体行スナップショットだけ更新（READMEを1ソース化）
 ./scripts/sync-help-to-readme.sh --update-summary-line-snapshot
+# 4) test-links だけ個別同期（--help Examples と同一手順）
+./scripts/sync-help-to-readme.sh --update-one-line-contract-test-links
+# 5) --help Examples ブロック最小スナップショット更新（help/README二重編集差分を検知）
+./scripts/sync-help-to-readme.sh --update-help-examples-snapshot
 
 # ローカル検証ワンライナー（同期→summary、直後のCI向け1行サマリと同順）
 ./scripts/sync-help-to-readme.sh --all && ./scripts/selfcheck.sh --summary
@@ -396,14 +396,14 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-25 06:30 JST)
-反復判定（実行前の直近5サイクル）: `P138 -> P139 -> Plan更新 -> P141 -> P141` で README/sync-help/selfcheck の同系比率は `2/5=0.40`（閾値0.60未満）。
+## Update Plan (watchdog 2026-02-25 06:40 JST)
+反復判定（実行前の直近5サイクル）: `P139 -> Plan更新 -> P141 -> P142 -> P137` で README/sync-help/selfcheck の同系比率は `2/5=0.40`（閾値0.60未満）。
 selfcheckで即検証できる前進を優先し、Impact優先・同ImpactはEffort低い順・Evidence-ready優先で継続。
 
 - [x] P141: `sync-help-to-readme.sh --all` 実行後に `git diff --quiet README.md tests/snapshots` を使った不変チェック関数を追加し、差分時に `changed_count=<n> changed=<labels...>` を1行で出す（Impact: 3, Effort: 2, Evidence: yes）
 - [x] P142: `assert_sync_help_all_invariants` のラベル配列と期待メッセージ（`no diff after --all for: ...`）を単一定義に統一し、差分対象追加時の更新漏れを防ぐ（Impact: 3, Effort: 2, Evidence: yes）
-- [ ] P137: `tests/snapshots/sync-help-examples.md` から README 個別同期コマンド群を自動抽出するヘルパーを追加し、help→README同期を単一ソース化（Impact: 2, Effort: 3, Evidence: yes）
+- [x] P137: `tests/snapshots/sync-help-examples.md` から README 個別同期コマンド群を抽出する `scripts/extract-sync-help-update-commands.sh` を追加し、`update-sync-help-optional-order-snapshot.sh` を snapshotソースへ切替（Impact: 2, Effort: 3, Evidence: yes）
 - [ ] P143: `sync-help-to-readme.sh --all` 検証失敗時の案内を「再同期コマンド+差分確認コマンド」の2行テンプレで統一し、README Quick check と selfcheck の失敗導線を一致させる（Impact: 2, Effort: 2, Evidence: yes）
 
 ## Next
-- P137を実施する: `tests/snapshots/sync-help-examples.md` から README 個別同期コマンド群を自動抽出するヘルパーを追加し、help→README同期を単一ソース化する
+- P143を実施する: `sync-help-to-readme.sh --all` 検証失敗時の案内を「再同期コマンド+差分確認コマンド」の2行テンプレで統一する

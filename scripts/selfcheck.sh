@@ -934,11 +934,11 @@ assert_readme_snapshot \
 readme_sync_help_optional_block_actual=$(awk '
   /^# 必要時のみ: 個別同期（推奨順で実行）$/ {capture=1; print; next}
   capture && /^\.\/scripts\/sync-help-to-readme\.sh --update-sync-help-optional-order-snapshot$/ {print; next}
-  capture && /^\.\/scripts\/sync-help-to-readme\.sh --update-one-line-contract-test-links$/ {print; next}
   capture && /^\.\/scripts\/sync-help-to-readme\.sh --update-recommended-sequence-snapshot$/ {print; next}
   capture && /^\.\/scripts\/sync-help-to-readme\.sh --update-sync-line-snapshot$/ {print; next}
-  capture && /^\.\/scripts\/sync-help-to-readme\.sh --update-help-examples-snapshot$/ {print; next}
-  capture && /^\.\/scripts\/sync-help-to-readme\.sh --update-summary-line-snapshot$/ {print; exit}
+  capture && /^\.\/scripts\/sync-help-to-readme\.sh --update-summary-line-snapshot$/ {print; next}
+  capture && /^\.\/scripts\/sync-help-to-readme\.sh --update-one-line-contract-test-links$/ {print; next}
+  capture && /^\.\/scripts\/sync-help-to-readme\.sh --update-help-examples-snapshot$/ {print; exit}
 ' "$ROOT_DIR/README.md")
 assert_readme_snapshot \
   "README Quick check keeps sync-help optional block snapshot (header + 6 commands)" \
