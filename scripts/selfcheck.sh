@@ -255,15 +255,15 @@ assert_sync_help_git_diff_invariants() {
   local before_diff="$1" after_diff="$2"
   local changed_count changed_labels
 
-  if git diff --quiet -- README.md tests/snapshots; then
-    pass "$SYNC_HELP_ALL_GIT_DIFF_CHECK_NAME"
-  elif [ "$before_diff" = "$after_diff" ]; then
-    pass "sync-help-to-readme --all keeps README.md and tests/snapshots unchanged from pre-existing local diffs"
-  else
+  if [ "$before_diff" != "$after_diff" ]; then
     changed_count=$(printf "%s\n" "$after_diff" | sed '/^$/d' | wc -l | tr -d ' ')
     changed_labels=$(printf "%s\n" "$after_diff" | sed '/^$/d' | tr '\n' ',' | sed 's/,$//')
     fail "$SYNC_HELP_ALL_GIT_DIFF_CHECK_NAME" "$(sync_help_all_retry_template)" "$(sync_help_all_retry_template)
 changed_count=${changed_count:-0} changed=${changed_labels:-none}"
+  elif git diff --quiet -- README.md tests/snapshots; then
+    pass "$SYNC_HELP_ALL_GIT_DIFF_CHECK_NAME"
+  else
+    pass "sync-help-to-readme --all keeps README.md and tests/snapshots unchanged from pre-existing local diffs"
   fi
 }
 
@@ -1120,6 +1120,16 @@ assert_readme_snapshot \
   "$readme_sync_help_failure_template_actual"
 
 readme_sync_all_line_no=$(grep -n -F -- "$readme_sync_all_line" "$ROOT_DIR/README.md" | head -n 1 | cut -d: -f1)
+readme_sync_help_retry_line_no=$(grep -n -F -- '# retry: ./scripts/sync-help-to-readme.sh --all' "$ROOT_DIR/README.md" | head -n 1 | cut -d: -f1)
+readme_sync_help_diff_line_no=$(grep -n -F -- '# diff: git diff -- README.md tests/snapshots' "$ROOT_DIR/README.md" | head -n 1 | cut -d: -f1)
+if [ -n "$readme_sync_all_line_no" ] && [ -n "$readme_sync_help_retry_line_no" ] && [ -n "$readme_sync_help_diff_line_no" ] \
+  && [ "$readme_sync_help_retry_line_no" -eq $((readme_sync_all_line_no + 2)) ] \
+  && [ "$readme_sync_help_diff_line_no" -eq $((readme_sync_all_line_no + 3)) ]; then
+  pass "README Quick check keeps retry/diff template immediately below --all (next two lines)"
+else
+  fail "README Quick check keeps retry/diff template immediately below --all (next two lines)" "retry is +2 and diff is +3 from './scripts/sync-help-to-readme.sh --all'" "sync_all=${readme_sync_all_line_no:-missing} retry=${readme_sync_help_retry_line_no:-missing} diff=${readme_sync_help_diff_line_no:-missing}"
+fi
+
 readme_recommended_sequence_line_no=$(grep -n -F -- "$readme_recommended_sequence_line" "$ROOT_DIR/README.md" | head -n 1 | cut -d: -f1)
 expected_sync_then_recommended_order=$(printf '%s\n%s' "$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-sync-line.md")" "$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-recommended-sequence.md")")
 actual_sync_then_recommended_order=$(printf '%s\n%s' "$readme_sync_all_line" "$readme_recommended_sequence_line")
