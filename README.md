@@ -386,15 +386,15 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-25 02:20 JST)
-反復判定（実行前の直近5サイクル）: `P120(推奨順1行追加) -> P121(推奨順1行の存在回帰) -> P122(単体行→推奨順の順序回帰) -> plan再優先付け -> P119(ローカル検証ワンライナーの隣接回帰)` で同系（README同期/検証）比率は `5/5=1.00`（閾値0.60）。
-閾値超過のため、Update Plan を Impact/Effort/Evidence で再優先付けし、次サイクルは CLIヘルプ導線の実行可能性を先に固める。
+## Update Plan (watchdog 2026-02-25 02:30 JST)
+反復判定（実行前の直近5サイクル）: `P121(推奨順1行の存在回帰) -> P122(単体行→推奨順の順序回帰) -> plan再優先付け -> P119(ローカル検証ワンライナー明確化) -> P117(--help使用例へtest-links統合例追加)` で README/sync-help 導線の同系比率は `5/5=1.00`（閾値0.60）。
+閾値超過のため、次サイクルは README Quick check の残り固定点をスナップショット化して、行順差分を機械検知できる状態へ寄せる。
 
-- [x] P119: `./scripts/selfcheck.sh --summary` の直前に `./scripts/sync-help-to-readme.sh --all` を入れるローカル検証ワンライナーを README に追加し、selfcheckで「推奨ワンライナー直後がsummary単体行」であることを回帰化（Impact: 2, Effort: 1, Evidence: yes）
-- [ ] P117: `sync-help-to-readme.sh --help` の使用例へ test-links 統合例を追記し、CLIガイドと実装の乖離を防止（Impact: 3, Effort: 1, Evidence: yes）
-- [ ] P123: README Quick check の推奨順1行を tests/snapshots/readme-quick-check-recommended-sequence.md に分離し、更新スクリプト経由で同期可能にする（Impact: 2, Effort: 2, Evidence: yes）
-- [ ] P124: README Quick check の `sync-help-to-readme --all` 単体行を tests/snapshots/readme-quick-check-sync-line.md に分離し、推奨順行との順序差分をスナップショット比較で検知可能にする（Impact: 2, Effort: 2, Evidence: yes）
+- [x] P117: `sync-help-to-readme.sh --help` の Examples に `--update-one-line-contract-test-links` / `--all` を追加し、README Quick check に同一手順を追記。selfcheck に `--help` 例とREADME記載の存在検証を追加（Impact: 3, Effort: 1, Evidence: yes）
+- [ ] P123: README Quick check の推奨順1行を `tests/snapshots/readme-quick-check-recommended-sequence.md` に分離し、更新スクリプト経由で同期可能にする（Impact: 3, Effort: 2, Evidence: yes）
+- [ ] P124: README Quick check の `sync-help-to-readme --all` 単体行を `tests/snapshots/readme-quick-check-sync-line.md` に分離し、推奨順行との順序差分をスナップショット比較で検知可能にする（Impact: 3, Effort: 2, Evidence: yes）
 - [ ] P125: README Quick check の「ローカル検証ワンライナー」見出しと実コマンドの組を専用スナップショットへ固定し、見出し変更時の差分検知を追加（Impact: 2, Effort: 2, Evidence: yes）
+- [ ] P126: `sync-help-to-readme.sh --help` の Examples ブロックを README へ自動同期する最小スナップショットを追加し、ヘルプ/README二重編集の再発を防ぐ（Impact: 4, Effort: 3, Evidence: yes）
 
 ## Next
 - P117を実施する: `./scripts/sync-help-to-readme.sh --help` の使用例へ test-links 統合例を追加し、selfcheckでREADMEと--helpの一致を検証する
