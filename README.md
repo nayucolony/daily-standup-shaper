@@ -59,6 +59,9 @@
 # CI向け1行サマリ
 ./scripts/selfcheck.sh --summary
 
+# 最小CI例（grep -E 1本で summary 契約を検証）
+./scripts/selfcheck.sh --summary | grep -E '^SELF_CHECK_SUMMARY: passed=[0-9]+/[0-9]+ failed_case=(none|[a-z0-9._-]+)$'
+
 # --summary 失敗例（期待: 先頭1行が SUMMARY / 終了コードは非0）
 set +e
 SELF_CHECK_FORCE_FAIL_CASE=summary-failcase-contract-sentinel \
@@ -337,8 +340,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 13:40 JST)
-反復判定（直近5サイクル）: summary契約系の連続実装を避けるため、今回は `--help` 同期の自動化（P62）を前進アクションとして実施。
+## Update Plan (watchdog 2026-02-24 13:50 JST)
+反復判定（直近5サイクル）: summary契約系の実装は継続中だが、今回は外部CI移植の即効性が高い最小 `grep -E` 例（P58）を追加して前進。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。
 
@@ -346,9 +349,9 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P59: `scripts/selfcheck.sh --summary` 失敗時に `summary_code=<number>` の数値契約を単独回帰で固定し、機械処理の型崩れを防ぐ（Impact: 3, Effort: 2, Evidence: yes）
 - [x] P60: README Quick check に summary失敗時の triage 手順（`summary_code`→`summary_lines`→`first_line`）を3手順で追加し、一次切り分けを短縮する（Impact: 3, Effort: 1, Evidence: yes）
 - [x] P62: `./bin/shape-standup --help` の全オプションを README へ機械同期する `scripts/sync-help-to-readme.sh` を追加し、README/実装の乖離を防ぐ（Impact: 4, Effort: 3, Evidence: yes）
-- [ ] P58: README に `grep -E` 1本で回せる summary契約の最小CI例を追加し、外部CI移植を容易にする（Impact: 2, Effort: 1, Evidence: yes）
-- [ ] P61: `scripts/selfcheck.sh` の summary失敗系検証を1関数1責務（実行/抽出/判定）に分割し、今後の失敗ケース追加の改修コストを下げる（Impact: 2, Effort: 2, Evidence: yes）
+- [x] P58: README に `grep -E` 1本で回せる summary契約の最小CI例を追加し、外部CI移植を容易にする（Impact: 2, Effort: 1, Evidence: yes）
 - [ ] P63: `--strict --quiet` 契約を README の対応表から自動検証する markdownテーブルスナップショットテストを追加し、運用文書の回帰検知を強化する（Impact: 3, Effort: 3, Evidence: yes）
+- [ ] P61: `scripts/selfcheck.sh` の summary失敗系検証を1関数1責務（実行/抽出/判定）に分割し、今後の失敗ケース追加の改修コストを下げる（Impact: 2, Effort: 2, Evidence: yes）
 
 ## Next
-- P58実施: README に `grep -E` 1本で回せる summary契約の最小CI例を追加する
+- P63実施: `--strict --quiet` 契約を README 対応表から自動検証する markdownテーブルスナップショットテストを追加する
