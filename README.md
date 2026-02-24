@@ -375,15 +375,16 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-25 00:50 JST)
-反復判定（実行前の直近5サイクル）: `P112(sync+selfcheck) -> P111(script+selfcheck) -> P109(snapshot+selfcheck) -> P113(sync-script+selfcheck) -> P114(selfcheck拡張)` で同系（README契約ブロック同期/検証）比率は `5/5=1.00`（閾値0.60）。
-閾値超過のため Update Plan を更新し、Impact/Effort/Evidence で再優先付け。
+## Update Plan (watchdog 2026-02-25 01:00 JST)
+反復判定（実行前の直近5サイクル）: `P111(script+selfcheck) -> P109(snapshot+selfcheck) -> P113(sync-script+selfcheck) -> P114(selfcheck拡張) -> plan-only更新` で同系（README契約ブロック同期/検証）比率は `5/5=1.00`（閾値0.60）。
+閾値超過のため、同系ループ回避として Update Plan を再更新し、Impact/Effort/Evidence で優先順位を再構成。
 
 - [x] P114: selfcheck に `sync-help-to-readme.sh --all` 実行時の test-links 行/スナップショット冪等性検証を追加し、1コマンド同期の自己検証を成立（Impact: 3, Effort: 1, Evidence: yes）
-- [ ] P115: selfcheck の `--all` 同期検証（help/options + one-line contract + test-links）を単一ヘルパー化して失敗メッセージを統一（Impact: 2, Effort: 2, Evidence: yes）
+- [ ] P115: selfcheck の `--all` 同期検証（help/options + one-line contract + test-links）を単一ヘルパー化して失敗メッセージを統一（Impact: 3, Effort: 2, Evidence: yes）
 - [ ] P116: README Quick check に `./scripts/sync-help-to-readme.sh --all` の単一同期手順を明示し、運用導線を一本化（Impact: 2, Effort: 1, Evidence: yes）
+- [ ] P118: tests/snapshots/readme-quick-check-one-line-contract-links.md の更新手順を README に追記して、差分発生時の復旧手順を固定（Impact: 2, Effort: 1, Evidence: yes）
 - [ ] P117: `sync-help-to-readme.sh --help` の使用例へ test-links 統合例を追記し、CLIガイドと実装の乖離を防止（Impact: 1, Effort: 1, Evidence: yes）
-- [ ] P118: tests/snapshots/readme-quick-check-one-line-contract-links.md の更新手順を README に追記して、差分発生時の復旧手順を固定（Impact: 1, Effort: 1, Evidence: yes）
+- [ ] P119: `./scripts/selfcheck.sh --summary` の直前に `./scripts/sync-help-to-readme.sh --all` を入れるローカル検証ワンライナーを README に追加（Impact: 1, Effort: 1, Evidence: yes）
 
 ## Next
 - P115を実施する: selfcheck の `sync-help-to-readme --all` 検証3点（help/options・one-line contract・test-links）を単一ヘルパーへ集約し、失敗時に差分対象を1形式で表示する
