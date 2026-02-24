@@ -2,3 +2,4 @@
 ./scripts/sync-help-to-readme.sh --update-recommended-sequence-snapshot
 ./scripts/sync-help-to-readme.sh --update-sync-line-snapshot
 ./scripts/sync-help-to-readme.sh --update-help-examples-snapshot
+./scripts/sync-help-to-readme.sh --update-summary-line-snapshot

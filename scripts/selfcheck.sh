@@ -860,15 +860,15 @@ else
   fail "README Quick check marks sync-help individual updates as optional" "README contains exactly one optional header line for sync-help individual updates" "count=$readme_sync_help_optional_header_count"
 fi
 
-readme_sync_help_optional_total_count=$(grep -E -c '^\./scripts/sync-help-to-readme\.sh --update-(one-line-contract-test-links|recommended-sequence-snapshot|sync-line-snapshot|help-examples-snapshot)$' "$ROOT_DIR/README.md" || true)
-if [ "$readme_sync_help_optional_total_count" -eq 4 ]; then
-  pass "README Quick check keeps exactly four sync-help individual update commands"
+readme_sync_help_optional_total_count=$(grep -E -c '^\./scripts/sync-help-to-readme\.sh --update-(one-line-contract-test-links|recommended-sequence-snapshot|sync-line-snapshot|help-examples-snapshot|summary-line-snapshot)$' "$ROOT_DIR/README.md" || true)
+if [ "$readme_sync_help_optional_total_count" -eq 5 ]; then
+  pass "README Quick check keeps exactly five sync-help individual update commands"
 else
-  fail "README Quick check keeps exactly four sync-help individual update commands" "README contains exactly 4 sync-help individual update commands" "count=$readme_sync_help_optional_total_count"
+  fail "README Quick check keeps exactly five sync-help individual update commands" "README contains exactly 5 sync-help individual update commands" "count=$readme_sync_help_optional_total_count"
 fi
 
 readme_sync_help_optional_order_actual=$(awk '
-  /^\.\/scripts\/sync-help-to-readme\.sh --update-(one-line-contract-test-links|recommended-sequence-snapshot|sync-line-snapshot|help-examples-snapshot)$/ {print}
+  /^\.\/scripts\/sync-help-to-readme\.sh --update-(one-line-contract-test-links|recommended-sequence-snapshot|sync-line-snapshot|help-examples-snapshot|summary-line-snapshot)$/ {print}
 ' "$ROOT_DIR/README.md")
 assert_readme_snapshot \
   "README Quick check keeps sync-help optional command order snapshot" \
