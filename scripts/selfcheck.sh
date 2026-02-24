@@ -944,6 +944,8 @@ readme_help_block_before=$(awk '
   /<!-- AUTO_SYNC_HELP_OPTIONS:END -->/ {exit}
 ' "$ROOT_DIR/README.md")
 sync_contract_before_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-one-line-contract.md")
+readme_test_links_before_all=$(grep -F -- '# 対応テスト:' "$ROOT_DIR/README.md" | head -n 1)
+readme_test_links_snapshot_before_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-one-line-contract-links.md")
 "$ROOT_DIR/scripts/sync-help-to-readme.sh" --all >/dev/null
 readme_help_block_after=$(awk '
   /<!-- AUTO_SYNC_HELP_OPTIONS:START -->/ {capture=1}
@@ -951,8 +953,12 @@ readme_help_block_after=$(awk '
   /<!-- AUTO_SYNC_HELP_OPTIONS:END -->/ {exit}
 ' "$ROOT_DIR/README.md")
 sync_contract_after_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-one-line-contract.md")
+readme_test_links_after_all=$(grep -F -- '# 対応テスト:' "$ROOT_DIR/README.md" | head -n 1)
+readme_test_links_snapshot_after_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-one-line-contract-links.md")
 assert_eq "sync-help-to-readme --all keeps README help options block in sync" "$readme_help_block_before" "$readme_help_block_after"
 assert_eq "sync-help-to-readme --all keeps one-line contract snapshot in sync" "$sync_contract_before_all" "$sync_contract_after_all"
+assert_eq "sync-help-to-readme --all keeps README #対応テスト line in sync" "$readme_test_links_before_all" "$readme_test_links_after_all"
+assert_eq "sync-help-to-readme --all keeps one-line contract link snapshot in sync" "$readme_test_links_snapshot_before_all" "$readme_test_links_snapshot_after_all"
 
 readme_test_links_before=$(grep -F -- '# 対応テスト:' "$ROOT_DIR/README.md" | head -n 1)
 readme_test_links_snapshot_before=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-one-line-contract-links.md")
