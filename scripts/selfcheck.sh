@@ -165,6 +165,13 @@ assert_failed_case_extraction() {
   assert_eq "failed_case boundary contrast ${case_name}" "$expected" "$(extract_failed_case_from_summary_line "$line")"
 }
 
+assert_readme_snapshot() {
+  local name="$1" expected_path="$2" actual="$3"
+  local expected
+  expected=$(cat "$expected_path")
+  assert_eq "$name" "$expected" "$actual"
+}
+
 summary_failed_case_name() {
   local text="$1"
   local summary_line
@@ -788,8 +795,10 @@ readme_quiet_table_actual=$(awk '
     }
   }
 ' "$ROOT_DIR/README.md")
-readme_quiet_table_expected=$(cat "$ROOT_DIR/tests/snapshots/readme-strict-quiet-matrix.md")
-assert_eq "README strict/quiet matrix snapshot matches expected markdown table" "$readme_quiet_table_expected" "$readme_quiet_table_actual"
+assert_readme_snapshot \
+  "README strict/quiet matrix snapshot matches expected markdown table" \
+  "$ROOT_DIR/tests/snapshots/readme-strict-quiet-matrix.md" \
+  "$readme_quiet_table_actual"
 
 summary_line_leading_dot='SELF_CHECK_SUMMARY: passed=3/7 failed_case=.summary-failcase-contract-sentinel'
 summary_line_leading_dash='SELF_CHECK_SUMMARY: passed=3/7 failed_case=-summary-failcase-contract-sentinel'
@@ -906,8 +915,10 @@ readme_one_line_contract_actual=$(awk '
     }
   }
 ' "$ROOT_DIR/README.md" | sed -E 's/#L[0-9]+/#L<line>/g')
-readme_one_line_contract_expected=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-one-line-contract.md")
-assert_eq "README Quick check one-line contract two-line snapshot matches expected" "$readme_one_line_contract_expected" "$readme_one_line_contract_actual"
+assert_readme_snapshot \
+  "README Quick check one-line contract two-line snapshot matches expected" \
+  "$ROOT_DIR/tests/snapshots/readme-quick-check-one-line-contract.md" \
+  "$readme_one_line_contract_actual"
 
 sync_contract_before=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-one-line-contract.md")
 "$ROOT_DIR/scripts/sync-help-to-readme.sh" --update-one-line-contract-snapshot >/dev/null
