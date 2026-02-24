@@ -69,10 +69,10 @@
 # 命名テンプレ: SELF_CHECK_FORCE_FAIL_CASE=summary-fail.case_name ./scripts/selfcheck.sh --summary
 # 正常系の最小例（NG例との対比用）: SELF_CHECK_FORCE_FAIL_CASE=foo-1 ./scripts/selfcheck.sh --summary
 # 許容境界（先頭/末尾）: '.' '-' '_' は保持される（例: '.case', 'case-', '_case_'）。
-# 先頭境界の対比: `0foo` は許容 / `Foo` は拒否（先頭英大文字は規約外）。
+# 境界対比（3点セット）: `0foo` は許容 / `Foo` は拒否 / `fooA` は拒否（英大文字は先頭・末尾とも規約外）。
 # 拒否境界（抽出NG例）: ')foo' / 'foo)' は failed_case として抽出されない（先頭/末尾の ')' は規約外）。
 # extract_failed_case_from_summary_line も同じ許容境界で抽出し、境界文字を削らずに返す。
-# 受け入れ条件（1行）: failed_case は `[a-z0-9._-]+` を満たし、先頭 `0` は許容・先頭 `A-Z` は拒否。
+# 受け入れ条件（1行）: failed_case は `[a-z0-9._-]+` を満たし、`0foo` は許容・`Foo` と `fooA` は拒否。
 # SELF_CHECK_FORCE_FAIL_CASE に空白など規約外文字を渡した場合は、
 # failed_case=invalid-self-check-force-fail-case で明示的に拒否される。
 
@@ -369,21 +369,16 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 19:20 JST)
-反復判定（直近5サイクル）: `P83(README追記) -> P84(回帰追加) -> stagnation(Plan更新) -> P85(回帰追加) -> P87(回帰追加)` で同一ファミリ比率は `3/5=0.60`。閾値到達中だが、このサイクルは selfcheck で `foo/bar` 拒否回帰を追加して1アクション前進した。
+## Update Plan (watchdog 2026-02-24 19:30 JST)
+反復判定（直近5サイクル）: `stagnation(Plan更新) -> P85(回帰追加) -> stagnation(Plan更新) -> P87(回帰追加) -> P86(README追記)` で同一ファミリ比率は `3/5=0.60`。閾値到達のため、Update Plan を再優先付けしたうえで P86（READMEの3点セット明記）を完了した。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) の順。
 
-- [x] P80: scripts/selfcheck.sh に failed_case 先頭数字＋末尾数字（`0foo0`）保持の回帰を追加し、数値境界の両端同時ケースを固定する（Impact: 3, Effort: 2, Evidence: yes）
-- [x] P81: README Quick check に failed_case 正常系の最小例（`foo-1`）を1行追加し、NG例との対比を完成させる（Impact: 2, Effort: 1, Evidence: yes）
-- [x] P82: scripts/selfcheck.sh に failed_case 単一文字（`a` / `0`）保持の回帰を追加し、最小長境界を固定する（Impact: 2, Effort: 2, Evidence: yes）
-- [x] P83: README Quick check に先頭数字許容（`0foo`）と先頭大文字拒否（`Foo`）を対で示す注記を追加し、受け入れ条件を1行化する（Impact: 1, Effort: 1, Evidence: yes）
-- [x] P84: scripts/selfcheck.sh に `0foo` 許容と `Foo` 拒否を同一ブロックで対比検証する回帰を追加し、READMEの1行受け入れ条件と実装契約を1:1で結びつける（Impact: 2, Effort: 2, Evidence: yes）
-- [x] P85: scripts/selfcheck.sh に `fooA`（末尾大文字）拒否の回帰を追加し、`[a-z0-9._-]+` が全位置で大文字非許容であることを固定する（Impact: 3, Effort: 2, Evidence: yes）
-- [x] P87: scripts/selfcheck.sh に `foo/bar`（スラッシュ含み）拒否の回帰を追加し、運用時に混入しやすい区切り文字のNG境界を固定する（Impact: 3, Effort: 2, Evidence: yes）
-- [ ] P86: README Quick check に `fooA` 拒否を `0foo` 許容 / `Foo` 拒否の並びへ追記し、受け入れ条件1行の例示を3点セット化する（Impact: 2, Effort: 1, Evidence: yes）
+- [x] P86: README Quick check に `fooA` 拒否を `0foo` 許容 / `Foo` 拒否の並びへ追記し、受け入れ条件1行の例示を3点セット化する（Impact: 2, Effort: 1, Evidence: yes）
 - [ ] P89: README Quick check の1行受け入れ条件に「英大文字・スラッシュは全位置で拒否」を追記し、境界説明を実装と同期する（Impact: 2, Effort: 1, Evidence: yes）
+- [ ] P90: README Quick check に `foo/bar` 拒否の最小再現例を1行追加し、`fooA` と並べて NG 文字種の対比を即時確認可能にする（Impact: 2, Effort: 1, Evidence: yes）
 - [ ] P88: scripts/selfcheck.sh に `foo/bar` と `fooA` を同一ブロックで対比検証する回帰を追加し、NG境界の網羅性を一括で固定する（Impact: 2, Effort: 2, Evidence: yes）
+- [ ] P91: scripts/selfcheck.sh に `foo/bar`・`Foo`・`fooA` の3点を1ケース群で検証するヘルパー化を追加し、境界回帰追加時の重複を減らす（Impact: 1, Effort: 2, Evidence: yes）
 
 ## Next
-- P86を実施する: README Quick check に `fooA` 拒否を `0foo` 許容 / `Foo` 拒否の並びへ追記し、受け入れ条件1行の例示を3点セット化する
+- P89を実施する: README Quick check の1行受け入れ条件に「英大文字・スラッシュは全位置で拒否」を追記し、`fooA`/`foo/bar` 回帰と説明を同期する
