@@ -173,32 +173,55 @@ assert_readme_snapshot() {
 }
 
 assert_sync_help_all_invariants() {
-  local before_help="$1" after_help="$2"
-  local before_contract="$3" after_contract="$4"
-  local before_test_links="$5" after_test_links="$6"
-  local before_test_links_snapshot="$7" after_test_links_snapshot="$8"
-  local before_recommended_snapshot="$9" after_recommended_snapshot="${10}"
-  local before_sync_line_snapshot="${11}" after_sync_line_snapshot="${12}"
-  local before_summary_line_snapshot="${13}" after_summary_line_snapshot="${14}"
-  local before_help_examples_snapshot="${15}" after_help_examples_snapshot="${16}"
-  local before_optional_order_snapshot="${17}" after_optional_order_snapshot="${18}"
+  local -a labels=(
+    "help/options"
+    "one-line-contract"
+    "test-links-line"
+    "test-links-snapshot"
+    "recommended-sequence-snapshot"
+    "sync-line-snapshot"
+    "summary-line-snapshot"
+    "help-examples-snapshot"
+    "optional-order-snapshot"
+  )
+  local -a before_values=(
+    "$1"
+    "$3"
+    "$5"
+    "$7"
+    "$9"
+    "${11}"
+    "${13}"
+    "${15}"
+    "${17}"
+  )
+  local -a after_values=(
+    "$2"
+    "$4"
+    "$6"
+    "$8"
+    "${10}"
+    "${12}"
+    "${14}"
+    "${16}"
+    "${18}"
+  )
 
-  local mismatch=""
-  [ "$before_help" = "$after_help" ] || mismatch="${mismatch} help/options"
-  [ "$before_contract" = "$after_contract" ] || mismatch="${mismatch} one-line-contract"
-  [ "$before_test_links" = "$after_test_links" ] || mismatch="${mismatch} test-links-line"
-  [ "$before_test_links_snapshot" = "$after_test_links_snapshot" ] || mismatch="${mismatch} test-links-snapshot"
-  [ "$before_recommended_snapshot" = "$after_recommended_snapshot" ] || mismatch="${mismatch} recommended-sequence-snapshot"
-  [ "$before_sync_line_snapshot" = "$after_sync_line_snapshot" ] || mismatch="${mismatch} sync-line-snapshot"
-  [ "$before_summary_line_snapshot" = "$after_summary_line_snapshot" ] || mismatch="${mismatch} summary-line-snapshot"
-  [ "$before_help_examples_snapshot" = "$after_help_examples_snapshot" ] || mismatch="${mismatch} help-examples-snapshot"
-  [ "$before_optional_order_snapshot" = "$after_optional_order_snapshot" ] || mismatch="${mismatch} optional-order-snapshot"
+  local -a mismatches=()
+  local i
+  for i in "${!labels[@]}"; do
+    if [ "${before_values[$i]}" != "${after_values[$i]}" ]; then
+      mismatches+=("${labels[$i]}")
+    fi
+  done
 
-  if [ -z "$mismatch" ]; then
-    pass "sync-help-to-readme --all keeps help/options + one-line contract + test-links + recommended-sequence + sync-line + summary-line + help-examples + optional-order snapshots in sync"
+  local invariant_name="sync-help-to-readme --all keeps help/options + one-line contract + test-links + recommended-sequence + sync-line + summary-line + help-examples + optional-order snapshots in sync"
+  if [ "${#mismatches[@]}" -eq 0 ]; then
+    pass "$invariant_name"
   else
-    mismatch=$(printf "%s" "$mismatch" | sed -E 's/^ //')
-    fail "sync-help-to-readme --all keeps help/options + one-line contract + test-links + recommended-sequence + sync-line + summary-line + help-examples + optional-order snapshots in sync" "no diff after --all for: help/options, one-line-contract, test-links-line, test-links-snapshot, recommended-sequence-snapshot, sync-line-snapshot, summary-line-snapshot, help-examples-snapshot, optional-order-snapshot" "changed=${mismatch}"
+    local mismatch_summary
+    mismatch_summary=$(IFS=', '; echo "${mismatches[*]}")
+    fail "$invariant_name" "no diff after --all for: help/options, one-line-contract, test-links-line, test-links-snapshot, recommended-sequence-snapshot, sync-line-snapshot, summary-line-snapshot, help-examples-snapshot, optional-order-snapshot" "changed_count=${#mismatches[@]} changed=${mismatch_summary}"
   fi
 }
 
