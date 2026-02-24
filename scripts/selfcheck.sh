@@ -16,6 +16,7 @@ fi
 
 FORCE_FAIL_CASE="${SELF_CHECK_FORCE_FAIL_CASE:-}"
 SKIP_SUMMARY_FAILCASE_TEST="${SELF_CHECK_SKIP_SUMMARY_FAILCASE_TEST:-0}"
+INVALID_FORCE_FAIL_CASE_NAME="invalid-self-check-force-fail-case"
 
 TOTAL_CHECKS=0
 PASSED_CHECKS=0
@@ -180,6 +181,15 @@ is_numeric() {
   local value="$1"
   echo "$value" | grep -Eq '^[0-9]+$'
 }
+
+is_valid_failed_case_name() {
+  local value="$1"
+  echo "$value" | grep -Eq '^[a-z0-9._-]+$'
+}
+
+if [ -n "$FORCE_FAIL_CASE" ] && ! is_valid_failed_case_name "$FORCE_FAIL_CASE"; then
+  fail "$INVALID_FORCE_FAIL_CASE_NAME"
+fi
 
 multiline_input=$(cat <<'IN'
 昨日:
@@ -790,6 +800,7 @@ if [ "$SKIP_SUMMARY_FAILCASE_TEST" != "1" ]; then
   summary_fail_case="summary-failcase-contract-sentinel"
   summary_fail_case_with_double_dash="summary--failcase-contract-sentinel"
   summary_fail_case_with_dot_underscore="summary.failcase_contract.sentinel"
+  summary_fail_case_with_space="summary failcase contract sentinel"
 
   run_selfcheck_capture "" summary
   summary_success_out="$RUN_SELF_CHECK_OUT"
@@ -892,6 +903,16 @@ if [ "$SKIP_SUMMARY_FAILCASE_TEST" != "1" ]; then
     pass "--summary failure keeps failed_case intact when case name contains dot and underscore"
   else
     fail "--summary failure keeps failed_case intact when case name contains dot and underscore" "failed_case preserves full case name ($summary_fail_case_with_dot_underscore)" "$(summary_contract_actual "$summary_du_code" "$(summary_line_count "$summary_du_out")" "$(summary_first_nonempty_line "$summary_du_out")")"
+  fi
+
+  run_selfcheck_capture "$summary_fail_case_with_space" summary
+  summary_space_out="$RUN_SELF_CHECK_OUT"
+  summary_space_code=$RUN_SELF_CHECK_CODE
+  summary_space_fail_name=$(summary_failed_case_name "$summary_space_out")
+  if [ "$summary_space_code" -ne 0 ] && [ "$summary_space_fail_name" = "$INVALID_FORCE_FAIL_CASE_NAME" ]; then
+    pass "--summary rejects FORCE_FAIL_CASE values outside [a-z0-9._-]+"
+  else
+    fail "--summary rejects FORCE_FAIL_CASE values outside [a-z0-9._-]+" "failed_case becomes $INVALID_FORCE_FAIL_CASE_NAME when FORCE_FAIL_CASE contains spaces" "$(summary_contract_actual "$summary_space_code" "$(summary_line_count "$summary_space_out")" "$(summary_first_nonempty_line "$summary_space_out")")"
   fi
 
   if [ -n "$summary_passed_count" ] && [ "$normal_passed_count" = "$summary_passed_count" ]; then
