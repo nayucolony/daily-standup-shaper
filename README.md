@@ -59,6 +59,10 @@
 # README/スナップショット同期（help/options + one-line contract + test-links を1コマンドで揃える）
 ./scripts/sync-help-to-readme.sh --all
 
+# test-links だけ個別同期（--help Examples と同一手順）
+./scripts/sync-help-to-readme.sh --update-one-line-contract-test-links
+
+
 # ローカル検証ワンライナー（同期→summary、直後のCI向け1行サマリと同順）
 ./scripts/sync-help-to-readme.sh --all && ./scripts/selfcheck.sh --summary
 ./scripts/selfcheck.sh --summary
@@ -79,7 +83,7 @@
 # extract_failed_case_from_summary_line も同じ許容境界で抽出し、境界文字を削らずに返す。
 <a id="quick-check-one-line-acceptance"></a>
 # 受け入れ条件（1行）: failed_case は `[a-z0-9._-]+` を満たし、`0foo` は許容・`Foo`/`fooA`/`foo/bar` は拒否（英大文字・スラッシュは全位置で規約外）。契約詳細は [Strict mode (CI向け)](#strict-mode-ci向け) / [Quiet mode](#quiet-mode) を参照。
-# 対応テスト: [`accepts 0foo (README one-line acceptance)`](./scripts/selfcheck.sh#L850), [`rejects Foo (README one-line acceptance)`](./scripts/selfcheck.sh#L851), [`rejects fooA (uppercase suffix, README one-line acceptance)`](./scripts/selfcheck.sh#L851), [`rejects foo/bar (slash delimiter, README one-line acceptance)`](./scripts/selfcheck.sh#L851)
+# 対応テスト: [`accepts 0foo (README one-line acceptance)`](./scripts/selfcheck.sh#L865), [`rejects Foo (README one-line acceptance)`](./scripts/selfcheck.sh#L866), [`rejects fooA (uppercase suffix, README one-line acceptance)`](./scripts/selfcheck.sh#L866), [`rejects foo/bar (slash delimiter, README one-line acceptance)`](./scripts/selfcheck.sh#L866)
 # 補足: 上記4リンクは selfcheck 内の「README one-line acceptance」境界テスト群（0foo許容 / Foo・fooA・foo/bar拒否）を指す。
 # 2行契約ブロックスナップショット更新: ./scripts/update-one-line-contract-snapshot.sh
 # 対応テスト4リンク行の同期（README行番号ズレ防止）: ./scripts/update-one-line-contract-test-links.sh

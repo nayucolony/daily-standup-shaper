@@ -802,6 +802,21 @@ help_quiet_line=$(printf "%s\n" "$help_text" | grep -E '^  --quiet[[:space:]]+' 
 readme_strict_line=$(grep -F -- '- `--strict`:' "$ROOT_DIR/README.md" | head -n 1 | sed -E 's/^- `--strict`: //')
 readme_quiet_line=$(grep -F -- '- `--quiet`:' "$ROOT_DIR/README.md" | head -n 1 | sed -E 's/^- `--quiet`: //')
 
+sync_help_text=$("$ROOT_DIR/scripts/sync-help-to-readme.sh" --help)
+if printf "%s\n" "$sync_help_text" | grep -Fx -- '  ./scripts/sync-help-to-readme.sh --update-one-line-contract-test-links' >/dev/null \
+  && printf "%s\n" "$sync_help_text" | grep -Fx -- '  ./scripts/sync-help-to-readme.sh --all' >/dev/null; then
+  pass "sync-help-to-readme --help includes test-links and --all examples"
+else
+  fail "sync-help-to-readme --help includes test-links and --all examples" "--help Examples contain test-links and --all commands" "$sync_help_text"
+fi
+
+readme_sync_help_example_count=$(grep -Fxc -- './scripts/sync-help-to-readme.sh --update-one-line-contract-test-links' "$ROOT_DIR/README.md" || true)
+if [ "$readme_sync_help_example_count" -ge 1 ]; then
+  pass "README Quick check includes sync-help test-links example"
+else
+  fail "README Quick check includes sync-help test-links example" "README contains ./scripts/sync-help-to-readme.sh --update-one-line-contract-test-links" "count=$readme_sync_help_example_count"
+fi
+
 assert_eq "README strict snapshot matches --help" "$help_strict_line" "$readme_strict_line"
 assert_eq "README quiet snapshot matches --help" "$help_quiet_line" "$readme_quiet_line"
 

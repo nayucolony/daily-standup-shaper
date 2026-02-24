@@ -17,6 +17,10 @@ Options:
   --update-one-line-contract-snapshot   Update tests/snapshots/readme-quick-check-one-line-contract.md only.
   --update-one-line-contract-test-links Update README '# 対応テスト' links + tests/snapshots/readme-quick-check-one-line-contract-links.md.
   --all                                 Sync README help options + one-line contract snapshot + test-link line/snapshot.
+
+Examples:
+  ./scripts/sync-help-to-readme.sh --update-one-line-contract-test-links
+  ./scripts/sync-help-to-readme.sh --all
 USAGE
 }
 
