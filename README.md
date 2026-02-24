@@ -309,8 +309,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 12:10 JST)
-反復判定（直近5サイクル）: summary契約回帰系 5/5 で閾値到達。重複回帰の取りこぼしを防ぐため、失敗時の単一行性を先に固定したうえで次候補を再優先付け。
+## Update Plan (watchdog 2026-02-24 12:20 JST)
+反復判定（直近5サイクル）: summary契約回帰系 5/5 で閾値到達。P55で失敗メッセージ形式を固定化したため、次は同系の重複検証を減らしつつ契約差分検知力を上げる候補へ再優先付け。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。
 
@@ -330,7 +330,10 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P52: `scripts/selfcheck.sh --summary` の失敗時に `SELF_CHECK_SUMMARY` 行が **ちょうど1行のみ**（重複なし）であることを回帰追加し、ログ収集の重複行パース揺れを防ぐ（Impact: 2, Effort: 2, Evidence: yes）
 - [x] P53: `scripts/selfcheck.sh --summary` の失敗時に `PASS:` / `FAIL:` 詳細行が混在しないことを失敗系専用で回帰追加し、CIの単一行パーサ互換をさらに固定する（Impact: 3, Effort: 2, Evidence: yes）
 - [x] P54: README Quick check に `--summary` 失敗例（期待: 先頭1行が SUMMARY、終了コード非0）を追記し、運用者向けの受け入れ条件を明示する（Impact: 2, Effort: 1, Evidence: yes）
-- [ ] P55: `scripts/selfcheck.sh` の summary契約回帰ブロックを関数化し、失敗時メッセージを `summary_code/summary_lines/first_line` の固定形式に統一する（Impact: 2, Effort: 2, Evidence: yes）
+- [x] P55: `scripts/selfcheck.sh` の summary契約回帰ブロックを関数化し、失敗時メッセージを `summary_code/summary_lines/first_line` の固定形式に統一する（Impact: 2, Effort: 2, Evidence: yes）
+- [ ] P56: summary失敗時の固定形式（`summary_code/summary_lines/first_line`）を README Quick check に追記し、運用者が失敗ログを即読できる受け入れ条件を追加する（Impact: 3, Effort: 1, Evidence: yes）
+- [ ] P57: `scripts/selfcheck.sh` に summary契約テスト用のヘルパー関数（成功/失敗ケース実行と項目抽出）を追加し、重複コマンド列を削減する（Impact: 3, Effort: 2, Evidence: yes）
+- [ ] P58: `scripts/selfcheck.sh --summary` の出力を `grep -E` 1本で検証できる最小CI例を README に追加し、外部CIへの移植性を上げる（Impact: 2, Effort: 1, Evidence: yes）
 
 ## Next
-- P55実施: `scripts/selfcheck.sh` の summary契約回帰ブロックを関数化し、失敗時メッセージを `summary_code/summary_lines/first_line` の固定形式に統一する
+- P56実施: README Quick check に `summary_code/summary_lines/first_line` 固定形式の失敗時ログ受け入れ条件を追記する

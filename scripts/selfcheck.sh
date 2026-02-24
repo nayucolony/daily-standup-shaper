@@ -117,6 +117,11 @@ expect_fail_contains() {
   fi
 }
 
+summary_contract_actual() {
+  local summary_code="$1" summary_lines="$2" first_line="$3"
+  printf "summary_code=%s summary_lines=%s first_line=%s" "$summary_code" "$summary_lines" "${first_line:-<empty>}"
+}
+
 multiline_input=$(cat <<'IN'
 昨日:
 - APIモック作成
@@ -733,31 +738,31 @@ if [ "$SKIP_SUMMARY_FAILCASE_TEST" != "1" ]; then
     && [ "$summary_success_first_line" = "$summary_success_out" ]; then
     pass "--summary outputs only one SELF_CHECK_SUMMARY line without PASS/FAIL details"
   else
-    fail "--summary outputs only one SELF_CHECK_SUMMARY line without PASS/FAIL details" "single SELF_CHECK_SUMMARY line only (no PASS/FAIL detail lines and summary is first line)" "code=$summary_success_code lines=$summary_success_total_lines summary_lines=$summary_success_line_count detail_lines=$summary_success_detail_lines first_line=$summary_success_first_line output=$summary_success_out"
+    fail "--summary outputs only one SELF_CHECK_SUMMARY line without PASS/FAIL details" "single SELF_CHECK_SUMMARY line only (no PASS/FAIL detail lines and summary is first line)" "$(summary_contract_actual "$summary_success_code" "$summary_success_line_count" "$summary_success_first_line")"
   fi
 
   if printf "%s\n" "$summary_line" | grep -Eq '^SELF_CHECK_SUMMARY: passed=[0-9]+/[0-9]+ failed_case=[^[:space:]]+$'; then
     pass "--summary failure keeps SELF_CHECK_SUMMARY snapshot format"
   else
-    fail "--summary failure keeps SELF_CHECK_SUMMARY snapshot format" "SELF_CHECK_SUMMARY: passed=<n>/<m> failed_case=<name>" "$summary_line"
+    fail "--summary failure keeps SELF_CHECK_SUMMARY snapshot format" "SELF_CHECK_SUMMARY: passed=<n>/<m> failed_case=<name>" "$(summary_contract_actual "$summary_code" "$summary_failure_line_count" "$summary_first_line")"
   fi
 
   if [ "$summary_code" -ne 0 ] && [ "$summary_first_line" = "$summary_line" ]; then
     pass "--summary failure keeps SELF_CHECK_SUMMARY as the first output line"
   else
-    fail "--summary failure keeps SELF_CHECK_SUMMARY as the first output line" "first non-empty output line is SELF_CHECK_SUMMARY" "summary_code=$summary_code first_line=$summary_first_line summary_line=$summary_line output=$summary_out"
+    fail "--summary failure keeps SELF_CHECK_SUMMARY as the first output line" "first non-empty output line is SELF_CHECK_SUMMARY" "$(summary_contract_actual "$summary_code" "$summary_failure_line_count" "$summary_first_line")"
   fi
 
   if [ "$summary_code" -ne 0 ] && [ "$summary_failure_line_count" -eq 1 ]; then
     pass "--summary failure emits exactly one SELF_CHECK_SUMMARY line"
   else
-    fail "--summary failure emits exactly one SELF_CHECK_SUMMARY line" "summary failure output contains exactly one SELF_CHECK_SUMMARY line" "summary_code=$summary_code summary_lines=$summary_failure_line_count output=$summary_out"
+    fail "--summary failure emits exactly one SELF_CHECK_SUMMARY line" "summary failure output contains exactly one SELF_CHECK_SUMMARY line" "$(summary_contract_actual "$summary_code" "$summary_failure_line_count" "$summary_first_line")"
   fi
 
   if [ "$summary_code" -ne 0 ] && [ "$summary_failure_detail_lines" -eq 0 ]; then
     pass "--summary failure output does not include PASS/FAIL detail lines"
   else
-    fail "--summary failure output does not include PASS/FAIL detail lines" "summary failure output contains no PASS:/FAIL: detail lines" "summary_code=$summary_code detail_lines=$summary_failure_detail_lines output=$summary_out"
+    fail "--summary failure output does not include PASS/FAIL detail lines" "summary failure output contains no PASS:/FAIL: detail lines" "$(summary_contract_actual "$summary_code" "$summary_failure_line_count" "$summary_first_line")"
   fi
 
   if [ "$normal_code" -ne 0 ] \
@@ -766,19 +771,19 @@ if [ "$SKIP_SUMMARY_FAILCASE_TEST" != "1" ]; then
     && [ "$summary_fail_name" = "$summary_fail_case" ]; then
     pass "--summary failure reports failed_case matching normal-mode FAIL name"
   else
-    fail "--summary failure reports failed_case matching normal-mode FAIL name" "normal/summary both fail and report identical case name ($summary_fail_case)" "normal(code=$normal_code, fail=$normal_fail_name) | summary(code=$summary_code, failed_case=$summary_fail_name)"
+    fail "--summary failure reports failed_case matching normal-mode FAIL name" "normal/summary both fail and report identical case name ($summary_fail_case)" "$(summary_contract_actual "$summary_code" "$summary_failure_line_count" "$summary_first_line")"
   fi
 
   if [ -n "$summary_passed_count" ] && [ "$normal_passed_count" = "$summary_passed_count" ]; then
     pass "--summary failure passed count matches normal-mode PASS count before failure"
   else
-    fail "--summary failure passed count matches normal-mode PASS count before failure" "normal PASS count equals summary passed=<n>/<m> numerator" "normal_passed=$normal_passed_count | summary_passed=$summary_passed_count"
+    fail "--summary failure passed count matches normal-mode PASS count before failure" "normal PASS count equals summary passed=<n>/<m> numerator" "$(summary_contract_actual "$summary_code" "$summary_failure_line_count" "$summary_first_line")"
   fi
 
   if [ -n "$summary_total_count" ] && [ "$normal_total_count" = "$summary_total_count" ]; then
     pass "--summary failure total count denominator matches normal-mode total checks"
   else
-    fail "--summary failure total count denominator matches normal-mode total checks" "normal total PASS+FAIL count equals summary passed=<n>/<m> denominator" "normal_total=$normal_total_count | summary_total=$summary_total_count"
+    fail "--summary failure total count denominator matches normal-mode total checks" "normal total PASS+FAIL count equals summary passed=<n>/<m> denominator" "$(summary_contract_actual "$summary_code" "$summary_failure_line_count" "$summary_first_line")"
   fi
 fi
 
