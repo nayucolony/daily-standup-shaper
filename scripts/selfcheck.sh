@@ -916,10 +916,21 @@ fi
 
 readme_sync_all_line_no=$(grep -n -F -- "$readme_sync_all_line" "$ROOT_DIR/README.md" | head -n 1 | cut -d: -f1)
 readme_recommended_sequence_line_no=$(grep -n -F -- "$readme_recommended_sequence_line" "$ROOT_DIR/README.md" | head -n 1 | cut -d: -f1)
+readme_summary_line='./scripts/selfcheck.sh --summary'
+readme_line_after_recommended=''
+if [ -n "$readme_recommended_sequence_line_no" ]; then
+  readme_line_after_recommended=$(sed -n "$((readme_recommended_sequence_line_no + 1))p" "$ROOT_DIR/README.md")
+fi
 if [ -n "$readme_sync_all_line_no" ] && [ -n "$readme_recommended_sequence_line_no" ] && [ "$readme_sync_all_line_no" -lt "$readme_recommended_sequence_line_no" ]; then
   pass "README Quick check keeps sync-help single-line command before recommended sequence one-liner"
 else
   fail "README Quick check keeps sync-help single-line command before recommended sequence one-liner" "README keeps './scripts/sync-help-to-readme.sh --all' above '$readme_recommended_sequence_line'" "sync_all_line=${readme_sync_all_line_no:-missing} recommended_line=${readme_recommended_sequence_line_no:-missing}"
+fi
+
+if [ -n "$readme_recommended_sequence_line_no" ] && [ "$readme_line_after_recommended" = "$readme_summary_line" ]; then
+  pass "README Quick check keeps local sync-then-summary one-liner immediately before summary command"
+else
+  fail "README Quick check keeps local sync-then-summary one-liner immediately before summary command" "README keeps '$readme_recommended_sequence_line' immediately followed by '$readme_summary_line'" "recommended_line=${readme_recommended_sequence_line_no:-missing} line_after='$readme_line_after_recommended'"
 fi
 
 readme_backlink_count=$(grep -F -- '[受け入れ条件（1行）](#quick-check-one-line-acceptance)' "$ROOT_DIR/README.md" | wc -l | tr -d ' ')
