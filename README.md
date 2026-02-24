@@ -56,7 +56,7 @@
 ```bash
 ./scripts/selfcheck.sh
 
-# README/スナップショット同期（help/options + one-line contract + test-links を1コマンドで揃える）
+# README/スナップショット同期（help/options + one-line contract + links + recommended + sync-line + help-examples を1コマンドで揃える）
 ./scripts/sync-help-to-readme.sh --all
 
 # test-links だけ個別同期（--help Examples と同一手順）

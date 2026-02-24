@@ -956,6 +956,18 @@ else
   fail "README one-line acceptance line links to Strict/Quiet contract sections" "contains [Strict mode (CI向け)](#strict-mode-ci向け) and [Quiet mode](#quiet-mode) links" "$readme_acceptance_line"
 fi
 
+readme_sync_all_scope_line=$(grep -F -- '# README/スナップショット同期（' "$ROOT_DIR/README.md" | head -n 1)
+readme_sync_all_scope_count=$(grep -Fxc -- '# README/スナップショット同期（help/options + one-line contract + links + recommended + sync-line + help-examples を1コマンドで揃える）' "$ROOT_DIR/README.md" || true)
+if [ "$readme_sync_all_scope_count" -eq 1 ]; then
+  pass "README Quick check documents --all sync scope in one line"
+else
+  fail "README Quick check documents --all sync scope in one line" "README contains exactly one scope line for --all: help/options + one-line contract + links + recommended + sync-line + help-examples" "count=$readme_sync_all_scope_count line='$readme_sync_all_scope_line'"
+fi
+assert_readme_snapshot \
+  "README Quick check --all sync scope line snapshot matches expected" \
+  "$ROOT_DIR/tests/snapshots/readme-quick-check-sync-all-scope.md" \
+  "$readme_sync_all_scope_line"
+
 readme_sync_all_line='./scripts/sync-help-to-readme.sh --all'
 readme_recommended_sequence_line='./scripts/sync-help-to-readme.sh --all && ./scripts/selfcheck.sh --summary'
 readme_recommended_sequence_count=$(grep -Fxc -- "$readme_recommended_sequence_line" "$ROOT_DIR/README.md" || true)
