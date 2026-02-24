@@ -4,14 +4,50 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 CLI="$ROOT_DIR/bin/shape-standup"
 
-pass() { echo "PASS: $1"; }
+SUMMARY_MODE=false
+if [ "${1:-}" = "--summary" ]; then
+  SUMMARY_MODE=true
+  shift
+fi
+if [ "$#" -gt 0 ]; then
+  echo "Usage: ./scripts/selfcheck.sh [--summary]" >&2
+  exit 1
+fi
+
+TOTAL_CHECKS=0
+PASSED_CHECKS=0
+FAILED_CASE=""
+
+on_exit() {
+  local code=$?
+  if [ "$SUMMARY_MODE" = true ]; then
+    if [ "$code" -eq 0 ]; then
+      echo "SELF_CHECK_SUMMARY: passed=${PASSED_CHECKS}/${TOTAL_CHECKS} failed_case=none"
+    else
+      echo "SELF_CHECK_SUMMARY: passed=${PASSED_CHECKS}/${TOTAL_CHECKS} failed_case=${FAILED_CASE:-unknown}"
+    fi
+  fi
+}
+trap on_exit EXIT
+
+pass() {
+  TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
+  PASSED_CHECKS=$((PASSED_CHECKS + 1))
+  if [ "$SUMMARY_MODE" = false ]; then
+    echo "PASS: $1"
+  fi
+}
 fail() {
-  echo "FAIL: $1" >&2
-  if [ "${2:-}" != "" ]; then
-    echo "--- expected ---" >&2
-    echo "$2" >&2
-    echo "--- actual ---" >&2
-    echo "$3" >&2
+  TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
+  FAILED_CASE="$1"
+  if [ "$SUMMARY_MODE" = false ]; then
+    echo "FAIL: $1" >&2
+    if [ "${2:-}" != "" ]; then
+      echo "--- expected ---" >&2
+      echo "$2" >&2
+      echo "--- actual ---" >&2
+      echo "$3" >&2
+    fi
   fi
   exit 1
 }
@@ -629,4 +665,6 @@ readme_quiet_line=$(grep -F -- '- `--quiet`:' "$ROOT_DIR/README.md" | head -n 1 
 assert_eq "README strict snapshot matches --help" "$help_strict_line" "$readme_strict_line"
 assert_eq "README quiet snapshot matches --help" "$help_quiet_line" "$readme_quiet_line"
 
-echo "All checks passed."
+if [ "$SUMMARY_MODE" = false ]; then
+  echo "All checks passed."
+fi

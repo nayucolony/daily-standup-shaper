@@ -35,6 +35,7 @@
 - `--labels` のJSON検証を追加（必須キー欠落・型不正を明示エラー化）
 - `--json-include-entry-meta` を追加（`--all --format json` で `entryIndex` / `entryName` を付与可能）
 - selfcheck PASS を確認（`./scripts/selfcheck.sh`）
+- `./scripts/selfcheck.sh --summary` を追加（CI向け1行サマリ: passed/failed_case）
 
 ## Pattern D (multiline bullets)
 以下のような入力を 1 項目に連結して出力します。
@@ -54,6 +55,9 @@
 ## Quick check
 ```bash
 ./scripts/selfcheck.sh
+
+# CI向け1行サマリ
+./scripts/selfcheck.sh --summary
 ```
 
 補足: `scripts/selfcheck.sh` は失敗系検証を `expect_fail_contains` ヘルパーで共通化しており、
@@ -295,7 +299,7 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 09:40 JST)
+## Update Plan (watchdog 2026-02-24 10:20 JST)
 反復判定（直近5サイクル）: plan更新系 0/5 のため stagnation は閾値未満。selfcheckで検証可能な前進を維持します。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。
@@ -305,7 +309,7 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P41: `--strict --quiet` の single/all/json を `examples/strict-missing.txt` と標準入力の両系統で再検証し、入力経路差分がないことを回帰化する（Impact: 4, Effort: 3, Evidence: yes）
 - [x] P42: README Quiet mode 対応表に「入力経路（file/stdin）」列を追加し、運用時の再現コマンドを各行へ1つずつ明示する（Impact: 3, Effort: 1, Evidence: yes）
 - [x] P43: `./bin/shape-standup --help` の quiet/strict説明と README 文言の差分を selfcheck で検知する簡易スナップショット比較を追加（Impact: 3, Effort: 3, Evidence: yes）
-- [ ] P44: CI向けに `./scripts/selfcheck.sh` 実行結果の要約（checks passed / failed case）を1行出力するオプションを追加（Impact: 2, Effort: 3, Evidence: yes）
+- [x] P44: CI向けに `./scripts/selfcheck.sh` 実行結果の要約（checks passed / failed case）を1行出力するオプションを追加（Impact: 2, Effort: 3, Evidence: yes）
 
 ## Next
-- P44実施: CI向けに `./scripts/selfcheck.sh` 実行結果の要約（checks passed / failed case）を1行出力するオプションを追加する
+- P40実施: `scripts/selfcheck.sh` の Quiet/Strict検証ブロックを関数化して重複を削減し、失敗時ログ（mode/code/stderr）を1形式に統一する
