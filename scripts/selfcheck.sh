@@ -139,6 +139,41 @@ run_selfcheck_capture() {
   set -e
 }
 
+summary_line_count() {
+  local text="$1"
+  printf "%s\n" "$text" | grep -E -c '^SELF_CHECK_SUMMARY:' || true
+}
+
+summary_detail_line_count() {
+  local text="$1"
+  printf "%s\n" "$text" | grep -E -c '^(PASS|FAIL): ' || true
+}
+
+summary_first_nonempty_line() {
+  local text="$1"
+  printf "%s\n" "$text" | sed -n '/./{p;q;}'
+}
+
+summary_failed_case_name() {
+  local text="$1"
+  printf "%s\n" "$text" | sed -n 's/^SELF_CHECK_SUMMARY: .*failed_case=//p' | head -n 1
+}
+
+summary_passed_count_from_line() {
+  local text="$1"
+  printf "%s\n" "$text" | sed -n 's/^SELF_CHECK_SUMMARY: passed=\([0-9][0-9]*\)\/[0-9][0-9]* failed_case=.*/\1/p' | head -n 1
+}
+
+summary_total_count_from_line() {
+  local text="$1"
+  printf "%s\n" "$text" | sed -n 's/^SELF_CHECK_SUMMARY: passed=[0-9][0-9]*\/\([0-9][0-9]*\) failed_case=.*/\1/p' | head -n 1
+}
+
+is_numeric() {
+  local value="$1"
+  echo "$value" | grep -Eq '^[0-9]+$'
+}
+
 multiline_input=$(cat <<'IN'
 昨日:
 - APIモック作成
@@ -750,19 +785,19 @@ if [ "$SKIP_SUMMARY_FAILCASE_TEST" != "1" ]; then
   summary_code=$RUN_SELF_CHECK_CODE
 
   normal_fail_name=$(printf "%s\n" "$normal_out" | sed -n 's/^FAIL: //p' | head -n 1)
-  summary_success_line_count=$(printf "%s\n" "$summary_success_out" | grep -E -c '^SELF_CHECK_SUMMARY:' || true)
+  summary_success_line_count=$(summary_line_count "$summary_success_out")
   summary_success_total_lines=$(printf "%s\n" "$summary_success_out" | sed '/^$/d' | wc -l | tr -d ' ')
-  summary_success_detail_lines=$(printf "%s\n" "$summary_success_out" | grep -E -c '^(PASS|FAIL): ' || true)
-  summary_success_first_line=$(printf "%s\n" "$summary_success_out" | sed -n '/./{p;q;}')
+  summary_success_detail_lines=$(summary_detail_line_count "$summary_success_out")
+  summary_success_first_line=$(summary_first_nonempty_line "$summary_success_out")
   summary_line=$(printf "%s\n" "$summary_out" | grep '^SELF_CHECK_SUMMARY:' | head -n 1)
-  summary_failure_line_count=$(printf "%s\n" "$summary_out" | grep -E -c '^SELF_CHECK_SUMMARY:' || true)
-  summary_failure_detail_lines=$(printf "%s\n" "$summary_out" | grep -E -c '^(PASS|FAIL): ' || true)
-  summary_first_line=$(printf "%s\n" "$summary_out" | sed -n '/./{p;q;}')
-  summary_fail_name=$(printf "%s\n" "$summary_out" | sed -n 's/^SELF_CHECK_SUMMARY: .*failed_case=//p' | head -n 1)
+  summary_failure_line_count=$(summary_line_count "$summary_out")
+  summary_failure_detail_lines=$(summary_detail_line_count "$summary_out")
+  summary_first_line=$(summary_first_nonempty_line "$summary_out")
+  summary_fail_name=$(summary_failed_case_name "$summary_out")
   normal_passed_count=$(printf "%s\n" "$normal_out" | grep -c '^PASS: ' | tr -d ' ')
   normal_total_count=$(printf "%s\n" "$normal_out" | grep -E -c '^(PASS|FAIL): ' | tr -d ' ')
-  summary_passed_count=$(printf "%s\n" "$summary_out" | sed -n 's/^SELF_CHECK_SUMMARY: passed=\([0-9][0-9]*\)\/[0-9][0-9]* failed_case=.*/\1/p' | head -n 1)
-  summary_total_count=$(printf "%s\n" "$summary_out" | sed -n 's/^SELF_CHECK_SUMMARY: passed=[0-9][0-9]*\/\([0-9][0-9]*\) failed_case=.*/\1/p' | head -n 1)
+  summary_passed_count=$(summary_passed_count_from_line "$summary_out")
+  summary_total_count=$(summary_total_count_from_line "$summary_out")
 
   if [ "$summary_success_code" -eq 0 ] \
     && [ "$summary_success_line_count" -eq 1 ] \
@@ -786,7 +821,7 @@ if [ "$SKIP_SUMMARY_FAILCASE_TEST" != "1" ]; then
     fail "--summary failure keeps SELF_CHECK_SUMMARY as the first output line" "first non-empty output line is SELF_CHECK_SUMMARY" "$(summary_contract_actual "$summary_code" "$summary_failure_line_count" "$summary_first_line")"
   fi
 
-  if echo "$summary_code" | grep -Eq '^[0-9]+$'; then
+  if is_numeric "$summary_code"; then
     pass "--summary failure contract keeps summary_code as numeric"
   else
     fail "--summary failure contract keeps summary_code as numeric" "summary_code=<number>" "$(summary_contract_actual "$summary_code" "$summary_failure_line_count" "$summary_first_line")"
