@@ -179,7 +179,9 @@ assert_sync_help_all_invariants() {
   local before_test_links_snapshot="$7" after_test_links_snapshot="$8"
   local before_recommended_snapshot="$9" after_recommended_snapshot="${10}"
   local before_sync_line_snapshot="${11}" after_sync_line_snapshot="${12}"
-  local before_optional_order_snapshot="${13}" after_optional_order_snapshot="${14}"
+  local before_summary_line_snapshot="${13}" after_summary_line_snapshot="${14}"
+  local before_help_examples_snapshot="${15}" after_help_examples_snapshot="${16}"
+  local before_optional_order_snapshot="${17}" after_optional_order_snapshot="${18}"
 
   local mismatch=""
   [ "$before_help" = "$after_help" ] || mismatch="${mismatch} help/options"
@@ -188,13 +190,15 @@ assert_sync_help_all_invariants() {
   [ "$before_test_links_snapshot" = "$after_test_links_snapshot" ] || mismatch="${mismatch} test-links-snapshot"
   [ "$before_recommended_snapshot" = "$after_recommended_snapshot" ] || mismatch="${mismatch} recommended-sequence-snapshot"
   [ "$before_sync_line_snapshot" = "$after_sync_line_snapshot" ] || mismatch="${mismatch} sync-line-snapshot"
+  [ "$before_summary_line_snapshot" = "$after_summary_line_snapshot" ] || mismatch="${mismatch} summary-line-snapshot"
+  [ "$before_help_examples_snapshot" = "$after_help_examples_snapshot" ] || mismatch="${mismatch} help-examples-snapshot"
   [ "$before_optional_order_snapshot" = "$after_optional_order_snapshot" ] || mismatch="${mismatch} optional-order-snapshot"
 
   if [ -z "$mismatch" ]; then
-    pass "sync-help-to-readme --all keeps help/options + one-line contract + test-links + recommended-sequence + sync-line + optional-order snapshots in sync"
+    pass "sync-help-to-readme --all keeps help/options + one-line contract + test-links + recommended-sequence + sync-line + summary-line + help-examples + optional-order snapshots in sync"
   else
     mismatch=$(printf "%s" "$mismatch" | sed -E 's/^ //')
-    fail "sync-help-to-readme --all keeps help/options + one-line contract + test-links + recommended-sequence + sync-line + optional-order snapshots in sync" "no diff after --all for: help/options, one-line-contract, test-links-line, test-links-snapshot, recommended-sequence-snapshot, sync-line-snapshot, optional-order-snapshot" "changed=${mismatch}"
+    fail "sync-help-to-readme --all keeps help/options + one-line contract + test-links + recommended-sequence + sync-line + summary-line + help-examples + optional-order snapshots in sync" "no diff after --all for: help/options, one-line-contract, test-links-line, test-links-snapshot, recommended-sequence-snapshot, sync-line-snapshot, summary-line-snapshot, help-examples-snapshot, optional-order-snapshot" "changed=${mismatch}"
   fi
 }
 
@@ -1140,6 +1144,8 @@ readme_test_links_before_all=$(grep -F -- '# 対応テスト:' "$ROOT_DIR/README
 readme_test_links_snapshot_before_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-one-line-contract-links.md")
 readme_recommended_snapshot_before_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-recommended-sequence.md")
 readme_sync_line_snapshot_before_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-sync-line.md")
+readme_summary_line_snapshot_before_all=$(cat "$ROOT_DIR/tests/snapshots/readme-sync-help-summary-line.md")
+readme_help_examples_snapshot_before_all=$(cat "$ROOT_DIR/tests/snapshots/sync-help-examples.md")
 readme_optional_order_snapshot_before_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-sync-help-optional-order.md")
 "$ROOT_DIR/scripts/sync-help-to-readme.sh" --all >/dev/null
 readme_help_block_after=$(awk '
@@ -1152,6 +1158,8 @@ readme_test_links_after_all=$(grep -F -- '# 対応テスト:' "$ROOT_DIR/README.
 readme_test_links_snapshot_after_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-one-line-contract-links.md")
 readme_recommended_snapshot_after_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-recommended-sequence.md")
 readme_sync_line_snapshot_after_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-sync-line.md")
+readme_summary_line_snapshot_after_all=$(cat "$ROOT_DIR/tests/snapshots/readme-sync-help-summary-line.md")
+readme_help_examples_snapshot_after_all=$(cat "$ROOT_DIR/tests/snapshots/sync-help-examples.md")
 readme_optional_order_snapshot_after_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-sync-help-optional-order.md")
 assert_sync_help_all_invariants \
   "$readme_help_block_before" "$readme_help_block_after" \
@@ -1160,6 +1168,8 @@ assert_sync_help_all_invariants \
   "$readme_test_links_snapshot_before_all" "$readme_test_links_snapshot_after_all" \
   "$readme_recommended_snapshot_before_all" "$readme_recommended_snapshot_after_all" \
   "$readme_sync_line_snapshot_before_all" "$readme_sync_line_snapshot_after_all" \
+  "$readme_summary_line_snapshot_before_all" "$readme_summary_line_snapshot_after_all" \
+  "$readme_help_examples_snapshot_before_all" "$readme_help_examples_snapshot_after_all" \
   "$readme_optional_order_snapshot_before_all" "$readme_optional_order_snapshot_after_all"
 
 readme_test_links_before=$(grep -F -- '# 対応テスト:' "$ROOT_DIR/README.md" | head -n 1)
