@@ -364,16 +364,17 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 17:00 JST)
-反復判定（直近5サイクル）: `plan更新 -> P73(回帰追加) -> plan更新 -> P74(回帰追加) -> P75(回帰追加)` を評価。同系比率は `3/5=0.60` で閾値到達のため、次サイクルは Update Plan 更新アクションを優先する。
+## Update Plan (watchdog 2026-02-24 17:10 JST)
+反復判定（直近5サイクル）: `P73(回帰追加) -> plan更新 -> P74(回帰追加) -> P75(回帰追加) -> plan更新候補` を評価。回帰追加系の同系比率は `3/5=0.60` で閾値到達のため、このサイクルは Update Plan 更新を実施した。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) の順。
 
 - [x] P74: `extract_failed_case_from_summary_line` の先頭大文字（例: `Foo`）拒否をselfcheck回帰へ追加し、`[a-z0-9._-]+` 契約との整合を固定する（Impact: 3, Effort: 2, Evidence: yes）
 - [x] P75: `extract_failed_case_from_summary_line` の先頭数字（例: `0foo`）許容をselfcheck回帰へ追加し、許可集合の下限を明示する（Impact: 2, Effort: 1, Evidence: yes）
-- [ ] P77: README Quick check に failed_case 抽出のNG例（`)foo` / `foo)`）を1行追記し、許容境界と拒否境界の対比を明示する（Impact: 2, Effort: 1, Evidence: yes）
+- [ ] P77: README Quick check に failed_case 抽出のNG例（`)foo` / `foo)`）を1行追記し、許容境界と拒否境界の対比を明示する（Impact: 3, Effort: 1, Evidence: yes）
+- [ ] P79: scripts/selfcheck.sh に failed_case 末尾数字（`foo0`）保持の回帰を追加し、英数字混在ケースの抽出契約を固定する（Impact: 3, Effort: 2, Evidence: yes）
 - [ ] P76: README Quick check に `SELF_CHECK_FORCE_FAIL_CASE` の命名テンプレ（kebab/dot/underscore）を1行で追加し、運用時のケース名設計を統一する（Impact: 2, Effort: 1, Evidence: yes）
 - [ ] P78: README Quick check に「先頭大文字は抽出拒否」の1行注記を追加し、P74テスト意図を利用者向けに可視化する（Impact: 1, Effort: 1, Evidence: yes）
 
 ## Next
-- 反復閾値到達（3/5）のため、次サイクルは Update Plan 更新を1アクション実施し、候補施策を Impact/Effort で再優先付けする
+- P77を実施する: README Quick check に failed_case 抽出のNG例（`)foo` / `foo)`）を1行追記し、許容境界と拒否境界の対比を明示する
