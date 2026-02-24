@@ -59,16 +59,14 @@
 # README/スナップショット同期（help/options + one-line contract + links + recommended + sync-line + help-examples を1コマンドで揃える）
 ./scripts/sync-help-to-readme.sh --all
 
-# test-links だけ個別同期（--help Examples と同一手順）
+# 必要時のみ: 個別同期（推奨順で実行）
+# 1) test-links だけ個別同期（--help Examples と同一手順）
 ./scripts/sync-help-to-readme.sh --update-one-line-contract-test-links
-
-# 推奨順1行スナップショットだけ更新
+# 2) 推奨順1行スナップショットだけ更新
 ./scripts/sync-help-to-readme.sh --update-recommended-sequence-snapshot
-
-# sync-help単体行スナップショットだけ更新
+# 3) sync-help単体行スナップショットだけ更新
 ./scripts/sync-help-to-readme.sh --update-sync-line-snapshot
-
-# --help Examples ブロック最小スナップショット更新（help/README二重編集差分を検知）
+# 4) --help Examples ブロック最小スナップショット更新（help/README二重編集差分を検知）
 ./scripts/sync-help-to-readme.sh --update-help-examples-snapshot
 
 # ローカル検証ワンライナー（同期→summary、直後のCI向け1行サマリと同順）
@@ -91,7 +89,7 @@
 # extract_failed_case_from_summary_line も同じ許容境界で抽出し、境界文字を削らずに返す。
 <a id="quick-check-one-line-acceptance"></a>
 # 受け入れ条件（1行）: failed_case は `[a-z0-9._-]+` を満たし、`0foo` は許容・`Foo`/`fooA`/`foo/bar` は拒否（英大文字・スラッシュは全位置で規約外）。契約詳細は [Strict mode (CI向け)](#strict-mode-ci向け) / [Quiet mode](#quiet-mode) を参照。
-# 対応テスト: [`accepts 0foo (README one-line acceptance)`](./scripts/selfcheck.sh#L901), [`rejects Foo (README one-line acceptance)`](./scripts/selfcheck.sh#L902), [`rejects fooA (uppercase suffix, README one-line acceptance)`](./scripts/selfcheck.sh#L902), [`rejects foo/bar (slash delimiter, README one-line acceptance)`](./scripts/selfcheck.sh#L902)
+# 対応テスト: [`accepts 0foo (README one-line acceptance)`](./scripts/selfcheck.sh#L923), [`rejects Foo (README one-line acceptance)`](./scripts/selfcheck.sh#L924), [`rejects fooA (uppercase suffix, README one-line acceptance)`](./scripts/selfcheck.sh#L924), [`rejects foo/bar (slash delimiter, README one-line acceptance)`](./scripts/selfcheck.sh#L924)
 # 補足: 上記4リンクは selfcheck 内の「README one-line acceptance」境界テスト群（0foo許容 / Foo・fooA・foo/bar拒否）を指す。
 # 2行契約ブロックスナップショット更新: ./scripts/update-one-line-contract-snapshot.sh
 # 対応テスト4リンク行の同期（README行番号ズレ防止）: ./scripts/update-one-line-contract-test-links.sh

@@ -853,6 +853,28 @@ else
   fail "README Quick check includes sync-help test-links example" "README contains ./scripts/sync-help-to-readme.sh --update-one-line-contract-test-links" "count=$readme_sync_help_example_count"
 fi
 
+readme_sync_help_optional_header_count=$(grep -Fxc -- '# 必要時のみ: 個別同期（推奨順で実行）' "$ROOT_DIR/README.md" || true)
+if [ "$readme_sync_help_optional_header_count" -eq 1 ]; then
+  pass "README Quick check marks sync-help individual updates as optional"
+else
+  fail "README Quick check marks sync-help individual updates as optional" "README contains exactly one optional header line for sync-help individual updates" "count=$readme_sync_help_optional_header_count"
+fi
+
+readme_sync_help_optional_total_count=$(grep -E -c '^\./scripts/sync-help-to-readme\.sh --update-(one-line-contract-test-links|recommended-sequence-snapshot|sync-line-snapshot|help-examples-snapshot)$' "$ROOT_DIR/README.md" || true)
+if [ "$readme_sync_help_optional_total_count" -eq 4 ]; then
+  pass "README Quick check keeps exactly four sync-help individual update commands"
+else
+  fail "README Quick check keeps exactly four sync-help individual update commands" "README contains exactly 4 sync-help individual update commands" "count=$readme_sync_help_optional_total_count"
+fi
+
+readme_sync_help_optional_order_actual=$(awk '
+  /^\.\/scripts\/sync-help-to-readme\.sh --update-(one-line-contract-test-links|recommended-sequence-snapshot|sync-line-snapshot|help-examples-snapshot)$/ {print}
+' "$ROOT_DIR/README.md")
+assert_readme_snapshot \
+  "README Quick check keeps sync-help optional command order snapshot" \
+  "$ROOT_DIR/tests/snapshots/readme-quick-check-sync-help-optional-order.md" \
+  "$readme_sync_help_optional_order_actual"
+
 assert_eq "README strict snapshot matches --help" "$help_strict_line" "$readme_strict_line"
 assert_eq "README quiet snapshot matches --help" "$help_quiet_line" "$readme_quiet_line"
 
