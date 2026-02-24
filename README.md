@@ -299,7 +299,7 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 11:20 JST)
+## Update Plan (watchdog 2026-02-24 11:40 JST)
 反復判定（直近5サイクル）: plan更新系 0/5 のため stagnation は閾値未満。selfcheckで検証可能な前進を維持します。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。
@@ -316,7 +316,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P48: `scripts/selfcheck.sh --summary` の失敗例で `<m>`（総チェック数）が通常モード実行時の総チェック数（FAILケース含む）と一致することを検証し、分母の信頼性を固定する（Impact: 2, Effort: 2, Evidence: yes）
 - [x] P49: `scripts/selfcheck.sh --summary` の失敗系回帰ブロック（P46-P48）に対し、`SELF_CHECK_SUMMARY` 行のフォーマット変化（`passed=<n>/<m> failed_case=<name>`）を1回で検知する単一スナップショット検証を追加する（Impact: 2, Effort: 2, Evidence: yes）
 - [x] P50: `scripts/selfcheck.sh --summary` 実行時に `SELF_CHECK_SUMMARY` 行が1行のみで、`PASS:` / `FAIL:` の詳細行が混在しないことを検証し、CIの行パース前提を固定する（Impact: 2, Effort: 2, Evidence: yes）
-- [ ] P51: `scripts/selfcheck.sh --summary` の成功時/失敗時で `SELF_CHECK_SUMMARY` 接頭辞が常に先頭行に出ること（余分な前置ログなし）を回帰追加し、ログ収集の先頭行パース互換を固定する（Impact: 2, Effort: 2, Evidence: yes）
+- [x] P51: `scripts/selfcheck.sh --summary` の成功時/失敗時で `SELF_CHECK_SUMMARY` 接頭辞が常に先頭行に出ること（余分な前置ログなし）を回帰追加し、ログ収集の先頭行パース互換を固定する（Impact: 2, Effort: 2, Evidence: yes）
+- [ ] P52: `scripts/selfcheck.sh --summary` の失敗時に `SELF_CHECK_SUMMARY` 行が **ちょうど1行のみ**（重複なし）であることを回帰追加し、ログ収集の重複行パース揺れを防ぐ（Impact: 2, Effort: 2, Evidence: yes）
 
 ## Next
-- P51実施: `scripts/selfcheck.sh --summary` の成功時/失敗時ともに `SELF_CHECK_SUMMARY` が先頭行であることを回帰追加し、ログ収集の先頭行パース互換を固定する
+- P52実施: `scripts/selfcheck.sh --summary` の失敗時に `SELF_CHECK_SUMMARY` 行が1行のみ（重複なし）であることを回帰追加し、ログ収集の重複行パース互換を固定する

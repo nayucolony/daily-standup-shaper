@@ -715,7 +715,9 @@ if [ "$SKIP_SUMMARY_FAILCASE_TEST" != "1" ]; then
   summary_success_line_count=$(printf "%s\n" "$summary_success_out" | grep -E -c '^SELF_CHECK_SUMMARY:' || true)
   summary_success_total_lines=$(printf "%s\n" "$summary_success_out" | sed '/^$/d' | wc -l | tr -d ' ')
   summary_success_detail_lines=$(printf "%s\n" "$summary_success_out" | grep -E -c '^(PASS|FAIL): ' || true)
+  summary_success_first_line=$(printf "%s\n" "$summary_success_out" | sed -n '/./{p;q;}')
   summary_line=$(printf "%s\n" "$summary_out" | grep '^SELF_CHECK_SUMMARY:' | head -n 1)
+  summary_first_line=$(printf "%s\n" "$summary_out" | sed -n '/./{p;q;}')
   summary_fail_name=$(printf "%s\n" "$summary_out" | sed -n 's/^SELF_CHECK_SUMMARY: .*failed_case=//p' | head -n 1)
   normal_passed_count=$(printf "%s\n" "$normal_out" | grep -c '^PASS: ' | tr -d ' ')
   normal_total_count=$(printf "%s\n" "$normal_out" | grep -E -c '^(PASS|FAIL): ' | tr -d ' ')
@@ -725,16 +727,23 @@ if [ "$SKIP_SUMMARY_FAILCASE_TEST" != "1" ]; then
   if [ "$summary_success_code" -eq 0 ] \
     && [ "$summary_success_line_count" -eq 1 ] \
     && [ "$summary_success_total_lines" -eq 1 ] \
-    && [ "$summary_success_detail_lines" -eq 0 ]; then
+    && [ "$summary_success_detail_lines" -eq 0 ] \
+    && [ "$summary_success_first_line" = "$summary_success_out" ]; then
     pass "--summary outputs only one SELF_CHECK_SUMMARY line without PASS/FAIL details"
   else
-    fail "--summary outputs only one SELF_CHECK_SUMMARY line without PASS/FAIL details" "single SELF_CHECK_SUMMARY line only (no PASS/FAIL detail lines)" "code=$summary_success_code lines=$summary_success_total_lines summary_lines=$summary_success_line_count detail_lines=$summary_success_detail_lines output=$summary_success_out"
+    fail "--summary outputs only one SELF_CHECK_SUMMARY line without PASS/FAIL details" "single SELF_CHECK_SUMMARY line only (no PASS/FAIL detail lines and summary is first line)" "code=$summary_success_code lines=$summary_success_total_lines summary_lines=$summary_success_line_count detail_lines=$summary_success_detail_lines first_line=$summary_success_first_line output=$summary_success_out"
   fi
 
   if printf "%s\n" "$summary_line" | grep -Eq '^SELF_CHECK_SUMMARY: passed=[0-9]+/[0-9]+ failed_case=[^[:space:]]+$'; then
     pass "--summary failure keeps SELF_CHECK_SUMMARY snapshot format"
   else
     fail "--summary failure keeps SELF_CHECK_SUMMARY snapshot format" "SELF_CHECK_SUMMARY: passed=<n>/<m> failed_case=<name>" "$summary_line"
+  fi
+
+  if [ "$summary_code" -ne 0 ] && [ "$summary_first_line" = "$summary_line" ]; then
+    pass "--summary failure keeps SELF_CHECK_SUMMARY as the first output line"
+  else
+    fail "--summary failure keeps SELF_CHECK_SUMMARY as the first output line" "first non-empty output line is SELF_CHECK_SUMMARY" "summary_code=$summary_code first_line=$summary_first_line summary_line=$summary_line output=$summary_out"
   fi
 
   if [ "$normal_code" -ne 0 ] \
