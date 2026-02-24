@@ -1013,6 +1013,28 @@ expected_sync_then_recommended_order=$(printf '%s\n%s' "$(cat "$ROOT_DIR/tests/s
 actual_sync_then_recommended_order=$(printf '%s\n%s' "$readme_sync_all_line" "$readme_recommended_sequence_line")
 assert_eq "README Quick check keeps sync-line then recommended-sequence order snapshot" "$expected_sync_then_recommended_order" "$actual_sync_then_recommended_order"
 readme_summary_line='./scripts/selfcheck.sh --summary'
+readme_summary_line_count=$(grep -Fxc -- "$readme_summary_line" "$ROOT_DIR/README.md" || true)
+if [ "$readme_summary_line_count" -eq 1 ]; then
+  pass "README Quick check keeps one standalone summary command line"
+else
+  fail "README Quick check keeps one standalone summary command line" "README contains exactly one line: $readme_summary_line" "count=$readme_summary_line_count"
+fi
+assert_readme_snapshot \
+  "README and sync-help share standalone summary command snapshot" \
+  "$ROOT_DIR/tests/snapshots/readme-sync-help-summary-line.md" \
+  "$readme_summary_line"
+
+sync_help_summary_line=$(printf "%s\n" "$sync_help_examples_actual" | grep -E '^  \./scripts/selfcheck\.sh --summary$' | sed -E 's/^[[:space:]]+//')
+if [ "$sync_help_summary_line" = "$readme_summary_line" ]; then
+  pass "sync-help Examples keeps standalone summary command aligned with README"
+else
+  fail "sync-help Examples keeps standalone summary command aligned with README" "sync-help Examples contains '$readme_summary_line'" "actual='${sync_help_summary_line:-<missing>}'"
+fi
+assert_readme_snapshot \
+  "sync-help standalone summary command snapshot matches README snapshot" \
+  "$ROOT_DIR/tests/snapshots/readme-sync-help-summary-line.md" \
+  "$sync_help_summary_line"
+
 readme_line_after_recommended=''
 if [ -n "$readme_recommended_sequence_line_no" ]; then
   readme_line_after_recommended=$(sed -n "$((readme_recommended_sequence_line_no + 1))p" "$ROOT_DIR/README.md")
