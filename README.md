@@ -251,12 +251,12 @@ done
 
 対応表:
 
-| mode | stdout | exit code | stderr | 要約（運用判断） |
-|---|---|---|---|---|
-| `--strict --quiet` (single/markdown) | Markdown (`## Yesterday` など) | 2（strict失敗契約を維持） | 空 | Markdown維持 + stderr空 + exit 2 |
-| `--strict --quiet --format json` (single/json) | JSONオブジェクト | 2 | 空 | JSON維持 + stderr空 + exit 2 |
-| `--all --strict --quiet` (all/markdown) | Markdown（`### Entry N` を含む） | 2 | 空 | Markdown維持 + stderr空 + exit 2 |
-| `--all --strict --quiet --format json` (all/json) | JSON配列 | 2 | 空 | JSON維持 + stderr空 + exit 2 |
+| mode | 入力経路（file/stdin） | stdout | exit code | stderr | 再現コマンド（1行） | 要約（運用判断） |
+|---|---|---|---|---|---|---|
+| `--strict --quiet` (single/markdown) | stdin | Markdown (`## Yesterday` など) | 2（strict失敗契約を維持） | 空 | `printf 'Yesterday: done\nToday: do\n' \| ./bin/shape-standup --strict --quiet /dev/stdin >/tmp/dss-single-md.out 2>/tmp/dss-single-md.err; echo $?` | Markdown維持 + stderr空 + exit 2 |
+| `--strict --quiet --format json` (single/json) | stdin | JSONオブジェクト | 2 | 空 | `printf 'Yesterday: done\nToday: do\n' \| ./bin/shape-standup --strict --quiet --format json /dev/stdin >/tmp/dss-single-json.out 2>/tmp/dss-single-json.err; echo $?` | JSON維持 + stderr空 + exit 2 |
+| `--all --strict --quiet` (all/markdown) | file | Markdown（`### Entry N` を含む） | 2 | 空 | `./bin/shape-standup --all --strict --quiet ./examples/strict-missing.txt >/tmp/dss-all-md.out 2>/tmp/dss-all-md.err; echo $?` | Markdown維持 + stderr空 + exit 2 |
+| `--all --strict --quiet --format json` (all/json) | file | JSON配列 | 2 | 空 | `./bin/shape-standup --all --strict --quiet --format json ./examples/strict-missing.txt >/tmp/dss-all-json.out 2>/tmp/dss-all-json.err; echo $?` | JSON維持 + stderr空 + exit 2 |
 
 ## Label synonyms config
 `config/labels.json` でラベル同義語を拡張できます。必要なら `--labels` で別ファイルを指定可能です。
@@ -296,9 +296,9 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P39: `scripts/selfcheck.sh` に Quiet mode 契約ワンライナー相当（single/all の exit=2 + stderr空）を `for mode in ...` で1ブロック検証する節を追加し、README手順との同型性を高める（Impact: 2, Effort: 2, Evidence: yes）
 - [ ] P40: `scripts/selfcheck.sh` の Quiet/Strict検証ブロックを関数化して重複を削減し、失敗時ログ（mode/code/stderr）を1形式に統一する（Impact: 4, Effort: 2, Evidence: yes）
 - [x] P41: `--strict --quiet` の single/all/json を `examples/strict-missing.txt` と標準入力の両系統で再検証し、入力経路差分がないことを回帰化する（Impact: 4, Effort: 3, Evidence: yes）
-- [ ] P42: README Quiet mode 対応表に「入力経路（file/stdin）」列を追加し、運用時の再現コマンドを各行へ1つずつ明示する（Impact: 3, Effort: 1, Evidence: yes）
+- [x] P42: README Quiet mode 対応表に「入力経路（file/stdin）」列を追加し、運用時の再現コマンドを各行へ1つずつ明示する（Impact: 3, Effort: 1, Evidence: yes）
 - [ ] P43: `./bin/shape-standup --help` の quiet/strict説明と README 文言の差分を selfcheck で検知する簡易スナップショット比較を追加（Impact: 3, Effort: 3, Evidence: yes）
 - [ ] P44: CI向けに `./scripts/selfcheck.sh` 実行結果の要約（checks passed / failed case）を1行出力するオプションを追加（Impact: 2, Effort: 3, Evidence: yes）
 
 ## Next
-- P42実施: README Quiet mode 対応表に「入力経路（file/stdin）」列を追加し、各モードの再現コマンドを1行ずつ併記する
+- P43実施: `./bin/shape-standup --help` の quiet/strict説明と README 文言の差分を selfcheck で検知する簡易スナップショット比較を追加する
