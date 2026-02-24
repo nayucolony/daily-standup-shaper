@@ -14,6 +14,9 @@ if [ "$#" -gt 0 ]; then
   exit 1
 fi
 
+FORCE_FAIL_CASE="${SELF_CHECK_FORCE_FAIL_CASE:-}"
+SKIP_SUMMARY_FAILCASE_TEST="${SELF_CHECK_SKIP_SUMMARY_FAILCASE_TEST:-0}"
+
 TOTAL_CHECKS=0
 PASSED_CHECKS=0
 FAILED_CASE=""
@@ -695,6 +698,33 @@ readme_quiet_line=$(grep -F -- '- `--quiet`:' "$ROOT_DIR/README.md" | head -n 1 
 
 assert_eq "README strict snapshot matches --help" "$help_strict_line" "$readme_strict_line"
 assert_eq "README quiet snapshot matches --help" "$help_quiet_line" "$readme_quiet_line"
+
+if [ "$SKIP_SUMMARY_FAILCASE_TEST" != "1" ]; then
+  summary_fail_case="summary-failcase-contract-sentinel"
+
+  set +e
+  normal_out=$(SELF_CHECK_FORCE_FAIL_CASE="$summary_fail_case" SELF_CHECK_SKIP_SUMMARY_FAILCASE_TEST=1 "$0" 2>&1)
+  normal_code=$?
+  summary_out=$(SELF_CHECK_FORCE_FAIL_CASE="$summary_fail_case" SELF_CHECK_SKIP_SUMMARY_FAILCASE_TEST=1 "$0" --summary 2>&1)
+  summary_code=$?
+  set -e
+
+  normal_fail_name=$(printf "%s\n" "$normal_out" | sed -n 's/^FAIL: //p' | head -n 1)
+  summary_fail_name=$(printf "%s\n" "$summary_out" | sed -n 's/^SELF_CHECK_SUMMARY: .*failed_case=//p' | head -n 1)
+
+  if [ "$normal_code" -ne 0 ] \
+    && [ "$summary_code" -ne 0 ] \
+    && [ "$normal_fail_name" = "$summary_fail_name" ] \
+    && [ "$summary_fail_name" = "$summary_fail_case" ]; then
+    pass "--summary failure reports failed_case matching normal-mode FAIL name"
+  else
+    fail "--summary failure reports failed_case matching normal-mode FAIL name" "normal/summary both fail and report identical case name ($summary_fail_case)" "normal(code=$normal_code, fail=$normal_fail_name) | summary(code=$summary_code, failed_case=$summary_fail_name)"
+  fi
+fi
+
+if [ -n "$FORCE_FAIL_CASE" ]; then
+  fail "$FORCE_FAIL_CASE"
+fi
 
 if [ "$SUMMARY_MODE" = false ]; then
   echo "All checks passed."

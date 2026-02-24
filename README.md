@@ -311,7 +311,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P43: `./bin/shape-standup --help` の quiet/strict説明と README 文言の差分を selfcheck で検知する簡易スナップショット比較を追加（Impact: 3, Effort: 3, Evidence: yes）
 - [x] P44: CI向けに `./scripts/selfcheck.sh` 実行結果の要約（checks passed / failed case）を1行出力するオプションを追加（Impact: 2, Effort: 3, Evidence: yes）
 - [x] P45: `scripts/selfcheck.sh` の strict/quiet 回帰で使用する一時stderrファイル（`/tmp/shape_*`）を `trap` で自動削除し、CI環境での残骸をなくす（Impact: 2, Effort: 2, Evidence: yes）
-- [ ] P46: `scripts/selfcheck.sh --summary` 失敗時に `failed_case` と同じ名前の `FAIL:` 行が通常モード出力に存在することを検証し、CIログ突合を簡単にする（Impact: 2, Effort: 2, Evidence: yes）
+- [x] P46: `scripts/selfcheck.sh --summary` 失敗時に `failed_case` と同じ名前の `FAIL:` 行が通常モード出力に存在することを検証し、CIログ突合を簡単にする（Impact: 2, Effort: 2, Evidence: yes）
+- [ ] P47: `scripts/selfcheck.sh --summary` の失敗例で `passed=<n>/<m>` が通常モードの失敗直前までの PASS 件数と一致することを検証し、進捗率の信頼性を固定する（Impact: 2, Effort: 2, Evidence: yes）
 
 ## Next
-- P46実施: `scripts/selfcheck.sh --summary` 失敗時の `failed_case` と通常モード `FAIL:` 名称の一致を1ケースで検証する回帰を追加
+- P47実施: `scripts/selfcheck.sh --summary` 失敗時の passed 件数が通常モードの失敗直前 PASS 件数と一致することを検証する回帰を追加
