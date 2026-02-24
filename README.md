@@ -370,9 +370,9 @@ cp ./config/labels.example.json ./config/labels.local.json
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。
 
 - [x] P71: summary失敗ケース名の許容境界（先頭/末尾の `.` `-` `_`）をREADME Quick checkへ明記し、抽出関数 `extract_failed_case_from_summary_line` の期待値（境界文字を保持）を運用ルールと同期する（Impact: 3, Effort: 1, Evidence: yes）
-- [ ] P72: `extract_failed_case_from_summary_line` の先頭境界（`.foo` / `-foo` / `_foo`）をselfcheck回帰へ追加し、READMEに記載した許容境界を実検証で固定する（Impact: 3, Effort: 2, Evidence: yes）
+- [x] P72: `extract_failed_case_from_summary_line` の先頭境界（`.foo` / `-foo` / `_foo`）をselfcheck回帰へ追加し、READMEに記載した許容境界を実検証で固定する（Impact: 3, Effort: 2, Evidence: yes）
 - [ ] P73: `extract_failed_case_from_summary_line` の先頭不正文字（例: `)foo`）拒否をselfcheck回帰へ追加し、許容集合外の早期検知を強化する（Impact: 2, Effort: 2, Evidence: yes）
 - [ ] P74: README Quick check に `SELF_CHECK_FORCE_FAIL_CASE` の命名テンプレ（kebab/dot/underscore）を1行で追加し、運用時のケース名設計を統一する（Impact: 2, Effort: 1, Evidence: yes）
 
 ## Next
-- P72実施: `extract_failed_case_from_summary_line` の先頭境界（`.foo` / `-foo` / `_foo`）をselfcheck回帰へ追加し、READMEに記載した許容境界を実検証で固定する
+- P73実施: `extract_failed_case_from_summary_line` の先頭不正文字（例: `)foo`）拒否をselfcheck回帰へ追加し、許容集合外の早期検知を強化する
