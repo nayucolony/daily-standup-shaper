@@ -299,7 +299,7 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 10:30 JST)
+## Update Plan (watchdog 2026-02-24 10:40 JST)
 反復判定（直近5サイクル）: plan更新系 0/5 のため stagnation は閾値未満。selfcheckで検証可能な前進を維持します。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。
@@ -310,7 +310,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P42: README Quiet mode 対応表に「入力経路（file/stdin）」列を追加し、運用時の再現コマンドを各行へ1つずつ明示する（Impact: 3, Effort: 1, Evidence: yes）
 - [x] P43: `./bin/shape-standup --help` の quiet/strict説明と README 文言の差分を selfcheck で検知する簡易スナップショット比較を追加（Impact: 3, Effort: 3, Evidence: yes）
 - [x] P44: CI向けに `./scripts/selfcheck.sh` 実行結果の要約（checks passed / failed case）を1行出力するオプションを追加（Impact: 2, Effort: 3, Evidence: yes）
-- [ ] P45: `scripts/selfcheck.sh` の strict/quiet 回帰で使用する一時stderrファイル（`/tmp/shape_*`）を `trap` で自動削除し、CI環境での残骸をなくす（Impact: 2, Effort: 2, Evidence: yes）
+- [x] P45: `scripts/selfcheck.sh` の strict/quiet 回帰で使用する一時stderrファイル（`/tmp/shape_*`）を `trap` で自動削除し、CI環境での残骸をなくす（Impact: 2, Effort: 2, Evidence: yes）
+- [ ] P46: `scripts/selfcheck.sh --summary` 失敗時に `failed_case` と同じ名前の `FAIL:` 行が通常モード出力に存在することを検証し、CIログ突合を簡単にする（Impact: 2, Effort: 2, Evidence: yes）
 
 ## Next
-- P45実施: `scripts/selfcheck.sh` の strict/quiet 回帰で使用する一時stderrファイル（`/tmp/shape_*`）を `trap` で自動削除し、CI環境での残骸をなくす
+- P46実施: `scripts/selfcheck.sh --summary` 失敗時の `failed_case` と通常モード `FAIL:` 名称の一致を1ケースで検証する回帰を追加

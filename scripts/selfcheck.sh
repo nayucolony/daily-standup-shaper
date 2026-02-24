@@ -17,9 +17,25 @@ fi
 TOTAL_CHECKS=0
 PASSED_CHECKS=0
 FAILED_CASE=""
+TMP_FILES=()
+
+new_tmp_file() {
+  local tmp_file
+  tmp_file=$(mktemp /tmp/shape_selfcheck_XXXXXX)
+  TMP_FILES+=("$tmp_file")
+  printf "%s" "$tmp_file"
+}
+
+cleanup_tmp_files() {
+  local tmp_file
+  for tmp_file in "${TMP_FILES[@]:-}"; do
+    rm -f "$tmp_file" || true
+  done
+}
 
 on_exit() {
   local code=$?
+  cleanup_tmp_files
   if [ "$SUMMARY_MODE" = true ]; then
     if [ "$code" -eq 0 ]; then
       echo "SELF_CHECK_SUMMARY: passed=${PASSED_CHECKS}/${TOTAL_CHECKS} failed_case=none"
@@ -64,7 +80,8 @@ assert_eq() {
 STRICT_QUIET_DEBUG=""
 run_strict_quiet_case() {
   local mode="$1" input="$2" args="$3" expect_pattern="$4"
-  local stderr_file="/tmp/shape_strict_${mode}_quiet_case_err.txt"
+  local stderr_file
+  stderr_file=$(new_tmp_file)
 
   set +e
   local stdout
@@ -465,9 +482,10 @@ else
 fi
 
 set +e
-strict_stdout=$(printf "%s\n" "$strict_missing_input" | "$CLI" --strict --quiet 2>/tmp/shape_quiet_err.txt)
+strict_quiet_err_file=$(new_tmp_file)
+strict_stdout=$(printf "%s\n" "$strict_missing_input" | "$CLI" --strict --quiet 2>"$strict_quiet_err_file")
 strict_stdout_code=$?
-strict_stderr=$(cat /tmp/shape_quiet_err.txt)
+strict_stderr=$(cat "$strict_quiet_err_file")
 set -e
 if [ "$strict_stdout_code" -eq 2 ] && echo "$strict_stdout" | grep -q "## Yesterday" && ! echo "$strict_stdout" | grep -qi "strict mode" && [ -z "$strict_stderr" ]; then
   pass "--quiet suppresses strict warning message and keeps exit code 2"
@@ -505,9 +523,10 @@ else
 fi
 
 set +e
-strict_all_quiet_stdout=$(printf "%s\n" "$strict_all_input" | "$CLI" --all --strict --quiet 2>/tmp/shape_strict_all_quiet_err.txt)
+strict_all_quiet_err_file=$(new_tmp_file)
+strict_all_quiet_stdout=$(printf "%s\n" "$strict_all_input" | "$CLI" --all --strict --quiet 2>"$strict_all_quiet_err_file")
 strict_all_quiet_code=$?
-strict_all_quiet_err=$(cat /tmp/shape_strict_all_quiet_err.txt)
+strict_all_quiet_err=$(cat "$strict_all_quiet_err_file")
 set -e
 if [ "$strict_all_quiet_code" -eq 2 ] \
   && [ -z "$strict_all_quiet_err" ] \
@@ -519,9 +538,10 @@ else
 fi
 
 set +e
-strict_all_quiet_no_header_stdout=$(printf "%s\n" "$strict_all_input" | "$CLI" --all --strict --quiet --no-entry-header 2>/tmp/shape_strict_all_quiet_no_header_err.txt)
+strict_all_quiet_no_header_err_file=$(new_tmp_file)
+strict_all_quiet_no_header_stdout=$(printf "%s\n" "$strict_all_input" | "$CLI" --all --strict --quiet --no-entry-header 2>"$strict_all_quiet_no_header_err_file")
 strict_all_quiet_no_header_code=$?
-strict_all_quiet_no_header_err=$(cat /tmp/shape_strict_all_quiet_no_header_err.txt)
+strict_all_quiet_no_header_err=$(cat "$strict_all_quiet_no_header_err_file")
 set -e
 if [ "$strict_all_quiet_no_header_code" -ne 0 ] \
   && [ -z "$strict_all_quiet_no_header_err" ] \
@@ -533,9 +553,10 @@ else
 fi
 
 set +e
-strict_all_json_stdout=$(printf "%s\n" "$strict_all_input" | "$CLI" --all --strict --format json 2>/tmp/shape_strict_all_json_err.txt)
+strict_all_json_err_file=$(new_tmp_file)
+strict_all_json_stdout=$(printf "%s\n" "$strict_all_input" | "$CLI" --all --strict --format json 2>"$strict_all_json_err_file")
 strict_all_json_code=$?
-strict_all_json_err=$(cat /tmp/shape_strict_all_json_err.txt)
+strict_all_json_err=$(cat "$strict_all_json_err_file")
 set -e
 if [ "$strict_all_json_code" -ne 0 ] \
   && echo "$strict_all_json_err" | grep -q "entry1:blockers" \
@@ -546,9 +567,10 @@ else
 fi
 
 set +e
-strict_all_json_quiet_stdout=$(printf "%s\n" "$strict_all_input" | "$CLI" --all --strict --quiet --format json 2>/tmp/shape_strict_all_json_quiet_err.txt)
+strict_all_json_quiet_err_file=$(new_tmp_file)
+strict_all_json_quiet_stdout=$(printf "%s\n" "$strict_all_input" | "$CLI" --all --strict --quiet --format json 2>"$strict_all_json_quiet_err_file")
 strict_all_json_quiet_code=$?
-strict_all_json_quiet_err=$(cat /tmp/shape_strict_all_json_quiet_err.txt)
+strict_all_json_quiet_err=$(cat "$strict_all_json_quiet_err_file")
 set -e
 if [ "$strict_all_json_quiet_code" -eq 2 ] \
   && [ -z "$strict_all_json_quiet_err" ] \
@@ -559,9 +581,10 @@ else
 fi
 
 set +e
-strict_all_json_quiet_no_header_stdout=$(printf "%s\n" "$strict_all_input" | "$CLI" --all --strict --quiet --no-entry-header --format json 2>/tmp/shape_strict_all_json_quiet_no_header_err.txt)
+strict_all_json_quiet_no_header_err_file=$(new_tmp_file)
+strict_all_json_quiet_no_header_stdout=$(printf "%s\n" "$strict_all_input" | "$CLI" --all --strict --quiet --no-entry-header --format json 2>"$strict_all_json_quiet_no_header_err_file")
 strict_all_json_quiet_no_header_code=$?
-strict_all_json_quiet_no_header_err=$(cat /tmp/shape_strict_all_json_quiet_no_header_err.txt)
+strict_all_json_quiet_no_header_err=$(cat "$strict_all_json_quiet_no_header_err_file")
 set -e
 if [ "$strict_all_json_quiet_no_header_code" -eq 2 ] \
   && [ -z "$strict_all_json_quiet_no_header_err" ] \
@@ -572,9 +595,10 @@ else
 fi
 
 set +e
-strict_single_json_quiet_stdout=$(printf "%s\n" "$strict_missing_input" | "$CLI" --strict --quiet --format json 2>/tmp/shape_strict_single_json_quiet_err.txt)
+strict_single_json_quiet_err_file=$(new_tmp_file)
+strict_single_json_quiet_stdout=$(printf "%s\n" "$strict_missing_input" | "$CLI" --strict --quiet --format json 2>"$strict_single_json_quiet_err_file")
 strict_single_json_quiet_code=$?
-strict_single_json_quiet_err=$(cat /tmp/shape_strict_single_json_quiet_err.txt)
+strict_single_json_quiet_err=$(cat "$strict_single_json_quiet_err_file")
 set -e
 if [ "$strict_single_json_quiet_code" -eq 2 ] \
   && [ -z "$strict_single_json_quiet_err" ] \
@@ -585,9 +609,10 @@ else
 fi
 
 set +e
-strict_missing_file_stdout=$("$CLI" --all --strict --format json "$ROOT_DIR/examples/strict-missing.txt" 2>/tmp/shape_strict_missing_file_err.txt)
+strict_missing_file_err_file=$(new_tmp_file)
+strict_missing_file_stdout=$("$CLI" --all --strict --format json "$ROOT_DIR/examples/strict-missing.txt" 2>"$strict_missing_file_err_file")
 strict_missing_file_code=$?
-strict_missing_file_err=$(cat /tmp/shape_strict_missing_file_err.txt)
+strict_missing_file_err=$(cat "$strict_missing_file_err_file")
 set -e
 if [ "$strict_missing_file_code" -ne 0 ] \
   && echo "$strict_missing_file_err" | grep -q "^strict mode: missing required fields in one or more entries" \
@@ -601,12 +626,14 @@ fi
 strict_single_temp=$(mktemp)
 printf "%s\n" "$strict_missing_input" > "$strict_single_temp"
 set +e
-strict_single_stdin_out=$(printf "%s\n" "$strict_missing_input" | "$CLI" --strict --quiet 2>/tmp/shape_strict_single_stdin_route_err.txt)
+strict_single_stdin_route_err_file=$(new_tmp_file)
+strict_single_stdin_out=$(printf "%s\n" "$strict_missing_input" | "$CLI" --strict --quiet 2>"$strict_single_stdin_route_err_file")
 strict_single_stdin_code=$?
-strict_single_stdin_err=$(cat /tmp/shape_strict_single_stdin_route_err.txt)
-strict_single_file_out=$("$CLI" --strict --quiet "$strict_single_temp" 2>/tmp/shape_strict_single_file_route_err.txt)
+strict_single_stdin_err=$(cat "$strict_single_stdin_route_err_file")
+strict_single_file_route_err_file=$(new_tmp_file)
+strict_single_file_out=$("$CLI" --strict --quiet "$strict_single_temp" 2>"$strict_single_file_route_err_file")
 strict_single_file_code=$?
-strict_single_file_err=$(cat /tmp/shape_strict_single_file_route_err.txt)
+strict_single_file_err=$(cat "$strict_single_file_route_err_file")
 set -e
 rm -f "$strict_single_temp"
 if [ "$strict_single_stdin_code" -eq 2 ] \
@@ -620,12 +647,14 @@ else
 fi
 
 set +e
-strict_all_stdin_out=$(cat "$ROOT_DIR/examples/strict-missing.txt" | "$CLI" --all --strict --quiet 2>/tmp/shape_strict_all_stdin_route_err.txt)
+strict_all_stdin_route_err_file=$(new_tmp_file)
+strict_all_stdin_out=$(cat "$ROOT_DIR/examples/strict-missing.txt" | "$CLI" --all --strict --quiet 2>"$strict_all_stdin_route_err_file")
 strict_all_stdin_code=$?
-strict_all_stdin_err=$(cat /tmp/shape_strict_all_stdin_route_err.txt)
-strict_all_file_out=$("$CLI" --all --strict --quiet "$ROOT_DIR/examples/strict-missing.txt" 2>/tmp/shape_strict_all_file_route_err.txt)
+strict_all_stdin_err=$(cat "$strict_all_stdin_route_err_file")
+strict_all_file_route_err_file=$(new_tmp_file)
+strict_all_file_out=$("$CLI" --all --strict --quiet "$ROOT_DIR/examples/strict-missing.txt" 2>"$strict_all_file_route_err_file")
 strict_all_file_code=$?
-strict_all_file_err=$(cat /tmp/shape_strict_all_file_route_err.txt)
+strict_all_file_err=$(cat "$strict_all_file_route_err_file")
 set -e
 if [ "$strict_all_stdin_code" -eq 2 ] \
   && [ "$strict_all_file_code" -eq 2 ] \
@@ -638,12 +667,14 @@ else
 fi
 
 set +e
-strict_all_json_stdin_out=$(cat "$ROOT_DIR/examples/strict-missing.txt" | "$CLI" --all --strict --quiet --format json 2>/tmp/shape_strict_all_json_stdin_route_err.txt)
+strict_all_json_stdin_route_err_file=$(new_tmp_file)
+strict_all_json_stdin_out=$(cat "$ROOT_DIR/examples/strict-missing.txt" | "$CLI" --all --strict --quiet --format json 2>"$strict_all_json_stdin_route_err_file")
 strict_all_json_stdin_code=$?
-strict_all_json_stdin_err=$(cat /tmp/shape_strict_all_json_stdin_route_err.txt)
-strict_all_json_file_out=$("$CLI" --all --strict --quiet --format json "$ROOT_DIR/examples/strict-missing.txt" 2>/tmp/shape_strict_all_json_file_route_err.txt)
+strict_all_json_stdin_err=$(cat "$strict_all_json_stdin_route_err_file")
+strict_all_json_file_route_err_file=$(new_tmp_file)
+strict_all_json_file_out=$("$CLI" --all --strict --quiet --format json "$ROOT_DIR/examples/strict-missing.txt" 2>"$strict_all_json_file_route_err_file")
 strict_all_json_file_code=$?
-strict_all_json_file_err=$(cat /tmp/shape_strict_all_json_file_route_err.txt)
+strict_all_json_file_err=$(cat "$strict_all_json_file_route_err_file")
 set -e
 if [ "$strict_all_json_stdin_code" -eq 2 ] \
   && [ "$strict_all_json_file_code" -eq 2 ] \
