@@ -855,7 +855,8 @@ else
 fi
 
 readme_boundary_link_line=$(grep -F -- '# 対応テスト:' "$ROOT_DIR/README.md" | head -n 1)
-readme_boundary_link_total_count=$(printf "%s\n" "$readme_boundary_link_line" | grep -oE '\[[^]]+\]\([^)]*\)' | sed '/^$/d' | wc -l | tr -d ' ')
+readme_boundary_links=$(printf "%s\n" "$readme_boundary_link_line" | grep -oE '\[[^]]+\]\([^)]*\)' | sed '/^$/d')
+readme_boundary_link_total_count=$(printf "%s\n" "$readme_boundary_links" | sed '/^$/d' | wc -l | tr -d ' ')
 readme_boundary_link_refs=$(printf "%s\n" "$readme_boundary_link_line" | grep -oE '\(\./scripts/selfcheck\.sh#L[0-9]+\)')
 readme_boundary_link_ref_count=$(printf "%s\n" "$readme_boundary_link_refs" | sed '/^$/d' | wc -l | tr -d ' ')
 if [ "$readme_boundary_link_total_count" -eq 4 ] && [ "$readme_boundary_link_ref_count" -eq 4 ] && [ -n "$readme_boundary_link_refs" ] && ! printf "%s\n" "$readme_boundary_link_refs" | grep -qvE '^\(\./scripts/selfcheck\.sh#L[0-9]+\)$'; then
@@ -863,6 +864,18 @@ if [ "$readme_boundary_link_total_count" -eq 4 ] && [ "$readme_boundary_link_ref
 else
   fail "README one-line acceptance links keep exactly four links (no extra/missing)" "exactly 4 markdown links and all refs use ./scripts/selfcheck.sh#L<line> format" "$readme_boundary_link_line"
 fi
+
+readme_boundary_links_normalized=$(printf "%s\n" "$readme_boundary_links" | sed -E 's/#L[0-9]+/#L<line>/g')
+readme_boundary_links_unique_count=$(printf "%s\n" "$readme_boundary_links_normalized" | sort | uniq | sed '/^$/d' | wc -l | tr -d ' ')
+if [ "$readme_boundary_links_unique_count" -eq 4 ]; then
+  pass "README one-line acceptance links are unique across all four markdown links"
+else
+  fail "README one-line acceptance links are unique across all four markdown links" "4 unique markdown links after #L normalization" "$readme_boundary_links_normalized"
+fi
+assert_readme_snapshot \
+  "README one-line acceptance link-set snapshot matches expected unique 4 links" \
+  "$ROOT_DIR/tests/snapshots/readme-quick-check-one-line-contract-links.md" \
+  "$readme_boundary_links_normalized"
 
 readme_acceptance_line=$(grep -F -- '# 受け入れ条件（1行）:' "$ROOT_DIR/README.md" | head -n 1)
 if echo "$readme_acceptance_line" | grep -F -- '[Strict mode (CI向け)](#strict-mode-ci向け)' >/dev/null \

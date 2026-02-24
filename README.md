@@ -381,8 +381,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P108: selfcheck の README 契約スナップショット検証（matrix + one-line contract）を `assert_readme_snapshot()` ヘルパーへ集約（Impact: 3, Effort: 2, Evidence: yes）
 - [x] P112: `scripts/sync-help-to-readme.sh --all` を selfcheck で検証し、help同期+contract同期の一括導線を固定（Impact: 2, Effort: 2, Evidence: yes）
 - [x] P111: 2行契約ブロック抽出 awk 式を `scripts/update-one-line-contract-snapshot.sh` に切り出し、README手順と同一実装へ寄せる（Impact: 2, Effort: 3, Evidence: yes）
-- [ ] P109: 2行契約ブロックのリンク4件が重複なく一意であることを専用スナップショットで固定（Impact: 1, Effort: 2, Evidence: yes）
+- [x] P109: 2行契約ブロックのリンク4件を `tests/snapshots/readme-quick-check-one-line-contract-links.md` へ分離固定し、selfcheckで重複なし（unique=4）を検証（Impact: 1, Effort: 2, Evidence: yes）
 - [ ] P113: README `# 対応テスト` の4リンク行を自動整形する同期スクリプトを追加し、行番号更新漏れを防止（Impact: 1, Effort: 3, Evidence: yes）
 
 ## Next
-- P109を実施する: 2行契約ブロックのリンク4件が重複なく一意であることを専用スナップショットで固定する
+- P113を実施する: README `# 対応テスト` の4リンク行を自動整形する同期スクリプトを追加し、行番号更新漏れを防止する
