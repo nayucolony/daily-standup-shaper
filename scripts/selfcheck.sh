@@ -182,6 +182,7 @@ assert_sync_help_all_invariants() {
     "sync-line-snapshot"
     "summary-line-snapshot"
     "help-examples-snapshot"
+    "optional-block-snapshot"
     "optional-order-snapshot"
   )
   local -a before_values=(
@@ -194,6 +195,7 @@ assert_sync_help_all_invariants() {
     "${13}"
     "${15}"
     "${17}"
+    "${19}"
   )
   local -a after_values=(
     "$2"
@@ -205,6 +207,7 @@ assert_sync_help_all_invariants() {
     "${14}"
     "${16}"
     "${18}"
+    "${20}"
   )
 
   local -a mismatches=()
@@ -215,13 +218,13 @@ assert_sync_help_all_invariants() {
     fi
   done
 
-  local invariant_name="sync-help-to-readme --all keeps help/options + one-line contract + test-links + recommended-sequence + sync-line + summary-line + help-examples + optional-order snapshots in sync"
+  local invariant_name="sync-help-to-readme --all keeps help/options + one-line contract + test-links + recommended-sequence + sync-line + summary-line + help-examples + optional-block + optional-order snapshots in sync"
   if [ "${#mismatches[@]}" -eq 0 ]; then
     pass "$invariant_name"
   else
     local mismatch_summary
     mismatch_summary=$(IFS=', '; echo "${mismatches[*]}")
-    fail "$invariant_name" "no diff after --all for: help/options, one-line-contract, test-links-line, test-links-snapshot, recommended-sequence-snapshot, sync-line-snapshot, summary-line-snapshot, help-examples-snapshot, optional-order-snapshot" "changed_count=${#mismatches[@]} changed=${mismatch_summary}"
+    fail "$invariant_name" "no diff after --all for: help/options, one-line-contract, test-links-line, test-links-snapshot, recommended-sequence-snapshot, sync-line-snapshot, summary-line-snapshot, help-examples-snapshot, optional-block-snapshot, optional-order-snapshot" "changed_count=${#mismatches[@]} changed=${mismatch_summary}"
   fi
 }
 
@@ -905,6 +908,20 @@ assert_readme_snapshot \
   "$ROOT_DIR/tests/snapshots/readme-quick-check-sync-help-optional-order.md" \
   "$readme_sync_help_optional_order_actual"
 
+readme_sync_help_optional_block_actual=$(awk '
+  /^# 必要時のみ: 個別同期（推奨順で実行）$/ {capture=1; print; next}
+  capture && /^\.\/scripts\/sync-help-to-readme\.sh --update-sync-help-optional-order-snapshot$/ {print; next}
+  capture && /^\.\/scripts\/sync-help-to-readme\.sh --update-one-line-contract-test-links$/ {print; next}
+  capture && /^\.\/scripts\/sync-help-to-readme\.sh --update-recommended-sequence-snapshot$/ {print; next}
+  capture && /^\.\/scripts\/sync-help-to-readme\.sh --update-sync-line-snapshot$/ {print; next}
+  capture && /^\.\/scripts\/sync-help-to-readme\.sh --update-help-examples-snapshot$/ {print; next}
+  capture && /^\.\/scripts\/sync-help-to-readme\.sh --update-summary-line-snapshot$/ {print; exit}
+' "$ROOT_DIR/README.md")
+assert_readme_snapshot \
+  "README Quick check keeps sync-help optional block snapshot (header + 6 commands)" \
+  "$ROOT_DIR/tests/snapshots/readme-quick-check-sync-help-optional-block.md" \
+  "$readme_sync_help_optional_block_actual"
+
 sync_help_optional_order_before=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-sync-help-optional-order.md")
 "$ROOT_DIR/scripts/update-sync-help-optional-order-snapshot.sh" >/dev/null
 sync_help_optional_order_after=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-sync-help-optional-order.md")
@@ -1169,6 +1186,7 @@ readme_recommended_snapshot_before_all=$(cat "$ROOT_DIR/tests/snapshots/readme-q
 readme_sync_line_snapshot_before_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-sync-line.md")
 readme_summary_line_snapshot_before_all=$(cat "$ROOT_DIR/tests/snapshots/readme-sync-help-summary-line.md")
 readme_help_examples_snapshot_before_all=$(cat "$ROOT_DIR/tests/snapshots/sync-help-examples.md")
+readme_optional_block_snapshot_before_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-sync-help-optional-block.md")
 readme_optional_order_snapshot_before_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-sync-help-optional-order.md")
 "$ROOT_DIR/scripts/sync-help-to-readme.sh" --all >/dev/null
 readme_help_block_after=$(awk '
@@ -1183,6 +1201,7 @@ readme_recommended_snapshot_after_all=$(cat "$ROOT_DIR/tests/snapshots/readme-qu
 readme_sync_line_snapshot_after_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-sync-line.md")
 readme_summary_line_snapshot_after_all=$(cat "$ROOT_DIR/tests/snapshots/readme-sync-help-summary-line.md")
 readme_help_examples_snapshot_after_all=$(cat "$ROOT_DIR/tests/snapshots/sync-help-examples.md")
+readme_optional_block_snapshot_after_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-sync-help-optional-block.md")
 readme_optional_order_snapshot_after_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-sync-help-optional-order.md")
 assert_sync_help_all_invariants \
   "$readme_help_block_before" "$readme_help_block_after" \
@@ -1193,6 +1212,7 @@ assert_sync_help_all_invariants \
   "$readme_sync_line_snapshot_before_all" "$readme_sync_line_snapshot_after_all" \
   "$readme_summary_line_snapshot_before_all" "$readme_summary_line_snapshot_after_all" \
   "$readme_help_examples_snapshot_before_all" "$readme_help_examples_snapshot_after_all" \
+  "$readme_optional_block_snapshot_before_all" "$readme_optional_block_snapshot_after_all" \
   "$readme_optional_order_snapshot_before_all" "$readme_optional_order_snapshot_after_all"
 
 readme_test_links_before=$(grep -F -- '# 対応テスト:' "$ROOT_DIR/README.md" | head -n 1)
