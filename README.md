@@ -340,8 +340,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 14:10 JST)
-反復判定（直近5サイクル）: P62→P58→P63→P61 と README/selfcheck ファミリが 4/5 を占め、閾値（>=0.6）超過。ループ固定化を避けるため Update Plan を再編し、次は影響範囲の広い仕様境界テストを優先する。
+## Update Plan (watchdog 2026-02-24 14:20 JST)
+反復判定（直近5サイクル）: P58→P63→P61→P64 と README/selfcheck ファミリが 4/5 を占め、閾値（>=0.6）超過。ループ固定化を避けるため Update Plan を再優先付けし、次は failed_case 文字種境界の回帰を優先する。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。
 
@@ -354,6 +354,7 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P61: `scripts/selfcheck.sh` の summary失敗系検証を1関数1責務（実行/抽出/判定）に分割し、今後の失敗ケース追加の改修コストを下げる（Impact: 2, Effort: 2, Evidence: yes）
 - [x] P64: `--summary` 出力行に余分な前後空白が混入しない契約（先頭/末尾trim不要）を失敗系で固定する（Impact: 3, Effort: 2, Evidence: yes）
 - [ ] P65: summary失敗時の `failed_case` が `--` を含むケース名でも壊れないことを回帰追加する（Impact: 3, Effort: 2, Evidence: yes）
+- [ ] P67: summary失敗時の `failed_case` が `.` と `_` を含むケース名でも末尾まで保持されることを回帰追加する（Impact: 3, Effort: 2, Evidence: yes）
 - [ ] P66: README Quick check に `--summary` 契約を jq 非依存で検証する POSIX sh 例を追記する（Impact: 2, Effort: 1, Evidence: yes）
 
 ## Next
