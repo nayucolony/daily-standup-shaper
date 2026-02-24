@@ -394,16 +394,16 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-25 03:34 JST)
-反復判定（実行前の直近5サイクル）: `P123(推奨順スナップショット化) -> P124(sync行スナップショット化) -> P126(help Examplesスナップショット化) -> P127(Examples導線追加) -> P129(Examples順序統一)` で README/sync-help 導線の同系比率は `5/5=1.00`（閾値0.60）。
+## Update Plan (watchdog 2026-02-25 03:40 JST)
+反復判定（実行前の直近5サイクル）: `P124(sync行スナップショット化) -> P126(help Examplesスナップショット化) -> P127(Examples導線追加) -> P129(Examples順序統一) -> P128(--all同期対象一覧の明文化)` で README/sync-help 導線の同系比率は `5/5=1.00`（閾値0.60）。
 閾値超過のため、次サイクルも **Update Plan優先（README Quick check の重複導線圧縮）** を先に実施する。
 
 - [x] P127: `sync-help-to-readme.sh --help` の Examples に推奨順/単体syncスナップショット更新導線（`--update-recommended-sequence-snapshot` / `--update-sync-line-snapshot`）を追記し、README Quick check 記載との一致を selfcheck で固定（Impact: 4, Effort: 2, Evidence: yes）
 - [x] P129: `sync-help-to-readme.sh --help` Examples の順序を README Quick check 見出し順（推奨順→単体sync→summary）に統一し、`tests/snapshots/sync-help-examples.md` との差分で順序崩れを検知（Impact: 4, Effort: 2, Evidence: yes）
-- [ ] P128: `sync-help-to-readme.sh --all` の同期対象一覧（help/options + one-line contract + links + recommended + sync-line + help-examples）を README Quick check に1行で明示し、selfcheck で文言固定（Impact: 3, Effort: 1, Evidence: yes）
-- [ ] P130: `./scripts/selfcheck.sh --summary` 単体実行行の README/sync-help 両記載を同一スナップショットへ集約し、二重更新ズレを検知（Impact: 2, Effort: 2, Evidence: yes）
+- [x] P128: `sync-help-to-readme.sh --all` の同期対象一覧（help/options + one-line contract + links + recommended + sync-line + help-examples）を README Quick check に1行で明示し、selfcheck で文言固定（Impact: 3, Effort: 1, Evidence: yes）
 - [ ] P131: README Quick check の sync-help 個別更新コマンド群を「推奨順/必要時のみ」へ整理し、過剰導線の再反復を抑える（Impact: 3, Effort: 2, Evidence: yes）
+- [ ] P130: `./scripts/selfcheck.sh --summary` 単体実行行の README/sync-help 両記載を同一スナップショットへ集約し、二重更新ズレを検知（Impact: 2, Effort: 2, Evidence: yes）
 - [ ] P125: README Quick check の「ローカル検証ワンライナー」見出しと実コマンドの組を専用スナップショットへ固定し、見出し変更時の差分検知を追加（Impact: 2, Effort: 2, Evidence: yes）
 
 ## Next
-- P128を実施する: README Quick check に `sync-help-to-readme.sh --all` の同期対象一覧を1行追加し、selfcheckで文言スナップショット固定する
+- P131を実施する: README Quick check の sync-help 個別更新コマンドを「推奨順/必要時のみ」へ整理し、selfcheckで件数と順序を固定する
