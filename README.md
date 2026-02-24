@@ -399,14 +399,14 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-25 07:00 JST)
-反復判定（実行前の直近5サイクル）: `P141 -> P142 -> P137 -> P143 -> P144` で README/sync-help/selfcheck の同系比率は `5/5=1.00`（閾値0.60超過）。
+## Update Plan (watchdog 2026-02-25 07:10 JST)
+反復判定（実行前の直近5サイクル）: `P142 -> P137 -> P143 -> P144 -> P145` で README/sync-help/selfcheck の同系比率は `5/5=1.00`（閾値0.60超過）。
 同系3連続ループ抑止ルールに基づき、Update PlanをImpact/Effort/Evidenceで再優先付け。
 
-- [x] P144: `scripts/selfcheck.sh` に `sync-help-to-readme --all keeps README.md and tests/snapshots unchanged (git diff --quiet)` の失敗系自己再現テストを追加し、retry/diff 2行テンプレ出力を回帰固定（`sync-help-all-git-diff-template` 強制失敗経路で検証）した（Impact: 3, Effort: 2, Evidence: yes）
-- [ ] P145: README Quick check の2行テンプレを `tests/snapshots/readme-sync-help-failure-template.md` に固定し、文言ずれを selfcheck で検知する（Impact: 3, Effort: 2, Evidence: yes）
+- [x] P145: README Quick check の2行テンプレを `tests/snapshots/readme-sync-help-failure-template.md` に固定し、`scripts/selfcheck.sh` にスナップショット比較を追加して文言ずれを検知可能化（Impact: 3, Effort: 2, Evidence: yes）
+- [ ] P147: README Quick check の `--all` 直下にある復旧テンプレの位置（`--all` の直後2行）を selfcheck で順序契約化する（Impact: 3, Effort: 2, Evidence: yes）
 - [ ] P146: `sync-help-to-readme.sh --help` に失敗時2行テンプレ節を追加し、README/selfcheck/helpの3点一致をスナップショット化する（Impact: 2, Effort: 3, Evidence: yes）
-- [ ] P147: README Quick check の `--all` 直下にある復旧テンプレの位置（`--all` の直後2行）を selfcheck で順序契約化する（Impact: 2, Effort: 2, Evidence: yes）
+- [ ] P148: `scripts/sync-help-to-readme.sh --update-sync-help-failure-template-snapshot` を追加し、2行テンプレ更新を1コマンド化する（Impact: 2, Effort: 2, Evidence: yes）
 
 ## Next
-- P145を実施する: README Quick check の retry/diff 2行テンプレを snapshots 化し、selfcheckで文言ずれを検知する
+- P147を実施する: README Quick check の `--all` 直下にある retry/diff 2行テンプレ位置（直後2行）を selfcheck で順序契約化する

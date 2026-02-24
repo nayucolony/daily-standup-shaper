@@ -1111,6 +1111,14 @@ assert_readme_snapshot \
   "$ROOT_DIR/tests/snapshots/readme-quick-check-sync-line.md" \
   "$readme_sync_all_line"
 
+readme_sync_help_retry_line=$(grep -F -- '# retry: ./scripts/sync-help-to-readme.sh --all' "$ROOT_DIR/README.md" | head -n 1 | sed -E 's/^#[[:space:]]*//')
+readme_sync_help_diff_line=$(grep -F -- '# diff: git diff -- README.md tests/snapshots' "$ROOT_DIR/README.md" | head -n 1 | sed -E 's/^#[[:space:]]*//')
+readme_sync_help_failure_template_actual=$(printf '%s\n%s' "$readme_sync_help_retry_line" "$readme_sync_help_diff_line")
+assert_readme_snapshot \
+  "README Quick check sync-help failure retry/diff template snapshot matches expected" \
+  "$ROOT_DIR/tests/snapshots/readme-sync-help-failure-template.md" \
+  "$readme_sync_help_failure_template_actual"
+
 readme_sync_all_line_no=$(grep -n -F -- "$readme_sync_all_line" "$ROOT_DIR/README.md" | head -n 1 | cut -d: -f1)
 readme_recommended_sequence_line_no=$(grep -n -F -- "$readme_recommended_sequence_line" "$ROOT_DIR/README.md" | head -n 1 | cut -d: -f1)
 expected_sync_then_recommended_order=$(printf '%s\n%s' "$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-sync-line.md")" "$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-recommended-sequence.md")")
