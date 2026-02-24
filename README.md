@@ -372,16 +372,17 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 21:10 JST)
-反復判定（直近5サイクル）: `P92(README) -> P93(selfcheck) -> stagnation(plan) -> P94(selfcheck) -> P95(README)` で同系比率は `2/5=0.40`（閾値未満）。
-このサイクルは selfcheck で検証可能な前進として **P95（README説明1行追加）** を実施。
+## Update Plan (watchdog 2026-02-24 21:20 JST)
+反復判定（実行前の直近5サイクル）: `P93(selfcheck) -> stagnation(plan) -> P94(selfcheck) -> P95(README) -> P96(selfcheck予定)` で同系比率は `3/5=0.60`（閾値到達）。
+このサイクルは同系ループ回避のため、**Update Plan の再優先付け**を1アクション前進として実施。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) の順。
 
-- [x] P94: README の対応テストリンク行で `./scripts/selfcheck.sh#L...` 形式が4件揃っていることを selfcheck で検証し、リンク先アンカー欠落を自動検出する（Impact: 3, Effort: 1, Evidence: yes）
-- [x] P95: README Quick check の「対応テスト」行に `scripts/selfcheck.sh` 内の対象ブロック見出し（境界テスト群）への説明を1行追加し、リンク意図を明確化する（Impact: 2, Effort: 1, Evidence: yes）
-- [ ] P96: scripts/selfcheck.sh で README の対応テストリンク数が4件ちょうどであること（不足/過剰）を検証し、README更新漏れ検知を強化する（Impact: 2, Effort: 2, Evidence: yes）
+- [x] Plan更新: `## Update Plan` を再編し、候補施策を Impact/Effort/Evidence で再優先付け（Impact: 3, Effort: 1, Evidence: yes）
+- [ ] P96: scripts/selfcheck.sh で README の対応テストリンク数が4件ちょうど（不足/過剰NG）を検証し、README更新漏れ検知を強化する（Impact: 3, Effort: 2, Evidence: yes）
 - [ ] P97: README Quick check の受け入れ条件1行と対応テスト行の近接配置（連続2行）を selfcheck で固定し、可読性劣化を防ぐ（Impact: 2, Effort: 2, Evidence: yes）
+- [ ] P98: README 側の4リンクラベル（accepts/rejects）と selfcheck テスト名の対応語彙を snapshot 検証し、文言ドリフトを検知する（Impact: 2, Effort: 3, Evidence: yes）
+- [ ] P99: README Quick check の failed_case 受け入れ条件1行を strict/quiet 契約節へ相互リンクし、参照の迷子を減らす（Impact: 1, Effort: 1, Evidence: yes）
 
 ## Next
 - P96を実施する: scripts/selfcheck.sh で README の対応テストリンク数が4件ちょうど（不足/過剰NG）を検証し、README更新漏れ検知を強化する
