@@ -855,6 +855,14 @@ else
   fail "README one-line acceptance links keep exactly four links (no extra/missing)" "exactly 4 markdown links and all refs use ./scripts/selfcheck.sh#L<line> format" "$readme_boundary_link_line"
 fi
 
+readme_acceptance_line_no=$(grep -n -F -- '# 受け入れ条件（1行）:' "$ROOT_DIR/README.md" | head -n 1 | cut -d: -f1)
+readme_test_line_no=$(grep -n -F -- '# 対応テスト:' "$ROOT_DIR/README.md" | head -n 1 | cut -d: -f1)
+if [ -n "$readme_acceptance_line_no" ] && [ -n "$readme_test_line_no" ] && [ $((readme_test_line_no - readme_acceptance_line_no)) -eq 1 ]; then
+  pass "README one-line acceptance and test-link lines stay adjacent"
+else
+  fail "README one-line acceptance and test-link lines stay adjacent" "README keeps '# 受け入れ条件（1行）:' immediately followed by '# 対応テスト:'" "acceptance_line=${readme_acceptance_line_no:-missing} test_line=${readme_test_line_no:-missing}"
+fi
+
 assert_eq "extract_failed_case_from_summary_line keeps leading digit" "0summary-failcase-contract-sentinel" "$(extract_failed_case_from_summary_line "$summary_line_leading_digit")"
 assert_eq "extract_failed_case_from_summary_line keeps trailing digit" "summary-failcase-contract-sentinel0" "$(extract_failed_case_from_summary_line "$summary_line_trailing_digit")"
 assert_eq "extract_failed_case_from_summary_line keeps both-edge digits" "0summary-failcase-contract-sentinel0" "$(extract_failed_case_from_summary_line "$summary_line_both_edge_digits")"
