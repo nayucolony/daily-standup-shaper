@@ -909,6 +909,11 @@ readme_one_line_contract_actual=$(awk '
 readme_one_line_contract_expected=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-one-line-contract.md")
 assert_eq "README Quick check one-line contract two-line snapshot matches expected" "$readme_one_line_contract_expected" "$readme_one_line_contract_actual"
 
+sync_contract_before=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-one-line-contract.md")
+"$ROOT_DIR/scripts/sync-help-to-readme.sh" --update-one-line-contract-snapshot >/dev/null
+sync_contract_after=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-one-line-contract.md")
+assert_eq "sync-help-to-readme --update-one-line-contract-snapshot keeps one-line contract snapshot in sync" "$sync_contract_before" "$sync_contract_after"
+
 if [ -n "$readme_acceptance_line_no" ] && [ -n "$readme_test_line_no" ] \
   && [ $((readme_test_line_no - readme_acceptance_line_no)) -eq 1 ] \
   && echo "$readme_acceptance_line" | grep -F -- '[Strict mode (CI向け)](#strict-mode-ci向け)' >/dev/null \
