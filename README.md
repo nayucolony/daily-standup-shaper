@@ -67,6 +67,7 @@
 # triage時に "どのケースが落ちたか" を機械判定で一意に追跡しやすくするため。
 # 運用では lower_snake / kebab / dot 区切りを使い、空白や日本語、記号（: , / など）は使わない。
 # 命名テンプレ: SELF_CHECK_FORCE_FAIL_CASE=summary-fail.case_name ./scripts/selfcheck.sh --summary
+# 正常系の最小例（NG例との対比用）: SELF_CHECK_FORCE_FAIL_CASE=foo-1 ./scripts/selfcheck.sh --summary
 # 許容境界（先頭/末尾）: '.' '-' '_' は保持される（例: '.case', 'case-', '_case_'）。
 # 拒否境界（抽出NG例）: ')foo' / 'foo)' は failed_case として抽出されない（先頭/末尾の ')' は規約外）。
 # extract_failed_case_from_summary_line も同じ許容境界で抽出し、境界文字を削らずに返す。
