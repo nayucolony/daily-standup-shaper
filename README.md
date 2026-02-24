@@ -314,16 +314,16 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 12:30 JST)
-反復判定（直近5サイクル）: summary契約回帰系 5/5 で閾値到達。今サイクルは同系実装を一旦止め、`## Update Plan` を再編して優先度を更新。
+## Update Plan (watchdog 2026-02-24 12:50 JST)
+反復判定（直近5サイクル）: summary契約系アクションが 4/5 で閾値(>=0.6)を超過。今回は同系の実装/追記ループを避けるため、`## Update Plan` を再優先付け。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。
 
-- [ ] P56: summary失敗時の固定形式（`summary_code/summary_lines/first_line`）を README Quick check に追記し、運用者が失敗ログを即読できる受け入れ条件を追加する（Impact: 3, Effort: 1, Evidence: yes）
-- [ ] P57: `scripts/selfcheck.sh` に summary契約テスト用のヘルパー関数（成功/失敗ケース実行と項目抽出）を追加し、重複コマンド列を削減する（Impact: 3, Effort: 2, Evidence: yes）
-- [ ] P59: `scripts/selfcheck.sh --summary` 失敗時に `summary_code=` が数値であることを単独回帰で固定し、ログ機械処理の型崩れを防ぐ（Impact: 3, Effort: 2, Evidence: yes）
-- [ ] P58: `scripts/selfcheck.sh --summary` の出力を `grep -E` 1本で検証できる最小CI例を README に追加し、外部CIへの移植性を上げる（Impact: 2, Effort: 1, Evidence: yes）
-- [ ] P60: README Quick check に summary失敗時の triage 手順（`summary_code`→`summary_lines`→`first_line`）を3手順で追記し、一次切り分け時間を短縮する（Impact: 2, Effort: 1, Evidence: yes）
+- [ ] P57: `scripts/selfcheck.sh` に summary契約テスト用ヘルパー（成功/失敗実行 + `summary_code/summary_lines/first_line` 抽出）を追加し、既存の重複コマンド列を関数化する（Impact: 4, Effort: 2, Evidence: yes）
+- [ ] P59: `scripts/selfcheck.sh --summary` 失敗時に `summary_code=<number>` の数値契約を単独回帰で固定し、機械処理の型崩れを防ぐ（Impact: 3, Effort: 2, Evidence: yes）
+- [ ] P60: README Quick check に summary失敗時の triage 手順（`summary_code`→`summary_lines`→`first_line`）を3手順で追加し、一次切り分けを短縮する（Impact: 3, Effort: 1, Evidence: yes）
+- [ ] P58: README に `grep -E` 1本で回せる summary契約の最小CI例を追加し、外部CI移植を容易にする（Impact: 2, Effort: 1, Evidence: yes）
+- [ ] P61: `scripts/selfcheck.sh` の summary失敗系検証を1関数1責務（実行/抽出/判定）に分割し、今後の失敗ケース追加の改修コストを下げる（Impact: 2, Effort: 2, Evidence: yes）
 
 ## Next
-- P56実施: README Quick check に `summary_code/summary_lines/first_line` 固定形式の失敗時ログ受け入れ条件を追記する
+- P57実施: scripts/selfcheck.sh に summary契約テスト用ヘルパー関数を追加し、重複コマンド列を削減する
