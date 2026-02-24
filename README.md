@@ -373,16 +373,14 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 22:40 JST)
-反復判定（実行前の直近5サイクル）: `P98(selfcheck) -> stagnation(plan) -> P99/P100(README+selfcheck) -> P101(README+selfcheck) -> P102(selfcheck)` で同系（README+selfcheck契約固定）比率は `4/5=0.80`（閾値0.60以上）。
-閾値到達のため、このサイクルは **Update Plan更新** を1アクション前進として実施。
+## Update Plan (watchdog 2026-02-24 22:50 JST)
+反復判定（実行前の直近5サイクル）: `stagnation(plan) -> P99/P100(README+selfcheck) -> P101(README+selfcheck) -> P102(selfcheck) -> stagnation(plan)` で同系（README+selfcheck契約固定）比率は `3/5=0.60`（閾値0.60）。
+閾値到達サイクルを含むため、優先度を Impact(高) / Effort(低) / Evidence readiness(可) で維持しつつ、今回は P103 を実行して前進。
 
-優先度は Impact(高) / Effort(低) / Evidence readiness(可) の順。
-
-- [ ] P103: `# 対応テスト` 行の4リンク語彙スナップショットが相互リンク追記後も不変であることを selfcheck で再固定する（Impact: 2, Effort: 2, Evidence: yes）
+- [x] P103: `# 対応テスト` 行の4リンク語彙スナップショットが相互リンク追記後も不変であることを selfcheck で再固定する（2026-02-24: accepts/rejects 比率 1:3 も回帰固定）
 - [ ] P104: strict/quiet の逆リンクアンカー `#quick-check-one-line-acceptance` が1つだけ存在することを selfcheck で固定する（Impact: 2, Effort: 2, Evidence: yes）
 - [ ] P105: `# 受け入れ条件（1行）` と `# 対応テスト` の2行ブロックが README 内で重複定義されていないことを selfcheck で固定する（Impact: 1, Effort: 2, Evidence: yes）
 - [ ] P106: Quick check の2行契約ブロックを tests/snapshots に固定し、selfcheck で差分検知する（Impact: 1, Effort: 3, Evidence: yes）
 
 ## Next
-- P103を実施する: `# 対応テスト` 行の4リンク語彙スナップショットが相互リンク追記後も不変であることを selfcheck で再固定する
+- P104を実施する: strict/quiet の逆リンクアンカー `#quick-check-one-line-acceptance` が1つだけ存在することを selfcheck で固定する
