@@ -67,6 +67,7 @@
 # triage時に "どのケースが落ちたか" を機械判定で一意に追跡しやすくするため。
 # 運用では lower_snake / kebab / dot 区切りを使い、空白や日本語、記号（: , / など）は使わない。
 # 許容境界（先頭/末尾）: '.' '-' '_' は保持される（例: '.case', 'case-', '_case_'）。
+# 拒否境界（抽出NG例）: ')foo' / 'foo)' は failed_case として抽出されない（先頭/末尾の ')' は規約外）。
 # extract_failed_case_from_summary_line も同じ許容境界で抽出し、境界文字を削らずに返す。
 # SELF_CHECK_FORCE_FAIL_CASE に空白など規約外文字を渡した場合は、
 # failed_case=invalid-self-check-force-fail-case で明示的に拒否される。
@@ -364,17 +365,17 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 17:10 JST)
-反復判定（直近5サイクル）: `P73(回帰追加) -> plan更新 -> P74(回帰追加) -> P75(回帰追加) -> plan更新候補` を評価。回帰追加系の同系比率は `3/5=0.60` で閾値到達のため、このサイクルは Update Plan 更新を実施した。
+## Update Plan (watchdog 2026-02-24 17:20 JST)
+反復判定（直近5サイクル）: `plan更新 -> P74(回帰追加) -> P75(回帰追加) -> plan更新 -> P77(README追記)` を評価。同系比率は `2/5=0.40` で閾値未満のため、計画更新ではなく README の具体タスクを前進。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) の順。
 
 - [x] P74: `extract_failed_case_from_summary_line` の先頭大文字（例: `Foo`）拒否をselfcheck回帰へ追加し、`[a-z0-9._-]+` 契約との整合を固定する（Impact: 3, Effort: 2, Evidence: yes）
 - [x] P75: `extract_failed_case_from_summary_line` の先頭数字（例: `0foo`）許容をselfcheck回帰へ追加し、許可集合の下限を明示する（Impact: 2, Effort: 1, Evidence: yes）
-- [ ] P77: README Quick check に failed_case 抽出のNG例（`)foo` / `foo)`）を1行追記し、許容境界と拒否境界の対比を明示する（Impact: 3, Effort: 1, Evidence: yes）
+- [x] P77: README Quick check に failed_case 抽出のNG例（`)foo` / `foo)`）を1行追記し、許容境界と拒否境界の対比を明示する（Impact: 3, Effort: 1, Evidence: yes）
 - [ ] P79: scripts/selfcheck.sh に failed_case 末尾数字（`foo0`）保持の回帰を追加し、英数字混在ケースの抽出契約を固定する（Impact: 3, Effort: 2, Evidence: yes）
 - [ ] P76: README Quick check に `SELF_CHECK_FORCE_FAIL_CASE` の命名テンプレ（kebab/dot/underscore）を1行で追加し、運用時のケース名設計を統一する（Impact: 2, Effort: 1, Evidence: yes）
 - [ ] P78: README Quick check に「先頭大文字は抽出拒否」の1行注記を追加し、P74テスト意図を利用者向けに可視化する（Impact: 1, Effort: 1, Evidence: yes）
 
 ## Next
-- P77を実施する: README Quick check に failed_case 抽出のNG例（`)foo` / `foo)`）を1行追記し、許容境界と拒否境界の対比を明示する
+- P79を実施する: scripts/selfcheck.sh に failed_case 末尾数字（`foo0`）保持の回帰を追加し、英数字混在ケースの抽出契約を固定する
