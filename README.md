@@ -364,15 +364,17 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 15:50 JST)
-反復判定（直近5サイクル）: plan更新を挟みつつ P68→P69→P70 を消化。今回候補（P71）は README 契約明文化の仕上げで、同一作業の反復率は 2/5 = 0.40（<0.60）のため実装を継続。
+## Update Plan (watchdog 2026-02-24 16:10 JST)
+反復判定（直近5サイクル）: `P70(回帰追加) -> plan更新 -> P71(README追記) -> P72(回帰追加) -> 今回候補P73(回帰追加)` で同一ファミリ（summary failed_case境界）比率が 3/5 = 0.60（閾値以上）。
+このため本サイクルは実装を一旦止め、Update Plan を再優先付けするアクションに切り替え。
 
-優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。
+優先度は Impact(高) / Effort(低) / Evidence readiness(可) の順。
 
-- [x] P71: summary失敗ケース名の許容境界（先頭/末尾の `.` `-` `_`）をREADME Quick checkへ明記し、抽出関数 `extract_failed_case_from_summary_line` の期待値（境界文字を保持）を運用ルールと同期する（Impact: 3, Effort: 1, Evidence: yes）
-- [x] P72: `extract_failed_case_from_summary_line` の先頭境界（`.foo` / `-foo` / `_foo`）をselfcheck回帰へ追加し、READMEに記載した許容境界を実検証で固定する（Impact: 3, Effort: 2, Evidence: yes）
-- [ ] P73: `extract_failed_case_from_summary_line` の先頭不正文字（例: `)foo`）拒否をselfcheck回帰へ追加し、許容集合外の早期検知を強化する（Impact: 2, Effort: 2, Evidence: yes）
-- [ ] P74: README Quick check に `SELF_CHECK_FORCE_FAIL_CASE` の命名テンプレ（kebab/dot/underscore）を1行で追加し、運用時のケース名設計を統一する（Impact: 2, Effort: 1, Evidence: yes）
+- [ ] P73: `extract_failed_case_from_summary_line` の先頭不正文字（例: `)foo`）拒否をselfcheck回帰へ追加し、許容集合外の早期検知を強化する（Impact: 3, Effort: 1, Evidence: yes）
+- [ ] P74: `extract_failed_case_from_summary_line` の先頭大文字（例: `Foo`）拒否をselfcheck回帰へ追加し、`[a-z0-9._-]+` 契約との整合を固定する（Impact: 3, Effort: 2, Evidence: yes）
+- [ ] P75: `extract_failed_case_from_summary_line` の先頭数字（例: `0foo`）許容をselfcheck回帰へ追加し、許可集合の下限を明示する（Impact: 2, Effort: 1, Evidence: yes）
+- [ ] P76: README Quick check に `SELF_CHECK_FORCE_FAIL_CASE` の命名テンプレ（kebab/dot/underscore）を1行で追加し、運用時のケース名設計を統一する（Impact: 2, Effort: 1, Evidence: yes）
+- [ ] P77: README Quick check に failed_case 抽出のNG例（` )foo ` / `foo)`）を1行追記し、許容境界と拒否境界の対比を明示する（Impact: 2, Effort: 1, Evidence: yes）
 
 ## Next
 - P73実施: `extract_failed_case_from_summary_line` の先頭不正文字（例: `)foo`）拒否をselfcheck回帰へ追加し、許容集合外の早期検知を強化する
