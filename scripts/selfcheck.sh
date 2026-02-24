@@ -1140,6 +1140,11 @@ assert_readme_snapshot \
   "$ROOT_DIR/tests/snapshots/readme-sync-help-failure-template.md" \
   "$readme_sync_help_failure_template_actual"
 
+readme_sync_help_failure_template_before=$(cat "$ROOT_DIR/tests/snapshots/readme-sync-help-failure-template.md")
+"$ROOT_DIR/scripts/sync-help-to-readme.sh" --update-sync-help-failure-template-snapshot >/dev/null
+readme_sync_help_failure_template_after=$(cat "$ROOT_DIR/tests/snapshots/readme-sync-help-failure-template.md")
+assert_eq "sync-help --update-sync-help-failure-template-snapshot keeps failure-template snapshot in sync" "$readme_sync_help_failure_template_before" "$readme_sync_help_failure_template_after"
+
 readme_sync_all_line_no=$(grep -n -F -- "$readme_sync_all_line" "$ROOT_DIR/README.md" | head -n 1 | cut -d: -f1)
 readme_sync_help_retry_line_no=$(grep -n -F -- '# retry: ./scripts/sync-help-to-readme.sh --all' "$ROOT_DIR/README.md" | head -n 1 | cut -d: -f1)
 readme_sync_help_diff_line_no=$(grep -n -F -- '# diff: git diff -- README.md tests/snapshots' "$ROOT_DIR/README.md" | head -n 1 | cut -d: -f1)
