@@ -797,6 +797,7 @@ summary_line_leading_upper='SELF_CHECK_SUMMARY: passed=3/7 failed_case=Foo'
 summary_line_leading_digit='SELF_CHECK_SUMMARY: passed=3/7 failed_case=0summary-failcase-contract-sentinel'
 summary_line_boundary_accept_0foo='SELF_CHECK_SUMMARY: passed=3/7 failed_case=0foo'
 summary_line_boundary_reject_Foo='SELF_CHECK_SUMMARY: passed=3/7 failed_case=Foo'
+summary_line_trailing_upper='SELF_CHECK_SUMMARY: passed=3/7 failed_case=fooA'
 summary_line_trailing_digit='SELF_CHECK_SUMMARY: passed=3/7 failed_case=summary-failcase-contract-sentinel0'
 summary_line_both_edge_digits='SELF_CHECK_SUMMARY: passed=3/7 failed_case=0summary-failcase-contract-sentinel0'
 summary_line_single_alpha='SELF_CHECK_SUMMARY: passed=3/7 failed_case=a'
@@ -813,6 +814,7 @@ assert_eq "extract_failed_case_from_summary_line rejects invalid leading punctua
 assert_eq "extract_failed_case_from_summary_line rejects uppercase leading character" "" "$(extract_failed_case_from_summary_line "$summary_line_leading_upper")"
 assert_eq "failed_case boundary contrast accepts 0foo (README one-line acceptance)" "0foo" "$(extract_failed_case_from_summary_line "$summary_line_boundary_accept_0foo")"
 assert_eq "failed_case boundary contrast rejects Foo (README one-line acceptance)" "" "$(extract_failed_case_from_summary_line "$summary_line_boundary_reject_Foo")"
+assert_eq "failed_case boundary contrast rejects fooA (README one-line acceptance)" "" "$(extract_failed_case_from_summary_line "$summary_line_trailing_upper")"
 assert_eq "extract_failed_case_from_summary_line keeps leading digit" "0summary-failcase-contract-sentinel" "$(extract_failed_case_from_summary_line "$summary_line_leading_digit")"
 assert_eq "extract_failed_case_from_summary_line keeps trailing digit" "summary-failcase-contract-sentinel0" "$(extract_failed_case_from_summary_line "$summary_line_trailing_digit")"
 assert_eq "extract_failed_case_from_summary_line keeps both-edge digits" "0summary-failcase-contract-sentinel0" "$(extract_failed_case_from_summary_line "$summary_line_both_edge_digits")"
