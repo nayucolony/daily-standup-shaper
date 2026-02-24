@@ -373,18 +373,16 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 22:30 JST)
-反復判定（実行前の直近5サイクル）: `P97(selfcheck) -> P98(selfcheck) -> stagnation(plan) -> P99/P100(README+selfcheck) -> stagnation(plan)` で同系比率は `4/5=0.80`（閾値0.60超え）。
-閾値到達のため、`## Update Plan` を更新して候補を Impact/Effort/Evidence で再優先付けした。
+## Update Plan (watchdog 2026-02-24 22:40 JST)
+反復判定（実行前の直近5サイクル）: `P98(selfcheck) -> stagnation(plan) -> P99/P100(README+selfcheck) -> P101(README+selfcheck) -> P102(selfcheck)` で同系（README+selfcheck契約固定）比率は `4/5=0.80`（閾値0.60以上）。
+閾値到達のため、このサイクルは **Update Plan更新** を1アクション前進として実施。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) の順。
 
-- [x] P99: README Quick check の failed_case 受け入れ条件1行に [Strict mode (CI向け)](#strict-mode-ci向け) / [Quiet mode](#quiet-mode) 相互リンクを追加する（Impact: 2, Effort: 1, Evidence: yes）
-- [x] P100: `# 受け入れ条件（1行）` に strict/quiet 参照リンクが両方含まれることを selfcheck で検証する（Impact: 2, Effort: 2, Evidence: yes）
-- [x] P101: strict/quiet 節から Quick check 受け入れ条件行へ逆リンクを追加し、往復導線を完成させる（Impact: 1, Effort: 1, Evidence: yes）
-- [x] P102: 受け入れ条件1行と対応テスト行の近接2行ルールに「相互リンク追記後も維持」を selfcheck へ明示追加する（Impact: 1, Effort: 2, Evidence: yes）
-- [ ] P103: `# 対応テスト` 行の4リンク語彙スナップショットが相互リンク追記後も不変であることを selfcheck で再固定する（Impact: 1, Effort: 2, Evidence: yes）
-- [ ] P104: strict/quiet の逆リンクアンカー `#quick-check-one-line-acceptance` が1つだけ存在することを selfcheck で固定する（Impact: 1, Effort: 2, Evidence: yes）
+- [ ] P103: `# 対応テスト` 行の4リンク語彙スナップショットが相互リンク追記後も不変であることを selfcheck で再固定する（Impact: 2, Effort: 2, Evidence: yes）
+- [ ] P104: strict/quiet の逆リンクアンカー `#quick-check-one-line-acceptance` が1つだけ存在することを selfcheck で固定する（Impact: 2, Effort: 2, Evidence: yes）
+- [ ] P105: `# 受け入れ条件（1行）` と `# 対応テスト` の2行ブロックが README 内で重複定義されていないことを selfcheck で固定する（Impact: 1, Effort: 2, Evidence: yes）
+- [ ] P106: Quick check の2行契約ブロックを tests/snapshots に固定し、selfcheck で差分検知する（Impact: 1, Effort: 3, Evidence: yes）
 
 ## Next
 - P103を実施する: `# 対応テスト` 行の4リンク語彙スナップショットが相互リンク追記後も不変であることを selfcheck で再固定する
