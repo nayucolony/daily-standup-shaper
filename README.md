@@ -369,8 +369,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 19:00 JST)
-反復判定（直近5サイクル）: `P81(README追記) -> P82(回帰追加) -> P83(README追記) -> P84(回帰追加) -> P85(回帰追加)` で同一ファミリ比率は `3/5=0.60`。閾値到達のため、次サイクルで plan更新アクションを優先する。
+## Update Plan (watchdog 2026-02-24 19:10 JST)
+反復判定（直近5サイクル）: `P82(回帰追加) -> P83(README追記) -> P84(回帰追加) -> stagnation(Plan更新) -> P85(回帰追加)` で同一ファミリ比率は `3/5=0.60`。閾値到達のため、このサイクルは README の Update Plan を再優先付けした。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) の順。
 
@@ -382,8 +382,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P85: scripts/selfcheck.sh に `fooA`（末尾大文字）拒否の回帰を追加し、`[a-z0-9._-]+` が全位置で大文字非許容であることを固定する（Impact: 3, Effort: 2, Evidence: yes）
 - [ ] P87: scripts/selfcheck.sh に `foo/bar`（スラッシュ含み）拒否の回帰を追加し、運用時に混入しやすい区切り文字のNG境界を固定する（Impact: 3, Effort: 2, Evidence: yes）
 - [ ] P86: README Quick check に `fooA` 拒否を `0foo` 許容 / `Foo` 拒否の並びへ追記し、受け入れ条件1行の例示を3点セット化する（Impact: 2, Effort: 1, Evidence: yes）
-- [ ] P88: scripts/selfcheck.sh に `foo/bar` と `fooA` を同一ブロックで対比検証する回帰を追加し、NG境界の網羅性を一括で固定する（Impact: 2, Effort: 2, Evidence: yes）
 - [ ] P89: README Quick check の1行受け入れ条件に「英大文字・スラッシュは全位置で拒否」を追記し、境界説明を実装と同期する（Impact: 2, Effort: 1, Evidence: yes）
+- [ ] P88: scripts/selfcheck.sh に `foo/bar` と `fooA` を同一ブロックで対比検証する回帰を追加し、NG境界の網羅性を一括で固定する（Impact: 2, Effort: 2, Evidence: yes）
 
 ## Next
 - P87を実施する: scripts/selfcheck.sh に `foo/bar`（スラッシュ含み）拒否の回帰を追加し、運用時に混入しやすい区切り文字のNG境界を selfcheck で固定する
