@@ -905,6 +905,14 @@ else
   fail "README one-line acceptance line links to Strict/Quiet contract sections" "contains [Strict mode (CI向け)](#strict-mode-ci向け) and [Quiet mode](#quiet-mode) links" "$readme_acceptance_line"
 fi
 
+readme_recommended_sequence_line='./scripts/sync-help-to-readme.sh --all && ./scripts/selfcheck.sh --summary'
+readme_recommended_sequence_count=$(grep -Fxc -- "$readme_recommended_sequence_line" "$ROOT_DIR/README.md" || true)
+if [ "$readme_recommended_sequence_count" -eq 1 ]; then
+  pass "README Quick check keeps recommended sync-then-summary one-liner"
+else
+  fail "README Quick check keeps recommended sync-then-summary one-liner" "README contains exactly one line: $readme_recommended_sequence_line" "count=$readme_recommended_sequence_count"
+fi
+
 readme_backlink_count=$(grep -F -- '[受け入れ条件（1行）](#quick-check-one-line-acceptance)' "$ROOT_DIR/README.md" | wc -l | tr -d ' ')
 if [ "$readme_backlink_count" -ge 2 ]; then
   pass "Strict/Quiet sections link back to Quick check one-line acceptance"
