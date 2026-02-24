@@ -77,7 +77,7 @@
 # 受け入れ条件（1行）: failed_case は `[a-z0-9._-]+` を満たし、`0foo` は許容・`Foo`/`fooA`/`foo/bar` は拒否（英大文字・スラッシュは全位置で規約外）。契約詳細は [Strict mode (CI向け)](#strict-mode-ci向け) / [Quiet mode](#quiet-mode) を参照。
 # 対応テスト: [`accepts 0foo (README one-line acceptance)`](./scripts/selfcheck.sh#L821), [`rejects Foo (README one-line acceptance)`](./scripts/selfcheck.sh#L822), [`rejects fooA (uppercase suffix, README one-line acceptance)`](./scripts/selfcheck.sh#L822), [`rejects foo/bar (slash delimiter, README one-line acceptance)`](./scripts/selfcheck.sh#L822)
 # 補足: 上記4リンクは selfcheck 内の「README one-line acceptance」境界テスト群（0foo許容 / Foo・fooA・foo/bar拒否）を指す。
-# 2行契約ブロックスナップショット更新: awk '/# 受け入れ条件（1行）:/{print; if (getline nextline > 0 && nextline ~ /^# 対応テスト:/) print nextline; exit}' ./README.md | sed -E 's/#L[0-9]+/#L<line>/g' > ./tests/snapshots/readme-quick-check-one-line-contract.md
+# 2行契約ブロックスナップショット更新: ./scripts/update-one-line-contract-snapshot.sh
 # SELF_CHECK_FORCE_FAIL_CASE に空白など規約外文字を渡した場合は、
 # failed_case=invalid-self-check-force-fail-case で明示的に拒否される。
 
@@ -378,11 +378,11 @@ cp ./config/labels.example.json ./config/labels.local.json
 反復判定（実行前の直近5サイクル）: `P105(selfcheck) -> P106(selfcheck) -> P107(README+selfcheck) -> P110(sync+selfcheck) -> plan-update` で同系（README契約ブロック運用）比率は `5/5=1.00`（閾値0.60）。
 同系3連続回避ルールにより、このサイクルは **plan更新を1アクション** として再優先付けのみ実施。
 
-- [ ] P108: selfcheck の README 契約スナップショット検証（matrix + one-line contract）を `assert_readme_snapshot()` ヘルパーへ集約（Impact: 3, Effort: 2, Evidence: yes）
+- [x] P108: selfcheck の README 契約スナップショット検証（matrix + one-line contract）を `assert_readme_snapshot()` ヘルパーへ集約（Impact: 3, Effort: 2, Evidence: yes）
 - [x] P112: `scripts/sync-help-to-readme.sh --all` を selfcheck で検証し、help同期+contract同期の一括導線を固定（Impact: 2, Effort: 2, Evidence: yes）
-- [ ] P111: 2行契約ブロック抽出 awk 式を `scripts/update-one-line-contract-snapshot.sh` に切り出し、README手順と同一実装へ寄せる（Impact: 2, Effort: 3, Evidence: yes）
+- [x] P111: 2行契約ブロック抽出 awk 式を `scripts/update-one-line-contract-snapshot.sh` に切り出し、README手順と同一実装へ寄せる（Impact: 2, Effort: 3, Evidence: yes）
 - [ ] P109: 2行契約ブロックのリンク4件が重複なく一意であることを専用スナップショットで固定（Impact: 1, Effort: 2, Evidence: yes）
 - [ ] P113: README `# 対応テスト` の4リンク行を自動整形する同期スクリプトを追加し、行番号更新漏れを防止（Impact: 1, Effort: 3, Evidence: yes）
 
 ## Next
-- P111を実施する: 2行契約ブロック抽出 awk 式を `scripts/update-one-line-contract-snapshot.sh` に切り出し、README手順と同一実装へ寄せる
+- P109を実施する: 2行契約ブロックのリンク4件が重複なく一意であることを専用スナップショットで固定する

@@ -100,7 +100,5 @@ PY
 fi
 
 if [ "$update_one_line_contract" = true ]; then
-  awk '/# 受け入れ条件（1行）:/{print; if (getline nextline > 0 && nextline ~ /^# 対応テスト:/) print nextline; exit}' "$README" \
-    | sed -E 's/#L[0-9]+/#L<line>/g' > "$ONE_LINE_CONTRACT_SNAPSHOT"
-  echo "updated one-line contract snapshot: $ONE_LINE_CONTRACT_SNAPSHOT"
+  "$ROOT_DIR/scripts/update-one-line-contract-snapshot.sh"
 fi
