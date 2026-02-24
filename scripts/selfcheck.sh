@@ -772,6 +772,7 @@ assert_eq "README strict/quiet matrix snapshot matches expected markdown table" 
 if [ "$SKIP_SUMMARY_FAILCASE_TEST" != "1" ]; then
   summary_fail_case="summary-failcase-contract-sentinel"
   summary_fail_case_with_double_dash="summary--failcase-contract-sentinel"
+  summary_fail_case_with_dot_underscore="summary.failcase_contract.sentinel"
 
   run_selfcheck_capture "" summary
   summary_success_out="$RUN_SELF_CHECK_OUT"
@@ -864,6 +865,16 @@ if [ "$SKIP_SUMMARY_FAILCASE_TEST" != "1" ]; then
     pass "--summary failure keeps failed_case intact when case name contains double dash"
   else
     fail "--summary failure keeps failed_case intact when case name contains double dash" "failed_case preserves full case name ($summary_fail_case_with_double_dash)" "$(summary_contract_actual "$summary_dd_code" "$(summary_line_count "$summary_dd_out")" "$(summary_first_nonempty_line "$summary_dd_out")")"
+  fi
+
+  run_selfcheck_capture "$summary_fail_case_with_dot_underscore" summary
+  summary_du_out="$RUN_SELF_CHECK_OUT"
+  summary_du_code=$RUN_SELF_CHECK_CODE
+  summary_du_fail_name=$(summary_failed_case_name "$summary_du_out")
+  if [ "$summary_du_code" -ne 0 ] && [ "$summary_du_fail_name" = "$summary_fail_case_with_dot_underscore" ]; then
+    pass "--summary failure keeps failed_case intact when case name contains dot and underscore"
+  else
+    fail "--summary failure keeps failed_case intact when case name contains dot and underscore" "failed_case preserves full case name ($summary_fail_case_with_dot_underscore)" "$(summary_contract_actual "$summary_du_code" "$(summary_line_count "$summary_du_out")" "$(summary_first_nonempty_line "$summary_du_out")")"
   fi
 
   if [ -n "$summary_passed_count" ] && [ "$normal_passed_count" = "$summary_passed_count" ]; then
