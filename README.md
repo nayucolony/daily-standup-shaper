@@ -373,14 +373,15 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 23:10 JST)
-反復判定（実行前の直近5サイクル）: `P101(README+selfcheck) -> P102(selfcheck) -> stagnation(plan) -> P103(selfcheck) -> P104(selfcheck)` で同系（README+selfcheck契約固定）比率は `3/5=0.60`（閾値0.60）。
-閾値到達サイクルを含むため、優先度を Impact(高) / Effort(低) / Evidence readiness(可) で維持しつつ、今回は P105 を実行して前進。
+## Update Plan (watchdog 2026-02-24 23:20 JST)
+反復判定（実行前の直近5サイクル）: `stagnation(plan) -> P103(selfcheck) -> P104(selfcheck) -> P105(selfcheck) -> P106(selfcheck)` で同系（README+selfcheck契約固定）比率は `4/5=0.80`（閾値0.60）。
+閾値超過のため Update Plan を再優先付け（Impact / Effort / Evidence）して次候補を整理。
 
-- [x] P103: `# 対応テスト` 行の4リンク語彙スナップショットが相互リンク追記後も不変であることを selfcheck で再固定する（2026-02-24: accepts/rejects 比率 1:3 も回帰固定）
-- [x] P104: strict/quiet の逆リンクアンカー `#quick-check-one-line-acceptance` が1つだけ存在することを selfcheck で固定する（2026-02-24: `<a id="quick-check-one-line-acceptance"></a>` の単一定義を回帰追加）
-- [x] P105: `# 受け入れ条件（1行）` と `# 対応テスト` の2行ブロックが README 内で重複定義されていないことを selfcheck で固定する（2026-02-24: 2行隣接ブロックの出現回数=1を回帰追加）
-- [ ] P106: Quick check の2行契約ブロックを tests/snapshots に固定し、selfcheck で差分検知する（Impact: 1, Effort: 3, Evidence: yes）
+- [x] P106: Quick check の2行契約ブロックを `tests/snapshots/readme-quick-check-one-line-contract.md` に固定し、selfcheck で差分検知を追加（2026-02-24: `#L<line>` 正規化付きで比較）
+- [ ] P107: 2行契約ブロックスナップショット生成コマンドを README に追記（Impact: 2, Effort: 1, Evidence: yes）
+- [ ] P108: selfcheck の README 契約スナップショット群（matrix + one-line contract）を1ヘルパーへ集約（Impact: 2, Effort: 2, Evidence: yes）
+- [ ] P109: 2行契約ブロックのリンク4件が重複なく一意であることを専用スナップショットで固定（Impact: 1, Effort: 2, Evidence: yes）
+- [ ] P110: `scripts/sync-help-to-readme.sh` に one-line contract snapshot 更新モードを追加（Impact: 3, Effort: 3, Evidence: yes）
 
 ## Next
-- P106を実施する: Quick check の2行契約ブロックを tests/snapshots に固定し、selfcheck で差分検知する
+- P107を実施する: 2行契約ブロックスナップショット生成コマンドを README に追記し、更新手順を固定する

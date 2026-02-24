@@ -1,0 +1,2 @@
+# 受け入れ条件（1行）: failed_case は `[a-z0-9._-]+` を満たし、`0foo` は許容・`Foo`/`fooA`/`foo/bar` は拒否（英大文字・スラッシュは全位置で規約外）。契約詳細は [Strict mode (CI向け)](#strict-mode-ci向け) / [Quiet mode](#quiet-mode) を参照。
+# 対応テスト: [`accepts 0foo (README one-line acceptance)`](./scripts/selfcheck.sh#L<line>), [`rejects Foo (README one-line acceptance)`](./scripts/selfcheck.sh#L<line>), [`rejects fooA (uppercase suffix, README one-line acceptance)`](./scripts/selfcheck.sh#L<line>), [`rejects foo/bar (slash delimiter, README one-line acceptance)`](./scripts/selfcheck.sh#L<line>)

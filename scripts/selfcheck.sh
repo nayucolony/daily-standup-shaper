@@ -897,6 +897,18 @@ else
   fail "README one-line acceptance/test two-line block is defined exactly once" "exactly one adjacent '# 受け入れ条件（1行）:' + '# 対応テスト:' block" "count=$readme_acceptance_test_block_count"
 fi
 
+readme_one_line_contract_actual=$(awk '
+  /# 受け入れ条件（1行）:/ {
+    print
+    if (getline nextline > 0 && nextline ~ /^# 対応テスト:/) {
+      print nextline
+      exit
+    }
+  }
+' "$ROOT_DIR/README.md" | sed -E 's/#L[0-9]+/#L<line>/g')
+readme_one_line_contract_expected=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-one-line-contract.md")
+assert_eq "README Quick check one-line contract two-line snapshot matches expected" "$readme_one_line_contract_expected" "$readme_one_line_contract_actual"
+
 if [ -n "$readme_acceptance_line_no" ] && [ -n "$readme_test_line_no" ] \
   && [ $((readme_test_line_no - readme_acceptance_line_no)) -eq 1 ] \
   && echo "$readme_acceptance_line" | grep -F -- '[Strict mode (CI向け)](#strict-mode-ci向け)' >/dev/null \
