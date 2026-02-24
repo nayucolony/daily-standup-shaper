@@ -177,6 +177,13 @@ CLIヘルプと同じ注意書き（再掲）:
 - `single + json` で指定した場合は無視され、通常のsingle JSON（yesterday/today/blockersのみ）を返します。
 - `--header-name-keys` 併用時に名前抽出できなかった段落は、entry meta の名前キー（既定では `entryName`、`--json-entry-meta-keys` 指定時は第2キー）が空文字 `""` になります。
 
+## CLI help snapshot (strict/quiet consistency)
+`./bin/shape-standup --help` の strict/quiet 説明と README 文言の差分を検知するため、
+README側にもヘルプ文言をそのまま保持します（selfcheck で照合）。
+
+- `--strict`: Exit non-zero when any of Yesterday/Today/Blockers is missing
+- `--quiet`: Suppress strict warning messages on stderr
+
 ## Strict mode (CI向け)
 必須3項目（Yesterday / Today / Blockers）のいずれかが未抽出なら、出力後に非0で終了します。
 
@@ -297,8 +304,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [ ] P40: `scripts/selfcheck.sh` の Quiet/Strict検証ブロックを関数化して重複を削減し、失敗時ログ（mode/code/stderr）を1形式に統一する（Impact: 4, Effort: 2, Evidence: yes）
 - [x] P41: `--strict --quiet` の single/all/json を `examples/strict-missing.txt` と標準入力の両系統で再検証し、入力経路差分がないことを回帰化する（Impact: 4, Effort: 3, Evidence: yes）
 - [x] P42: README Quiet mode 対応表に「入力経路（file/stdin）」列を追加し、運用時の再現コマンドを各行へ1つずつ明示する（Impact: 3, Effort: 1, Evidence: yes）
-- [ ] P43: `./bin/shape-standup --help` の quiet/strict説明と README 文言の差分を selfcheck で検知する簡易スナップショット比較を追加（Impact: 3, Effort: 3, Evidence: yes）
+- [x] P43: `./bin/shape-standup --help` の quiet/strict説明と README 文言の差分を selfcheck で検知する簡易スナップショット比較を追加（Impact: 3, Effort: 3, Evidence: yes）
 - [ ] P44: CI向けに `./scripts/selfcheck.sh` 実行結果の要約（checks passed / failed case）を1行出力するオプションを追加（Impact: 2, Effort: 3, Evidence: yes）
 
 ## Next
-- P43実施: `./bin/shape-standup --help` の quiet/strict説明と README 文言の差分を selfcheck で検知する簡易スナップショット比較を追加する
+- P44実施: CI向けに `./scripts/selfcheck.sh` 実行結果の要約（checks passed / failed case）を1行出力するオプションを追加する

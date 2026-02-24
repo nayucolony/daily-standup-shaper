@@ -620,4 +620,13 @@ else
   fail "--all --strict --quiet --format json keeps same result on stdin/file routes" "stdin/file both code=2 + empty stderr + same JSON array" "stdin: code=$strict_all_json_stdin_code stderr=$strict_all_json_stdin_err stdout=$strict_all_json_stdin_out | file: code=$strict_all_json_file_code stderr=$strict_all_json_file_err stdout=$strict_all_json_file_out"
 fi
 
+help_text=$("$CLI" --help)
+help_strict_line=$(printf "%s\n" "$help_text" | grep -E '^  --strict[[:space:]]+' | sed -E 's/^  --strict[[:space:]]+//')
+help_quiet_line=$(printf "%s\n" "$help_text" | grep -E '^  --quiet[[:space:]]+' | sed -E 's/^  --quiet[[:space:]]+//')
+readme_strict_line=$(grep -F -- '- `--strict`:' "$ROOT_DIR/README.md" | head -n 1 | sed -E 's/^- `--strict`: //')
+readme_quiet_line=$(grep -F -- '- `--quiet`:' "$ROOT_DIR/README.md" | head -n 1 | sed -E 's/^- `--quiet`: //')
+
+assert_eq "README strict snapshot matches --help" "$help_strict_line" "$readme_strict_line"
+assert_eq "README quiet snapshot matches --help" "$help_quiet_line" "$readme_quiet_line"
+
 echo "All checks passed."
