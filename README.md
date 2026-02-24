@@ -201,6 +201,24 @@ CLIヘルプと同じ注意書き（再掲）:
 - `single + json` で指定した場合は無視され、通常のsingle JSON（yesterday/today/blockersのみ）を返します。
 - `--header-name-keys` 併用時に名前抽出できなかった段落は、entry meta の名前キー（既定では `entryName`、`--json-entry-meta-keys` 指定時は第2キー）が空文字 `""` になります。
 
+
+## CLI Options (auto-synced)
+`./bin/shape-standup --help` の Options を機械同期しています。
+
+<!-- AUTO_SYNC_HELP_OPTIONS:START -->
+```text
+  --all               Parse blank-line separated entries and output each entry.
+  --format <type>     markdown (default) or json
+  --labels <file>     JSON file for label synonyms
+  --strict            Exit non-zero when any of Yesterday/Today/Blockers is missing
+  --quiet             Suppress strict warning messages on stderr
+  --no-entry-header   In --all markdown output, omit "### Entry N" headings
+  --header-name-keys  Regex for name labels used in entry header (default: Name|名前)
+  --json-keys <a,b,c> Custom JSON keys for yesterday,today,blockers (json format only)
+  --json-include-entry-meta  Add entryIndex/entryName fields (effective with --all --format json; ignored in single/json)
+  --json-entry-meta-keys <a,b> Custom meta keys for entryIndex,entryName (effective with --all --format json)
+```
+<!-- AUTO_SYNC_HELP_OPTIONS:END -->
 ## CLI help snapshot (strict/quiet consistency)
 `./bin/shape-standup --help` の strict/quiet 説明と README 文言の差分を検知するため、
 README側にもヘルプ文言をそのまま保持します（selfcheck で照合）。
