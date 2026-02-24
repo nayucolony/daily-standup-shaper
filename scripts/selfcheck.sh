@@ -870,6 +870,13 @@ else
   fail "Strict/Quiet sections link back to Quick check one-line acceptance" "at least two backlinks to [受け入れ条件（1行）](#quick-check-one-line-acceptance)" "count=$readme_backlink_count"
 fi
 
+readme_quick_check_anchor_count=$(grep -E -c '^<a id="quick-check-one-line-acceptance"></a>$' "$ROOT_DIR/README.md")
+if [ "$readme_quick_check_anchor_count" -eq 1 ]; then
+  pass "README quick-check one-line acceptance anchor is defined exactly once"
+else
+  fail "README quick-check one-line acceptance anchor is defined exactly once" "exactly one '<a id=\"quick-check-one-line-acceptance\"></a>' line exists" "count=$readme_quick_check_anchor_count"
+fi
+
 readme_acceptance_line_no=$(grep -n -F -- '# 受け入れ条件（1行）:' "$ROOT_DIR/README.md" | head -n 1 | cut -d: -f1)
 readme_test_line_no=$(grep -n -F -- '# 対応テスト:' "$ROOT_DIR/README.md" | head -n 1 | cut -d: -f1)
 if [ -n "$readme_acceptance_line_no" ] && [ -n "$readme_test_line_no" ] && [ $((readme_test_line_no - readme_acceptance_line_no)) -eq 1 ]; then
