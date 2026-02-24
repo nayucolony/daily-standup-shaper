@@ -128,6 +128,12 @@ RUN_SELF_CHECK_CODE=0
 run_selfcheck_capture() {
   local force_fail_case="${1:-}"
   local mode="${2:-normal}"
+  local force_sync_help_git_diff_failure=0
+
+  if [ "$force_fail_case" = "$SYNC_HELP_ALL_GIT_DIFF_TEMPLATE_FAILCASE" ]; then
+    force_sync_help_git_diff_failure=1
+    force_fail_case=""
+  fi
 
   local -a cmd=("$0")
   if [ "$mode" = "summary" ]; then
@@ -135,7 +141,7 @@ run_selfcheck_capture() {
   fi
 
   set +e
-  RUN_SELF_CHECK_OUT=$(SELF_CHECK_FORCE_FAIL_CASE="$force_fail_case" SELF_CHECK_SKIP_SUMMARY_FAILCASE_TEST=1 "${cmd[@]}" 2>&1)
+  RUN_SELF_CHECK_OUT=$(SELF_CHECK_FORCE_FAIL_CASE="$force_fail_case" SELF_CHECK_FORCE_SYNC_HELP_GIT_DIFF_FAILURE="$force_sync_help_git_diff_failure" SELF_CHECK_SKIP_SUMMARY_FAILCASE_TEST=1 "${cmd[@]}" 2>&1)
   RUN_SELF_CHECK_CODE=$?
   set -e
 }
@@ -184,6 +190,8 @@ SYNC_HELP_ALL_INVARIANT_LABELS=(
   "optional-block-snapshot"
   "optional-order-snapshot"
 )
+SYNC_HELP_ALL_GIT_DIFF_CHECK_NAME="sync-help-to-readme --all keeps README.md and tests/snapshots unchanged (git diff --quiet)"
+SYNC_HELP_ALL_GIT_DIFF_TEMPLATE_FAILCASE="sync-help-all-git-diff-template"
 
 sync_help_all_invariant_expected_no_diff_line() {
   local labels_csv
@@ -248,13 +256,13 @@ assert_sync_help_git_diff_invariants() {
   local changed_count changed_labels
 
   if git diff --quiet -- README.md tests/snapshots; then
-    pass "sync-help-to-readme --all keeps README.md and tests/snapshots unchanged (git diff --quiet)"
+    pass "$SYNC_HELP_ALL_GIT_DIFF_CHECK_NAME"
   elif [ "$before_diff" = "$after_diff" ]; then
     pass "sync-help-to-readme --all keeps README.md and tests/snapshots unchanged from pre-existing local diffs"
   else
     changed_count=$(printf "%s\n" "$after_diff" | sed '/^$/d' | wc -l | tr -d ' ')
     changed_labels=$(printf "%s\n" "$after_diff" | sed '/^$/d' | tr '\n' ',' | sed 's/,$//')
-    fail "sync-help-to-readme --all keeps README.md and tests/snapshots unchanged (git diff --quiet)" "$(sync_help_all_retry_template)" "$(sync_help_all_retry_template)
+    fail "$SYNC_HELP_ALL_GIT_DIFF_CHECK_NAME" "$(sync_help_all_retry_template)" "$(sync_help_all_retry_template)
 changed_count=${changed_count:-0} changed=${changed_labels:-none}"
   fi
 }
@@ -1248,6 +1256,9 @@ assert_sync_help_all_invariants \
   "$readme_help_examples_snapshot_before_all" "$readme_help_examples_snapshot_after_all" \
   "$readme_optional_block_snapshot_before_all" "$readme_optional_block_snapshot_after_all" \
   "$readme_optional_order_snapshot_before_all" "$readme_optional_order_snapshot_after_all"
+if [ "${SELF_CHECK_FORCE_SYNC_HELP_GIT_DIFF_FAILURE:-0}" = "1" ]; then
+  assert_sync_help_git_diff_invariants "" "README.md"
+fi
 assert_sync_help_git_diff_invariants "$git_diff_before_all" "$git_diff_after_all"
 
 readme_test_links_before=$(grep -F -- '# 対応テスト:' "$ROOT_DIR/README.md" | head -n 1)
@@ -1309,6 +1320,10 @@ if [ "$SKIP_SUMMARY_FAILCASE_TEST" != "1" ]; then
   normal_out="$RUN_SELF_CHECK_OUT"
   normal_code=$RUN_SELF_CHECK_CODE
 
+  run_selfcheck_capture "$SYNC_HELP_ALL_GIT_DIFF_TEMPLATE_FAILCASE" normal
+  sync_help_fail_out="$RUN_SELF_CHECK_OUT"
+  sync_help_fail_code=$RUN_SELF_CHECK_CODE
+
   run_selfcheck_capture "$summary_fail_case" summary
   summary_out="$RUN_SELF_CHECK_OUT"
   summary_code=$RUN_SELF_CHECK_CODE
@@ -1336,6 +1351,14 @@ if [ "$SKIP_SUMMARY_FAILCASE_TEST" != "1" ]; then
     pass "--summary outputs only one SELF_CHECK_SUMMARY line without PASS/FAIL details"
   else
     fail "--summary outputs only one SELF_CHECK_SUMMARY line without PASS/FAIL details" "single SELF_CHECK_SUMMARY line only (no PASS/FAIL detail lines and summary is first line)" "$(summary_contract_actual "$summary_success_code" "$summary_success_line_count" "$summary_success_first_line")"
+  fi
+
+  if [ "$sync_help_fail_code" -ne 0 ] \
+    && printf "%s\n" "$sync_help_fail_out" | grep -F -- "retry: ./scripts/sync-help-to-readme.sh --all" >/dev/null \
+    && printf "%s\n" "$sync_help_fail_out" | grep -F -- "diff: git diff -- README.md tests/snapshots" >/dev/null; then
+    pass "sync-help --all git diff failure emits retry/diff two-line template"
+  else
+    fail "sync-help --all git diff failure emits retry/diff two-line template" "normal-mode forced failure includes retry/diff two-line template" "code=${sync_help_fail_code:-missing} output=$(printf '%s' "$sync_help_fail_out" | tail -n 20 | tr '\n' ' ' | sed 's/[[:space:]]\+/ /g')"
   fi
 
   if printf "%s\n" "$summary_line" | grep -Eq '^SELF_CHECK_SUMMARY: passed=[0-9]+/[0-9]+ failed_case=[^[:space:]]+$'; then

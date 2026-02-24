@@ -96,7 +96,7 @@
 # extract_failed_case_from_summary_line も同じ許容境界で抽出し、境界文字を削らずに返す。
 <a id="quick-check-one-line-acceptance"></a>
 # 受け入れ条件（1行）: failed_case は `[a-z0-9._-]+` を満たし、`0foo` は許容・`Foo`/`fooA`/`foo/bar` は拒否（英大文字・スラッシュは全位置で規約外）。契約詳細は [Strict mode (CI向け)](#strict-mode-ci向け) / [Quiet mode](#quiet-mode) を参照。
-# 対応テスト: [`accepts 0foo (README one-line acceptance)`](./scripts/selfcheck.sh#L1006), [`rejects Foo (README one-line acceptance)`](./scripts/selfcheck.sh#L1007), [`rejects fooA (uppercase suffix, README one-line acceptance)`](./scripts/selfcheck.sh#L1007), [`rejects foo/bar (slash delimiter, README one-line acceptance)`](./scripts/selfcheck.sh#L1007)
+# 対応テスト: [`accepts 0foo (README one-line acceptance)`](./scripts/selfcheck.sh#L1014), [`rejects Foo (README one-line acceptance)`](./scripts/selfcheck.sh#L1015), [`rejects fooA (uppercase suffix, README one-line acceptance)`](./scripts/selfcheck.sh#L1015), [`rejects foo/bar (slash delimiter, README one-line acceptance)`](./scripts/selfcheck.sh#L1015)
 # 補足: 上記4リンクは selfcheck 内の「README one-line acceptance」境界テスト群（0foo許容 / Foo・fooA・foo/bar拒否）を指す。
 # 2行契約ブロックスナップショット更新: ./scripts/update-one-line-contract-snapshot.sh
 # 対応テスト4リンク行の同期（README行番号ズレ防止）: ./scripts/update-one-line-contract-test-links.sh
@@ -399,15 +399,14 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-25 06:53 JST)
-反復判定（実行前の直近5サイクル）: `Plan更新 -> P141 -> P142 -> P137 -> P143` で README/sync-help/selfcheck の同系比率は `3/5=0.60`（閾値0.60到達）。
+## Update Plan (watchdog 2026-02-25 07:00 JST)
+反復判定（実行前の直近5サイクル）: `P141 -> P142 -> P137 -> P143 -> P144` で README/sync-help/selfcheck の同系比率は `5/5=1.00`（閾値0.60超過）。
 同系3連続ループ抑止ルールに基づき、Update PlanをImpact/Effort/Evidenceで再優先付け。
 
-- [x] P143: `sync-help-to-readme.sh --all` 検証失敗時の案内を「再同期コマンド+差分確認コマンド」の2行テンプレで統一し、README Quick check と selfcheck の失敗導線を一致させる（Impact: 2, Effort: 2, Evidence: yes）
-- [ ] P144: `scripts/selfcheck.sh` の `sync-help-to-readme --all keeps README.md and tests/snapshots unchanged (git diff --quiet)` 失敗系自己再現テストを追加し、2行テンプレ（retry/diff）が必ず出ることを回帰固定する（Impact: 3, Effort: 2, Evidence: yes）
+- [x] P144: `scripts/selfcheck.sh` に `sync-help-to-readme --all keeps README.md and tests/snapshots unchanged (git diff --quiet)` の失敗系自己再現テストを追加し、retry/diff 2行テンプレ出力を回帰固定（`sync-help-all-git-diff-template` 強制失敗経路で検証）した（Impact: 3, Effort: 2, Evidence: yes）
 - [ ] P145: README Quick check の2行テンプレを `tests/snapshots/readme-sync-help-failure-template.md` に固定し、文言ずれを selfcheck で検知する（Impact: 3, Effort: 2, Evidence: yes）
 - [ ] P146: `sync-help-to-readme.sh --help` に失敗時2行テンプレ節を追加し、README/selfcheck/helpの3点一致をスナップショット化する（Impact: 2, Effort: 3, Evidence: yes）
 - [ ] P147: README Quick check の `--all` 直下にある復旧テンプレの位置（`--all` の直後2行）を selfcheck で順序契約化する（Impact: 2, Effort: 2, Evidence: yes）
 
 ## Next
-- P144を実施する: selfcheckに `sync-help-to-readme --all` 失敗系自己再現を追加し、retry/diff 2行テンプレの常時出力を回帰固定する
+- P145を実施する: README Quick check の retry/diff 2行テンプレを snapshots 化し、selfcheckで文言ずれを検知する
