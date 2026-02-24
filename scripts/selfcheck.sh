@@ -703,6 +703,8 @@ if [ "$SKIP_SUMMARY_FAILCASE_TEST" != "1" ]; then
   summary_fail_case="summary-failcase-contract-sentinel"
 
   set +e
+  summary_success_out=$(SELF_CHECK_SKIP_SUMMARY_FAILCASE_TEST=1 "$0" --summary 2>&1)
+  summary_success_code=$?
   normal_out=$(SELF_CHECK_FORCE_FAIL_CASE="$summary_fail_case" SELF_CHECK_SKIP_SUMMARY_FAILCASE_TEST=1 "$0" 2>&1)
   normal_code=$?
   summary_out=$(SELF_CHECK_FORCE_FAIL_CASE="$summary_fail_case" SELF_CHECK_SKIP_SUMMARY_FAILCASE_TEST=1 "$0" --summary 2>&1)
@@ -710,12 +712,24 @@ if [ "$SKIP_SUMMARY_FAILCASE_TEST" != "1" ]; then
   set -e
 
   normal_fail_name=$(printf "%s\n" "$normal_out" | sed -n 's/^FAIL: //p' | head -n 1)
+  summary_success_line_count=$(printf "%s\n" "$summary_success_out" | grep -E -c '^SELF_CHECK_SUMMARY:' || true)
+  summary_success_total_lines=$(printf "%s\n" "$summary_success_out" | sed '/^$/d' | wc -l | tr -d ' ')
+  summary_success_detail_lines=$(printf "%s\n" "$summary_success_out" | grep -E -c '^(PASS|FAIL): ' || true)
   summary_line=$(printf "%s\n" "$summary_out" | grep '^SELF_CHECK_SUMMARY:' | head -n 1)
   summary_fail_name=$(printf "%s\n" "$summary_out" | sed -n 's/^SELF_CHECK_SUMMARY: .*failed_case=//p' | head -n 1)
   normal_passed_count=$(printf "%s\n" "$normal_out" | grep -c '^PASS: ' | tr -d ' ')
   normal_total_count=$(printf "%s\n" "$normal_out" | grep -E -c '^(PASS|FAIL): ' | tr -d ' ')
   summary_passed_count=$(printf "%s\n" "$summary_out" | sed -n 's/^SELF_CHECK_SUMMARY: passed=\([0-9][0-9]*\)\/[0-9][0-9]* failed_case=.*/\1/p' | head -n 1)
   summary_total_count=$(printf "%s\n" "$summary_out" | sed -n 's/^SELF_CHECK_SUMMARY: passed=[0-9][0-9]*\/\([0-9][0-9]*\) failed_case=.*/\1/p' | head -n 1)
+
+  if [ "$summary_success_code" -eq 0 ] \
+    && [ "$summary_success_line_count" -eq 1 ] \
+    && [ "$summary_success_total_lines" -eq 1 ] \
+    && [ "$summary_success_detail_lines" -eq 0 ]; then
+    pass "--summary outputs only one SELF_CHECK_SUMMARY line without PASS/FAIL details"
+  else
+    fail "--summary outputs only one SELF_CHECK_SUMMARY line without PASS/FAIL details" "single SELF_CHECK_SUMMARY line only (no PASS/FAIL detail lines)" "code=$summary_success_code lines=$summary_success_total_lines summary_lines=$summary_success_line_count detail_lines=$summary_success_detail_lines output=$summary_success_out"
+  fi
 
   if printf "%s\n" "$summary_line" | grep -Eq '^SELF_CHECK_SUMMARY: passed=[0-9]+/[0-9]+ failed_case=[^[:space:]]+$'; then
     pass "--summary failure keeps SELF_CHECK_SUMMARY snapshot format"

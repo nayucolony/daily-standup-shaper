@@ -315,7 +315,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P47: `scripts/selfcheck.sh --summary` の失敗例で `passed=<n>/<m>` が通常モードの失敗直前までの PASS 件数と一致することを検証し、進捗率の信頼性を固定する（Impact: 2, Effort: 2, Evidence: yes）
 - [x] P48: `scripts/selfcheck.sh --summary` の失敗例で `<m>`（総チェック数）が通常モード実行時の総チェック数（FAILケース含む）と一致することを検証し、分母の信頼性を固定する（Impact: 2, Effort: 2, Evidence: yes）
 - [x] P49: `scripts/selfcheck.sh --summary` の失敗系回帰ブロック（P46-P48）に対し、`SELF_CHECK_SUMMARY` 行のフォーマット変化（`passed=<n>/<m> failed_case=<name>`）を1回で検知する単一スナップショット検証を追加する（Impact: 2, Effort: 2, Evidence: yes）
-- [ ] P50: `scripts/selfcheck.sh --summary` 実行時に `SELF_CHECK_SUMMARY` 行が1行のみで、`PASS:` / `FAIL:` の詳細行が混在しないことを検証し、CIの行パース前提を固定する（Impact: 2, Effort: 2, Evidence: yes）
+- [x] P50: `scripts/selfcheck.sh --summary` 実行時に `SELF_CHECK_SUMMARY` 行が1行のみで、`PASS:` / `FAIL:` の詳細行が混在しないことを検証し、CIの行パース前提を固定する（Impact: 2, Effort: 2, Evidence: yes）
+- [ ] P51: `scripts/selfcheck.sh --summary` の成功時/失敗時で `SELF_CHECK_SUMMARY` 接頭辞が常に先頭行に出ること（余分な前置ログなし）を回帰追加し、ログ収集の先頭行パース互換を固定する（Impact: 2, Effort: 2, Evidence: yes）
 
 ## Next
-- P50実施: `scripts/selfcheck.sh --summary` の出力が1行サマリのみ（詳細PASS/FAIL非混在）であることを回帰追加し、CIパーサ前提を固定する
+- P51実施: `scripts/selfcheck.sh --summary` の成功時/失敗時ともに `SELF_CHECK_SUMMARY` が先頭行であることを回帰追加し、ログ収集の先頭行パース互換を固定する
