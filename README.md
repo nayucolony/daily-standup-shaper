@@ -396,16 +396,14 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-25 05:30 JST)
-反復判定（実行前の直近5サイクル）: `P125 -> P133 -> P136 -> P132 -> P138` で README/sync-help/selfcheck の同系比率は `5/5=1.00`（閾値0.60）。
+## Update Plan (watchdog 2026-02-25 06:10 JST)
+反復判定（実行前の直近5サイクル）: `P136 -> P132 -> Plan更新 -> P138 -> P139` で README/sync-help/selfcheck の同系比率は `5/5=1.00`（閾値0.60）。
 同系3連続ルールを満たすため、このサイクルは **Plan更新を強制**（Impact優先、同ImpactではEffort低い順、Evidence-ready優先）。
 
-- [x] P138: `sync-help-to-readme.sh --all` の不変条件検証を summary-line/help-examples まで拡張し、`assert_sync_help_all_invariants` を完全に `--all` 対象と一致させる（Impact: 3, Effort: 3, Evidence: yes）
-- [x] P140: `assert_sync_help_all_invariants` で検証している対象一覧（help/options/one-line contract/links/recommended/sync-line/summary/help-examples/optional-order）を配列化し、差分比較ログを1行サマリ（`changed_count=<n> changed=<labels...>`）で出す（Impact: 3, Effort: 3, Evidence: yes）
-- [x] P139: README Quick check の個別同期ブロック（見出し+6コマンド）を専用スナップショット化し、文言崩れを1テストで検知する（Impact: 2, Effort: 2, Evidence: yes）
-- [ ] P141: `sync-help-to-readme.sh --all` 実行後に `git diff --quiet README.md tests/snapshots` を使った不変チェック関数を追加し、変化時のみ失敗理由を提示する（Impact: 2, Effort: 2, Evidence: yes）
+- [ ] P141: `sync-help-to-readme.sh --all` 実行後に `git diff --quiet README.md tests/snapshots` を使った不変チェック関数を追加し、差分時に `changed_count=<n> changed=<labels...>` を1行で出す（Impact: 3, Effort: 2, Evidence: yes）
+- [ ] P142: `assert_sync_help_all_invariants` のラベル配列と期待メッセージ（`no diff after --all for: ...`）を単一定義に統一し、差分対象追加時の更新漏れを防ぐ（Impact: 3, Effort: 2, Evidence: yes）
 - [ ] P137: `tests/snapshots/sync-help-examples.md` から README 個別同期コマンド群を自動抽出するヘルパーを追加し、help→README同期を単一ソース化（Impact: 2, Effort: 3, Evidence: yes）
-- [ ] P142: `assert_sync_help_all_invariants` のラベル配列と期待メッセージ（`no diff after --all for: ...`）を単一定義に統一し、差分対象追加時の更新漏れを防ぐ（Impact: 2, Effort: 2, Evidence: yes）
+- [ ] P143: `sync-help-to-readme.sh --all` 検証失敗時の案内を「再同期コマンド+差分確認コマンド」の2行テンプレで統一し、README Quick check と selfcheck の失敗導線を一致させる（Impact: 2, Effort: 2, Evidence: yes）
 
 ## Next
 - P141を実施する: `sync-help-to-readme.sh --all` 実行後に `git diff --quiet README.md tests/snapshots` を使った不変チェック関数を selfcheck へ追加し、差分発生時は changed labels を1行で出す
