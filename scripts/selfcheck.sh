@@ -815,8 +815,11 @@ assert_eq "extract_failed_case_from_summary_line rejects invalid leading punctua
 assert_eq "extract_failed_case_from_summary_line rejects uppercase leading character" "" "$(extract_failed_case_from_summary_line "$summary_line_leading_upper")"
 assert_eq "failed_case boundary contrast accepts 0foo (README one-line acceptance)" "0foo" "$(extract_failed_case_from_summary_line "$summary_line_boundary_accept_0foo")"
 assert_eq "failed_case boundary contrast rejects Foo (README one-line acceptance)" "" "$(extract_failed_case_from_summary_line "$summary_line_boundary_reject_Foo")"
-assert_eq "failed_case boundary contrast rejects fooA (README one-line acceptance)" "" "$(extract_failed_case_from_summary_line "$summary_line_trailing_upper")"
-assert_eq "failed_case boundary contrast rejects foo/bar (slash delimiter)" "" "$(extract_failed_case_from_summary_line "$summary_line_with_slash")"
+for rejected_boundary_case in "$summary_line_trailing_upper|fooA (uppercase suffix)" "$summary_line_with_slash|foo/bar (slash delimiter)"; do
+  line_value=${rejected_boundary_case%%|*}
+  case_label=${rejected_boundary_case#*|}
+  assert_eq "failed_case boundary contrast rejects ${case_label} (README one-line acceptance)" "" "$(extract_failed_case_from_summary_line "$line_value")"
+done
 assert_eq "extract_failed_case_from_summary_line keeps leading digit" "0summary-failcase-contract-sentinel" "$(extract_failed_case_from_summary_line "$summary_line_leading_digit")"
 assert_eq "extract_failed_case_from_summary_line keeps trailing digit" "summary-failcase-contract-sentinel0" "$(extract_failed_case_from_summary_line "$summary_line_trailing_digit")"
 assert_eq "extract_failed_case_from_summary_line keeps both-edge digits" "0summary-failcase-contract-sentinel0" "$(extract_failed_case_from_summary_line "$summary_line_both_edge_digits")"
