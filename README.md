@@ -299,7 +299,7 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 11:10 JST)
+## Update Plan (watchdog 2026-02-24 11:20 JST)
 反復判定（直近5サイクル）: plan更新系 0/5 のため stagnation は閾値未満。selfcheckで検証可能な前進を維持します。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。
@@ -314,7 +314,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P46: `scripts/selfcheck.sh --summary` 失敗時に `failed_case` と同じ名前の `FAIL:` 行が通常モード出力に存在することを検証し、CIログ突合を簡単にする（Impact: 2, Effort: 2, Evidence: yes）
 - [x] P47: `scripts/selfcheck.sh --summary` の失敗例で `passed=<n>/<m>` が通常モードの失敗直前までの PASS 件数と一致することを検証し、進捗率の信頼性を固定する（Impact: 2, Effort: 2, Evidence: yes）
 - [x] P48: `scripts/selfcheck.sh --summary` の失敗例で `<m>`（総チェック数）が通常モード実行時の総チェック数（FAILケース含む）と一致することを検証し、分母の信頼性を固定する（Impact: 2, Effort: 2, Evidence: yes）
-- [ ] P49: `scripts/selfcheck.sh --summary` の失敗系回帰ブロック（P46-P48）に対し、`SELF_CHECK_SUMMARY` 行のフォーマット変化（`passed=<n>/<m> failed_case=<name>`）を1回で検知する単一スナップショット検証を追加する（Impact: 2, Effort: 2, Evidence: yes）
+- [x] P49: `scripts/selfcheck.sh --summary` の失敗系回帰ブロック（P46-P48）に対し、`SELF_CHECK_SUMMARY` 行のフォーマット変化（`passed=<n>/<m> failed_case=<name>`）を1回で検知する単一スナップショット検証を追加する（Impact: 2, Effort: 2, Evidence: yes）
+- [ ] P50: `scripts/selfcheck.sh --summary` 実行時に `SELF_CHECK_SUMMARY` 行が1行のみで、`PASS:` / `FAIL:` の詳細行が混在しないことを検証し、CIの行パース前提を固定する（Impact: 2, Effort: 2, Evidence: yes）
 
 ## Next
-- P49実施: `scripts/selfcheck.sh` に `SELF_CHECK_SUMMARY` 形式のスナップショット検証（passed/denominator/failed_case）を追加し、P46-P48の前提フォーマットを回帰固定する
+- P50実施: `scripts/selfcheck.sh --summary` の出力が1行サマリのみ（詳細PASS/FAIL非混在）であることを回帰追加し、CIパーサ前提を固定する

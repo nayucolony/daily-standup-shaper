@@ -710,11 +710,18 @@ if [ "$SKIP_SUMMARY_FAILCASE_TEST" != "1" ]; then
   set -e
 
   normal_fail_name=$(printf "%s\n" "$normal_out" | sed -n 's/^FAIL: //p' | head -n 1)
+  summary_line=$(printf "%s\n" "$summary_out" | grep '^SELF_CHECK_SUMMARY:' | head -n 1)
   summary_fail_name=$(printf "%s\n" "$summary_out" | sed -n 's/^SELF_CHECK_SUMMARY: .*failed_case=//p' | head -n 1)
   normal_passed_count=$(printf "%s\n" "$normal_out" | grep -c '^PASS: ' | tr -d ' ')
   normal_total_count=$(printf "%s\n" "$normal_out" | grep -E -c '^(PASS|FAIL): ' | tr -d ' ')
   summary_passed_count=$(printf "%s\n" "$summary_out" | sed -n 's/^SELF_CHECK_SUMMARY: passed=\([0-9][0-9]*\)\/[0-9][0-9]* failed_case=.*/\1/p' | head -n 1)
   summary_total_count=$(printf "%s\n" "$summary_out" | sed -n 's/^SELF_CHECK_SUMMARY: passed=[0-9][0-9]*\/\([0-9][0-9]*\) failed_case=.*/\1/p' | head -n 1)
+
+  if printf "%s\n" "$summary_line" | grep -Eq '^SELF_CHECK_SUMMARY: passed=[0-9]+/[0-9]+ failed_case=[^[:space:]]+$'; then
+    pass "--summary failure keeps SELF_CHECK_SUMMARY snapshot format"
+  else
+    fail "--summary failure keeps SELF_CHECK_SUMMARY snapshot format" "SELF_CHECK_SUMMARY: passed=<n>/<m> failed_case=<name>" "$summary_line"
+  fi
 
   if [ "$normal_code" -ne 0 ] \
     && [ "$summary_code" -ne 0 ] \
