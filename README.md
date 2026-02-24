@@ -374,15 +374,15 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 23:40 JST)
-反復判定（実行前の直近5サイクル）: `P104(selfcheck) -> P105(selfcheck) -> P106(selfcheck) -> P107(README+selfcheck) -> P110(sync+selfcheck)` で同系（README契約ブロック固定）比率は `5/5=1.00`（閾値0.60）。
-閾値超過のため Update Plan を再優先付け（Impact / Effort / Evidence）して次候補を整理。
+## Update Plan (watchdog 2026-02-24 23:50 JST)
+反復判定（実行前の直近5サイクル）: `P105(selfcheck) -> P106(selfcheck) -> P107(README+selfcheck) -> P110(sync+selfcheck) -> plan-update` で同系（README契約ブロック運用）比率は `5/5=1.00`（閾値0.60）。
+同系3連続回避ルールにより、このサイクルは **plan更新を1アクション** として再優先付けのみ実施。
 
-- [x] P110: `scripts/sync-help-to-readme.sh` に one-line contract snapshot 更新モードを追加し、selfcheck から同期導線を検証（Impact: 3, Effort: 3, Evidence: yes）
-- [ ] P108: selfcheck の README 契約スナップショット群（matrix + one-line contract）を1ヘルパーへ集約（Impact: 2, Effort: 2, Evidence: yes）
-- [ ] P111: 2行契約ブロック抽出awk式を scripts/update-one-line-contract-snapshot.sh に切り出し、READMEから再利用する（Impact: 2, Effort: 2, Evidence: yes）
+- [ ] P108: selfcheck の README 契約スナップショット検証（matrix + one-line contract）を `assert_readme_snapshot()` ヘルパーへ集約（Impact: 3, Effort: 2, Evidence: yes）
+- [ ] P112: `scripts/sync-help-to-readme.sh --all` を selfcheck で検証し、help同期+contract同期の一括導線を固定（Impact: 2, Effort: 2, Evidence: yes）
+- [ ] P111: 2行契約ブロック抽出 awk 式を `scripts/update-one-line-contract-snapshot.sh` に切り出し、README手順と同一実装へ寄せる（Impact: 2, Effort: 3, Evidence: yes）
 - [ ] P109: 2行契約ブロックのリンク4件が重複なく一意であることを専用スナップショットで固定（Impact: 1, Effort: 2, Evidence: yes）
-- [ ] P112: `scripts/sync-help-to-readme.sh --all` を selfcheck で検証し、help同期+contract同期の一括導線を固定（Impact: 1, Effort: 2, Evidence: yes）
+- [ ] P113: README `# 対応テスト` の4リンク行を自動整形する同期スクリプトを追加し、行番号更新漏れを防止（Impact: 1, Effort: 3, Evidence: yes）
 
 ## Next
-- P108を実施する: README 契約スナップショット検証（matrix + one-line contract）を1ヘルパーに寄せ、重複コードを削減する
+- P108を実施する: selfcheck 内の README スナップショット比較を `assert_readme_snapshot()` ヘルパーに集約し、matrix と one-line contract の重複比較ロジックを削減する
