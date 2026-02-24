@@ -93,7 +93,7 @@
 # extract_failed_case_from_summary_line も同じ許容境界で抽出し、境界文字を削らずに返す。
 <a id="quick-check-one-line-acceptance"></a>
 # 受け入れ条件（1行）: failed_case は `[a-z0-9._-]+` を満たし、`0foo` は許容・`Foo`/`fooA`/`foo/bar` は拒否（英大文字・スラッシュは全位置で規約外）。契約詳細は [Strict mode (CI向け)](#strict-mode-ci向け) / [Quiet mode](#quiet-mode) を参照。
-# 対応テスト: [`accepts 0foo (README one-line acceptance)`](./scripts/selfcheck.sh#L990), [`rejects Foo (README one-line acceptance)`](./scripts/selfcheck.sh#L991), [`rejects fooA (uppercase suffix, README one-line acceptance)`](./scripts/selfcheck.sh#L991), [`rejects foo/bar (slash delimiter, README one-line acceptance)`](./scripts/selfcheck.sh#L991)
+# 対応テスト: [`accepts 0foo (README one-line acceptance)`](./scripts/selfcheck.sh#L998), [`rejects Foo (README one-line acceptance)`](./scripts/selfcheck.sh#L999), [`rejects fooA (uppercase suffix, README one-line acceptance)`](./scripts/selfcheck.sh#L999), [`rejects foo/bar (slash delimiter, README one-line acceptance)`](./scripts/selfcheck.sh#L999)
 # 補足: 上記4リンクは selfcheck 内の「README one-line acceptance」境界テスト群（0foo許容 / Foo・fooA・foo/bar拒否）を指す。
 # 2行契約ブロックスナップショット更新: ./scripts/update-one-line-contract-snapshot.sh
 # 対応テスト4リンク行の同期（README行番号ズレ防止）: ./scripts/update-one-line-contract-test-links.sh
@@ -396,14 +396,14 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-25 06:20 JST)
-反復判定（実行前の直近5サイクル）: `Plan更新 -> P138 -> P139 -> Plan更新 -> P141` で README/sync-help/selfcheck の同系比率は `2/5=0.40`（閾値0.60未満）。
+## Update Plan (watchdog 2026-02-25 06:30 JST)
+反復判定（実行前の直近5サイクル）: `P138 -> P139 -> Plan更新 -> P141 -> P141` で README/sync-help/selfcheck の同系比率は `2/5=0.40`（閾値0.60未満）。
 selfcheckで即検証できる前進を優先し、Impact優先・同ImpactはEffort低い順・Evidence-ready優先で継続。
 
 - [x] P141: `sync-help-to-readme.sh --all` 実行後に `git diff --quiet README.md tests/snapshots` を使った不変チェック関数を追加し、差分時に `changed_count=<n> changed=<labels...>` を1行で出す（Impact: 3, Effort: 2, Evidence: yes）
-- [ ] P142: `assert_sync_help_all_invariants` のラベル配列と期待メッセージ（`no diff after --all for: ...`）を単一定義に統一し、差分対象追加時の更新漏れを防ぐ（Impact: 3, Effort: 2, Evidence: yes）
+- [x] P142: `assert_sync_help_all_invariants` のラベル配列と期待メッセージ（`no diff after --all for: ...`）を単一定義に統一し、差分対象追加時の更新漏れを防ぐ（Impact: 3, Effort: 2, Evidence: yes）
 - [ ] P137: `tests/snapshots/sync-help-examples.md` から README 個別同期コマンド群を自動抽出するヘルパーを追加し、help→README同期を単一ソース化（Impact: 2, Effort: 3, Evidence: yes）
 - [ ] P143: `sync-help-to-readme.sh --all` 検証失敗時の案内を「再同期コマンド+差分確認コマンド」の2行テンプレで統一し、README Quick check と selfcheck の失敗導線を一致させる（Impact: 2, Effort: 2, Evidence: yes）
 
 ## Next
-- P142を実施する: `assert_sync_help_all_invariants` のラベル配列と `no diff after --all for: ...` 期待文言を単一定義に統一し、差分対象追加時の更新漏れを防ぐ
+- P137を実施する: `tests/snapshots/sync-help-examples.md` から README 個別同期コマンド群を自動抽出するヘルパーを追加し、help→README同期を単一ソース化する

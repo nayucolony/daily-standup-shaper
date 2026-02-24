@@ -172,19 +172,27 @@ assert_readme_snapshot() {
   assert_eq "$name" "$expected" "$actual"
 }
 
+SYNC_HELP_ALL_INVARIANT_LABELS=(
+  "help/options"
+  "one-line-contract"
+  "test-links-line"
+  "test-links-snapshot"
+  "recommended-sequence-snapshot"
+  "sync-line-snapshot"
+  "summary-line-snapshot"
+  "help-examples-snapshot"
+  "optional-block-snapshot"
+  "optional-order-snapshot"
+)
+
+sync_help_all_invariant_expected_no_diff_line() {
+  local labels_csv
+  labels_csv=$(IFS=', '; echo "${SYNC_HELP_ALL_INVARIANT_LABELS[*]}")
+  printf "no diff after --all for: %s" "$labels_csv"
+}
+
 assert_sync_help_all_invariants() {
-  local -a labels=(
-    "help/options"
-    "one-line-contract"
-    "test-links-line"
-    "test-links-snapshot"
-    "recommended-sequence-snapshot"
-    "sync-line-snapshot"
-    "summary-line-snapshot"
-    "help-examples-snapshot"
-    "optional-block-snapshot"
-    "optional-order-snapshot"
-  )
+  local -a labels=("${SYNC_HELP_ALL_INVARIANT_LABELS[@]}")
   local -a before_values=(
     "$1"
     "$3"
@@ -224,7 +232,7 @@ assert_sync_help_all_invariants() {
   else
     local mismatch_summary
     mismatch_summary=$(IFS=', '; echo "${mismatches[*]}")
-    fail "$invariant_name" "no diff after --all for: help/options, one-line-contract, test-links-line, test-links-snapshot, recommended-sequence-snapshot, sync-line-snapshot, summary-line-snapshot, help-examples-snapshot, optional-block-snapshot, optional-order-snapshot" "changed_count=${#mismatches[@]} changed=${mismatch_summary}"
+    fail "$invariant_name" "$(sync_help_all_invariant_expected_no_diff_line)" "changed_count=${#mismatches[@]} changed=${mismatch_summary}"
   fi
 }
 
