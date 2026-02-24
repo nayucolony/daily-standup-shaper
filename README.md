@@ -379,10 +379,10 @@ cp ./config/labels.example.json ./config/labels.local.json
 同系3連続回避ルールにより、このサイクルは **plan更新を1アクション** として再優先付けのみ実施。
 
 - [ ] P108: selfcheck の README 契約スナップショット検証（matrix + one-line contract）を `assert_readme_snapshot()` ヘルパーへ集約（Impact: 3, Effort: 2, Evidence: yes）
-- [ ] P112: `scripts/sync-help-to-readme.sh --all` を selfcheck で検証し、help同期+contract同期の一括導線を固定（Impact: 2, Effort: 2, Evidence: yes）
+- [x] P112: `scripts/sync-help-to-readme.sh --all` を selfcheck で検証し、help同期+contract同期の一括導線を固定（Impact: 2, Effort: 2, Evidence: yes）
 - [ ] P111: 2行契約ブロック抽出 awk 式を `scripts/update-one-line-contract-snapshot.sh` に切り出し、README手順と同一実装へ寄せる（Impact: 2, Effort: 3, Evidence: yes）
 - [ ] P109: 2行契約ブロックのリンク4件が重複なく一意であることを専用スナップショットで固定（Impact: 1, Effort: 2, Evidence: yes）
 - [ ] P113: README `# 対応テスト` の4リンク行を自動整形する同期スクリプトを追加し、行番号更新漏れを防止（Impact: 1, Effort: 3, Evidence: yes）
 
 ## Next
-- P108を実施する: selfcheck 内の README スナップショット比較を `assert_readme_snapshot()` ヘルパーに集約し、matrix と one-line contract の重複比較ロジックを削減する
+- P111を実施する: 2行契約ブロック抽出 awk 式を `scripts/update-one-line-contract-snapshot.sh` に切り出し、README手順と同一実装へ寄せる

@@ -925,6 +925,22 @@ sync_contract_before=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-one-lin
 sync_contract_after=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-one-line-contract.md")
 assert_eq "sync-help-to-readme --update-one-line-contract-snapshot keeps one-line contract snapshot in sync" "$sync_contract_before" "$sync_contract_after"
 
+readme_help_block_before=$(awk '
+  /<!-- AUTO_SYNC_HELP_OPTIONS:START -->/ {capture=1}
+  capture {print}
+  /<!-- AUTO_SYNC_HELP_OPTIONS:END -->/ {exit}
+' "$ROOT_DIR/README.md")
+sync_contract_before_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-one-line-contract.md")
+"$ROOT_DIR/scripts/sync-help-to-readme.sh" --all >/dev/null
+readme_help_block_after=$(awk '
+  /<!-- AUTO_SYNC_HELP_OPTIONS:START -->/ {capture=1}
+  capture {print}
+  /<!-- AUTO_SYNC_HELP_OPTIONS:END -->/ {exit}
+' "$ROOT_DIR/README.md")
+sync_contract_after_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-one-line-contract.md")
+assert_eq "sync-help-to-readme --all keeps README help options block in sync" "$readme_help_block_before" "$readme_help_block_after"
+assert_eq "sync-help-to-readme --all keeps one-line contract snapshot in sync" "$sync_contract_before_all" "$sync_contract_after_all"
+
 if [ -n "$readme_acceptance_line_no" ] && [ -n "$readme_test_line_no" ] \
   && [ $((readme_test_line_no - readme_acceptance_line_no)) -eq 1 ] \
   && echo "$readme_acceptance_line" | grep -F -- '[Strict mode (CI向け)](#strict-mode-ci向け)' >/dev/null \
