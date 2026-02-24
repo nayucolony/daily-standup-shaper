@@ -72,7 +72,7 @@
 # 境界対比（3点セット）: `0foo` は許容 / `Foo` は拒否 / `fooA` は拒否（英大文字は先頭・末尾とも規約外）。
 # 拒否境界（抽出NG例）: ')foo' / 'foo)' は failed_case として抽出されない（先頭/末尾の ')' は規約外）。
 # extract_failed_case_from_summary_line も同じ許容境界で抽出し、境界文字を削らずに返す。
-# 受け入れ条件（1行）: failed_case は `[a-z0-9._-]+` を満たし、`0foo` は許容・`Foo` と `fooA` は拒否。
+# 受け入れ条件（1行）: failed_case は `[a-z0-9._-]+` を満たし、`0foo` は許容・`Foo`/`fooA`/`foo/bar` は拒否（英大文字・スラッシュは全位置で規約外）。
 # SELF_CHECK_FORCE_FAIL_CASE に空白など規約外文字を渡した場合は、
 # failed_case=invalid-self-check-force-fail-case で明示的に拒否される。
 
@@ -369,16 +369,16 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 19:30 JST)
-反復判定（直近5サイクル）: `stagnation(Plan更新) -> P85(回帰追加) -> stagnation(Plan更新) -> P87(回帰追加) -> P86(README追記)` で同一ファミリ比率は `3/5=0.60`。閾値到達のため、Update Plan を再優先付けしたうえで P86（READMEの3点セット明記）を完了した。
+## Update Plan (watchdog 2026-02-24 19:40 JST)
+反復判定（直近5サイクル）: `P85(回帰追加) -> stagnation(Plan更新) -> P87(回帰追加) -> P86(README追記) -> P89(README追記)` で同一ファミリ比率は `2/5=0.40`。閾値未満のため、計画再編は行わず P89（受け入れ条件1行へ英大文字/スラッシュ拒否を明記）を前進アクションとして完了した。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) の順。
 
 - [x] P86: README Quick check に `fooA` 拒否を `0foo` 許容 / `Foo` 拒否の並びへ追記し、受け入れ条件1行の例示を3点セット化する（Impact: 2, Effort: 1, Evidence: yes）
-- [ ] P89: README Quick check の1行受け入れ条件に「英大文字・スラッシュは全位置で拒否」を追記し、境界説明を実装と同期する（Impact: 2, Effort: 1, Evidence: yes）
+- [x] P89: README Quick check の1行受け入れ条件に「英大文字・スラッシュは全位置で拒否」を追記し、境界説明を実装と同期する（Impact: 2, Effort: 1, Evidence: yes）
 - [ ] P90: README Quick check に `foo/bar` 拒否の最小再現例を1行追加し、`fooA` と並べて NG 文字種の対比を即時確認可能にする（Impact: 2, Effort: 1, Evidence: yes）
 - [ ] P88: scripts/selfcheck.sh に `foo/bar` と `fooA` を同一ブロックで対比検証する回帰を追加し、NG境界の網羅性を一括で固定する（Impact: 2, Effort: 2, Evidence: yes）
 - [ ] P91: scripts/selfcheck.sh に `foo/bar`・`Foo`・`fooA` の3点を1ケース群で検証するヘルパー化を追加し、境界回帰追加時の重複を減らす（Impact: 1, Effort: 2, Evidence: yes）
 
 ## Next
-- P89を実施する: README Quick check の1行受け入れ条件に「英大文字・スラッシュは全位置で拒否」を追記し、`fooA`/`foo/bar` 回帰と説明を同期する
+- P90を実施する: README Quick check に `foo/bar` 拒否の最小再現例を1行追加し、`fooA` と並べて NG 文字種の対比を即時確認できる形へ整える
