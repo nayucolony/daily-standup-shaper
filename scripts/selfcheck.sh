@@ -229,14 +229,16 @@ assert_sync_help_all_invariants() {
 }
 
 assert_sync_help_git_diff_invariants() {
-  local changed_files changed_count changed_labels
-  changed_files=$(git diff --name-only -- README.md tests/snapshots)
+  local before_diff="$1" after_diff="$2"
+  local changed_count changed_labels
 
   if git diff --quiet -- README.md tests/snapshots; then
     pass "sync-help-to-readme --all keeps README.md and tests/snapshots unchanged (git diff --quiet)"
+  elif [ "$before_diff" = "$after_diff" ]; then
+    pass "sync-help-to-readme --all keeps README.md and tests/snapshots unchanged from pre-existing local diffs"
   else
-    changed_count=$(printf "%s\n" "$changed_files" | sed '/^$/d' | wc -l | tr -d ' ')
-    changed_labels=$(printf "%s\n" "$changed_files" | sed '/^$/d' | tr '\n' ',' | sed 's/,$//')
+    changed_count=$(printf "%s\n" "$after_diff" | sed '/^$/d' | wc -l | tr -d ' ')
+    changed_labels=$(printf "%s\n" "$after_diff" | sed '/^$/d' | tr '\n' ',' | sed 's/,$//')
     fail "sync-help-to-readme --all keeps README.md and tests/snapshots unchanged (git diff --quiet)" "changed_count=0 changed=none" "changed_count=${changed_count:-0} changed=${changed_labels:-none}"
   fi
 }
@@ -1202,6 +1204,7 @@ readme_summary_line_snapshot_before_all=$(cat "$ROOT_DIR/tests/snapshots/readme-
 readme_help_examples_snapshot_before_all=$(cat "$ROOT_DIR/tests/snapshots/sync-help-examples.md")
 readme_optional_block_snapshot_before_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-sync-help-optional-block.md")
 readme_optional_order_snapshot_before_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-sync-help-optional-order.md")
+git_diff_before_all=$(git diff --name-only -- README.md tests/snapshots)
 "$ROOT_DIR/scripts/sync-help-to-readme.sh" --all >/dev/null
 readme_help_block_after=$(awk '
   /<!-- AUTO_SYNC_HELP_OPTIONS:START -->/ {capture=1}
@@ -1217,6 +1220,7 @@ readme_summary_line_snapshot_after_all=$(cat "$ROOT_DIR/tests/snapshots/readme-s
 readme_help_examples_snapshot_after_all=$(cat "$ROOT_DIR/tests/snapshots/sync-help-examples.md")
 readme_optional_block_snapshot_after_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-sync-help-optional-block.md")
 readme_optional_order_snapshot_after_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-sync-help-optional-order.md")
+git_diff_after_all=$(git diff --name-only -- README.md tests/snapshots)
 assert_sync_help_all_invariants \
   "$readme_help_block_before" "$readme_help_block_after" \
   "$sync_contract_before_all" "$sync_contract_after_all" \
@@ -1228,7 +1232,7 @@ assert_sync_help_all_invariants \
   "$readme_help_examples_snapshot_before_all" "$readme_help_examples_snapshot_after_all" \
   "$readme_optional_block_snapshot_before_all" "$readme_optional_block_snapshot_after_all" \
   "$readme_optional_order_snapshot_before_all" "$readme_optional_order_snapshot_after_all"
-assert_sync_help_git_diff_invariants
+assert_sync_help_git_diff_invariants "$git_diff_before_all" "$git_diff_after_all"
 
 readme_test_links_before=$(grep -F -- '# 対応テスト:' "$ROOT_DIR/README.md" | head -n 1)
 readme_test_links_snapshot_before=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-one-line-contract-links.md")
