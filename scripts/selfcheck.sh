@@ -172,6 +172,26 @@ assert_readme_snapshot() {
   assert_eq "$name" "$expected" "$actual"
 }
 
+assert_sync_help_all_invariants() {
+  local before_help="$1" after_help="$2"
+  local before_contract="$3" after_contract="$4"
+  local before_test_links="$5" after_test_links="$6"
+  local before_test_links_snapshot="$7" after_test_links_snapshot="$8"
+
+  local mismatch=""
+  [ "$before_help" = "$after_help" ] || mismatch="${mismatch} help/options"
+  [ "$before_contract" = "$after_contract" ] || mismatch="${mismatch} one-line-contract"
+  [ "$before_test_links" = "$after_test_links" ] || mismatch="${mismatch} test-links-line"
+  [ "$before_test_links_snapshot" = "$after_test_links_snapshot" ] || mismatch="${mismatch} test-links-snapshot"
+
+  if [ -z "$mismatch" ]; then
+    pass "sync-help-to-readme --all keeps help/options + one-line contract + test-links in sync"
+  else
+    mismatch=$(printf "%s" "$mismatch" | sed -E 's/^ //')
+    fail "sync-help-to-readme --all keeps help/options + one-line contract + test-links in sync" "no diff after --all for: help/options, one-line-contract, test-links-line, test-links-snapshot" "changed=${mismatch}"
+  fi
+}
+
 summary_failed_case_name() {
   local text="$1"
   local summary_line
@@ -955,10 +975,11 @@ readme_help_block_after=$(awk '
 sync_contract_after_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-one-line-contract.md")
 readme_test_links_after_all=$(grep -F -- '# 対応テスト:' "$ROOT_DIR/README.md" | head -n 1)
 readme_test_links_snapshot_after_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-one-line-contract-links.md")
-assert_eq "sync-help-to-readme --all keeps README help options block in sync" "$readme_help_block_before" "$readme_help_block_after"
-assert_eq "sync-help-to-readme --all keeps one-line contract snapshot in sync" "$sync_contract_before_all" "$sync_contract_after_all"
-assert_eq "sync-help-to-readme --all keeps README #対応テスト line in sync" "$readme_test_links_before_all" "$readme_test_links_after_all"
-assert_eq "sync-help-to-readme --all keeps one-line contract link snapshot in sync" "$readme_test_links_snapshot_before_all" "$readme_test_links_snapshot_after_all"
+assert_sync_help_all_invariants \
+  "$readme_help_block_before" "$readme_help_block_after" \
+  "$sync_contract_before_all" "$sync_contract_after_all" \
+  "$readme_test_links_before_all" "$readme_test_links_after_all" \
+  "$readme_test_links_snapshot_before_all" "$readme_test_links_snapshot_after_all"
 
 readme_test_links_before=$(grep -F -- '# 対応テスト:' "$ROOT_DIR/README.md" | head -n 1)
 readme_test_links_snapshot_before=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-one-line-contract-links.md")

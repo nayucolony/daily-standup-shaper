@@ -75,7 +75,7 @@
 # extract_failed_case_from_summary_line も同じ許容境界で抽出し、境界文字を削らずに返す。
 <a id="quick-check-one-line-acceptance"></a>
 # 受け入れ条件（1行）: failed_case は `[a-z0-9._-]+` を満たし、`0foo` は許容・`Foo`/`fooA`/`foo/bar` は拒否（英大文字・スラッシュは全位置で規約外）。契約詳細は [Strict mode (CI向け)](#strict-mode-ci向け) / [Quiet mode](#quiet-mode) を参照。
-# 対応テスト: [`accepts 0foo (README one-line acceptance)`](./scripts/selfcheck.sh#L830), [`rejects Foo (README one-line acceptance)`](./scripts/selfcheck.sh#L831), [`rejects fooA (uppercase suffix, README one-line acceptance)`](./scripts/selfcheck.sh#L831), [`rejects foo/bar (slash delimiter, README one-line acceptance)`](./scripts/selfcheck.sh#L831)
+# 対応テスト: [`accepts 0foo (README one-line acceptance)`](./scripts/selfcheck.sh#L850), [`rejects Foo (README one-line acceptance)`](./scripts/selfcheck.sh#L851), [`rejects fooA (uppercase suffix, README one-line acceptance)`](./scripts/selfcheck.sh#L851), [`rejects foo/bar (slash delimiter, README one-line acceptance)`](./scripts/selfcheck.sh#L851)
 # 補足: 上記4リンクは selfcheck 内の「README one-line acceptance」境界テスト群（0foo許容 / Foo・fooA・foo/bar拒否）を指す。
 # 2行契約ブロックスナップショット更新: ./scripts/update-one-line-contract-snapshot.sh
 # 対応テスト4リンク行の同期（README行番号ズレ防止）: ./scripts/update-one-line-contract-test-links.sh
@@ -380,11 +380,11 @@ cp ./config/labels.example.json ./config/labels.local.json
 閾値超過のため、同系ループ回避として Update Plan を再更新し、Impact/Effort/Evidence で優先順位を再構成。
 
 - [x] P114: selfcheck に `sync-help-to-readme.sh --all` 実行時の test-links 行/スナップショット冪等性検証を追加し、1コマンド同期の自己検証を成立（Impact: 3, Effort: 1, Evidence: yes）
-- [ ] P115: selfcheck の `--all` 同期検証（help/options + one-line contract + test-links）を単一ヘルパー化して失敗メッセージを統一（Impact: 3, Effort: 2, Evidence: yes）
+- [x] P115: selfcheck の `--all` 同期検証（help/options + one-line contract + test-links）を単一ヘルパー化して失敗メッセージを統一（Impact: 3, Effort: 2, Evidence: yes）
 - [ ] P116: README Quick check に `./scripts/sync-help-to-readme.sh --all` の単一同期手順を明示し、運用導線を一本化（Impact: 2, Effort: 1, Evidence: yes）
 - [ ] P118: tests/snapshots/readme-quick-check-one-line-contract-links.md の更新手順を README に追記して、差分発生時の復旧手順を固定（Impact: 2, Effort: 1, Evidence: yes）
 - [ ] P117: `sync-help-to-readme.sh --help` の使用例へ test-links 統合例を追記し、CLIガイドと実装の乖離を防止（Impact: 1, Effort: 1, Evidence: yes）
 - [ ] P119: `./scripts/selfcheck.sh --summary` の直前に `./scripts/sync-help-to-readme.sh --all` を入れるローカル検証ワンライナーを README に追加（Impact: 1, Effort: 1, Evidence: yes）
 
 ## Next
-- P115を実施する: selfcheck の `sync-help-to-readme --all` 検証3点（help/options・one-line contract・test-links）を単一ヘルパーへ集約し、失敗時に差分対象を1形式で表示する
+- P116を実施する: README Quick check に `./scripts/sync-help-to-readme.sh --all` の単一同期手順を追記し、運用導線を一本化する
