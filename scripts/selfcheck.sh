@@ -771,6 +771,7 @@ assert_eq "README strict/quiet matrix snapshot matches expected markdown table" 
 
 if [ "$SKIP_SUMMARY_FAILCASE_TEST" != "1" ]; then
   summary_fail_case="summary-failcase-contract-sentinel"
+  summary_fail_case_with_double_dash="summary--failcase-contract-sentinel"
 
   run_selfcheck_capture "" summary
   summary_success_out="$RUN_SELF_CHECK_OUT"
@@ -853,6 +854,16 @@ if [ "$SKIP_SUMMARY_FAILCASE_TEST" != "1" ]; then
     pass "--summary failure reports failed_case matching normal-mode FAIL name"
   else
     fail "--summary failure reports failed_case matching normal-mode FAIL name" "normal/summary both fail and report identical case name ($summary_fail_case)" "$(summary_contract_actual "$summary_code" "$summary_failure_line_count" "$summary_first_line")"
+  fi
+
+  run_selfcheck_capture "$summary_fail_case_with_double_dash" summary
+  summary_dd_out="$RUN_SELF_CHECK_OUT"
+  summary_dd_code=$RUN_SELF_CHECK_CODE
+  summary_dd_fail_name=$(summary_failed_case_name "$summary_dd_out")
+  if [ "$summary_dd_code" -ne 0 ] && [ "$summary_dd_fail_name" = "$summary_fail_case_with_double_dash" ]; then
+    pass "--summary failure keeps failed_case intact when case name contains double dash"
+  else
+    fail "--summary failure keeps failed_case intact when case name contains double dash" "failed_case preserves full case name ($summary_fail_case_with_double_dash)" "$(summary_contract_actual "$summary_dd_code" "$(summary_line_count "$summary_dd_out")" "$(summary_first_nonempty_line "$summary_dd_out")")"
   fi
 
   if [ -n "$summary_passed_count" ] && [ "$normal_passed_count" = "$summary_passed_count" ]; then
