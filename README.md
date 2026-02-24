@@ -82,6 +82,9 @@
 # 補足: 上記4リンクは selfcheck 内の「README one-line acceptance」境界テスト群（0foo許容 / Foo・fooA・foo/bar拒否）を指す。
 # 2行契約ブロックスナップショット更新: ./scripts/update-one-line-contract-snapshot.sh
 # 対応テスト4リンク行の同期（README行番号ズレ防止）: ./scripts/update-one-line-contract-test-links.sh
+# test-links スナップショット差分の復旧（README行 + tests/snapshots/readme-quick-check-one-line-contract-links.md を同時更新）:
+#   ./scripts/update-one-line-contract-test-links.sh
+#   git diff -- README.md tests/snapshots/readme-quick-check-one-line-contract-links.md
 # SELF_CHECK_FORCE_FAIL_CASE に空白など規約外文字を渡した場合は、
 # failed_case=invalid-self-check-force-fail-case で明示的に拒否される。
 
@@ -378,17 +381,17 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-25 01:20 JST)
-反復判定（実行前の直近5サイクル）: `P113(sync-script+selfcheck) -> P114(selfcheck拡張) -> plan-only更新 -> P115(selfcheck整理) -> README導線更新` で同系（README同期/検証）比率は `5/5=1.00`（閾値0.60）。
+## Update Plan (watchdog 2026-02-25 01:30 JST)
+反復判定（実行前の直近5サイクル）: `P114(selfcheck拡張) -> plan-only更新 -> P115(selfcheck整理) -> P116(README導線更新) -> P118(復旧手順固定)` で同系（README同期/検証）比率は `5/5=1.00`（閾値0.60）。
 閾値超過のため、Update Plan を再優先付け（Impact/Effort/Evidence）して plan-only 連打を回避。
 
 - [x] P114: selfcheck に `sync-help-to-readme.sh --all` 実行時の test-links 行/スナップショット冪等性検証を追加し、1コマンド同期の自己検証を成立（Impact: 3, Effort: 1, Evidence: yes）
 - [x] P115: selfcheck の `--all` 同期検証（help/options + one-line contract + test-links）を単一ヘルパー化して失敗メッセージを統一（Impact: 3, Effort: 2, Evidence: yes）
 - [x] P116: README Quick check に `./scripts/sync-help-to-readme.sh --all` の単一同期手順を追記し、運用導線を一本化（Impact: 2, Effort: 1, Evidence: yes）
-- [ ] P118: tests/snapshots/readme-quick-check-one-line-contract-links.md の更新手順を README に追記して、差分発生時の復旧手順を固定（Impact: 2, Effort: 1, Evidence: yes）
-- [ ] P117: `sync-help-to-readme.sh --help` の使用例へ test-links 統合例を追記し、CLIガイドと実装の乖離を防止（Impact: 1, Effort: 1, Evidence: yes）
-- [ ] P119: `./scripts/selfcheck.sh --summary` の直前に `./scripts/sync-help-to-readme.sh --all` を入れるローカル検証ワンライナーを README に追加（Impact: 1, Effort: 1, Evidence: yes）
+- [x] P118: tests/snapshots/readme-quick-check-one-line-contract-links.md の更新手順を README Quick check に追記し、差分発生時の復旧手順を固定（Impact: 2, Effort: 1, Evidence: yes）
 - [ ] P120: `sync-help-to-readme.sh --all && ./scripts/selfcheck.sh --summary` を Quick check の推奨順として1行追記し、同期忘れを予防（Impact: 1, Effort: 1, Evidence: yes）
+- [ ] P119: `./scripts/selfcheck.sh --summary` の直前に `./scripts/sync-help-to-readme.sh --all` を入れるローカル検証ワンライナーを README に追加（Impact: 1, Effort: 1, Evidence: yes）
+- [ ] P117: `sync-help-to-readme.sh --help` の使用例へ test-links 統合例を追記し、CLIガイドと実装の乖離を防止（Impact: 1, Effort: 1, Evidence: yes）
 
 ## Next
-- P118を実施する: tests/snapshots/readme-quick-check-one-line-contract-links.md の更新手順を README Quick check に追記し、差分発生時の復旧導線を固定する
+- P120を実施する: Quick check に `./scripts/sync-help-to-readme.sh --all && ./scripts/selfcheck.sh --summary` の推奨順1行を追記し、同期忘れを予防する
