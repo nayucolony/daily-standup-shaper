@@ -878,6 +878,15 @@ else
   fail "README one-line acceptance and test-link lines stay adjacent" "README keeps '# 受け入れ条件（1行）:' immediately followed by '# 対応テスト:'" "acceptance_line=${readme_acceptance_line_no:-missing} test_line=${readme_test_line_no:-missing}"
 fi
 
+if [ -n "$readme_acceptance_line_no" ] && [ -n "$readme_test_line_no" ] \
+  && [ $((readme_test_line_no - readme_acceptance_line_no)) -eq 1 ] \
+  && echo "$readme_acceptance_line" | grep -F -- '[Strict mode (CI向け)](#strict-mode-ci向け)' >/dev/null \
+  && echo "$readme_acceptance_line" | grep -F -- '[Quiet mode](#quiet-mode)' >/dev/null; then
+  pass "README one-line acceptance adjacency stays intact after Strict/Quiet mutual links"
+else
+  fail "README one-line acceptance adjacency stays intact after Strict/Quiet mutual links" "acceptance line keeps Strict/Quiet links and remains immediately followed by '# 対応テスト:'" "acceptance_line=${readme_acceptance_line:-missing} acceptance_line_no=${readme_acceptance_line_no:-missing} test_line_no=${readme_test_line_no:-missing}"
+fi
+
 readme_boundary_vocab_line_normalized=$(printf "%s\n" "$readme_boundary_link_line" | sed -E 's/#L[0-9]+/#L<line>/g')
 readme_boundary_vocab_expected='# 対応テスト: [`accepts 0foo (README one-line acceptance)`](./scripts/selfcheck.sh#L<line>), [`rejects Foo (README one-line acceptance)`](./scripts/selfcheck.sh#L<line>), [`rejects fooA (uppercase suffix, README one-line acceptance)`](./scripts/selfcheck.sh#L<line>), [`rejects foo/bar (slash delimiter, README one-line acceptance)`](./scripts/selfcheck.sh#L<line>)'
 assert_eq "README boundary link labels snapshot keeps accepts/rejects vocabulary mapping" "$readme_boundary_vocab_expected" "$readme_boundary_vocab_line_normalized"
