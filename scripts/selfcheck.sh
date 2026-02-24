@@ -817,12 +817,13 @@ assert_readme_snapshot \
   "$ROOT_DIR/tests/snapshots/sync-help-examples.md" \
   "$sync_help_examples_actual"
 if printf "%s\n" "$sync_help_text" | grep -Fx -- '  ./scripts/sync-help-to-readme.sh --update-one-line-contract-test-links' >/dev/null \
+  && printf "%s\n" "$sync_help_text" | grep -Fx -- '  ./scripts/sync-help-to-readme.sh --update-recommended-sequence-snapshot' >/dev/null \
   && printf "%s\n" "$sync_help_text" | grep -Fx -- '  ./scripts/sync-help-to-readme.sh --update-sync-line-snapshot' >/dev/null \
   && printf "%s\n" "$sync_help_text" | grep -Fx -- '  ./scripts/sync-help-to-readme.sh --update-help-examples-snapshot' >/dev/null \
   && printf "%s\n" "$sync_help_text" | grep -Fx -- '  ./scripts/sync-help-to-readme.sh --all' >/dev/null; then
-  pass "sync-help-to-readme --help includes test-links/sync-line/help-examples/--all examples"
+  pass "sync-help-to-readme --help includes test-links/recommended-sequence/sync-line/help-examples/--all examples"
 else
-  fail "sync-help-to-readme --help includes test-links/sync-line/help-examples/--all examples" "--help Examples contain test-links, sync-line, help-examples, and --all commands" "$sync_help_text"
+  fail "sync-help-to-readme --help includes test-links/recommended-sequence/sync-line/help-examples/--all examples" "--help Examples contain test-links, recommended-sequence, sync-line, help-examples, and --all commands" "$sync_help_text"
 fi
 
 missing_sync_help_examples_line=""
