@@ -228,6 +228,19 @@ assert_sync_help_all_invariants() {
   fi
 }
 
+assert_sync_help_git_diff_invariants() {
+  local changed_files changed_count changed_labels
+  changed_files=$(git diff --name-only -- README.md tests/snapshots)
+
+  if git diff --quiet -- README.md tests/snapshots; then
+    pass "sync-help-to-readme --all keeps README.md and tests/snapshots unchanged (git diff --quiet)"
+  else
+    changed_count=$(printf "%s\n" "$changed_files" | sed '/^$/d' | wc -l | tr -d ' ')
+    changed_labels=$(printf "%s\n" "$changed_files" | sed '/^$/d' | tr '\n' ',' | sed 's/,$//')
+    fail "sync-help-to-readme --all keeps README.md and tests/snapshots unchanged (git diff --quiet)" "changed_count=0 changed=none" "changed_count=${changed_count:-0} changed=${changed_labels:-none}"
+  fi
+}
+
 summary_failed_case_name() {
   local text="$1"
   local summary_line
@@ -1174,6 +1187,7 @@ sync_contract_before=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-one-lin
 sync_contract_after=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-one-line-contract.md")
 assert_eq "sync-help-to-readme --update-one-line-contract-snapshot keeps one-line contract snapshot in sync" "$sync_contract_before" "$sync_contract_after"
 
+"$ROOT_DIR/scripts/sync-help-to-readme.sh" --all >/dev/null
 readme_help_block_before=$(awk '
   /<!-- AUTO_SYNC_HELP_OPTIONS:START -->/ {capture=1}
   capture {print}
@@ -1214,6 +1228,7 @@ assert_sync_help_all_invariants \
   "$readme_help_examples_snapshot_before_all" "$readme_help_examples_snapshot_after_all" \
   "$readme_optional_block_snapshot_before_all" "$readme_optional_block_snapshot_after_all" \
   "$readme_optional_order_snapshot_before_all" "$readme_optional_order_snapshot_after_all"
+assert_sync_help_git_diff_invariants
 
 readme_test_links_before=$(grep -F -- '# 対応テスト:' "$ROOT_DIR/README.md" | head -n 1)
 readme_test_links_snapshot_before=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-one-line-contract-links.md")
