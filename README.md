@@ -337,18 +337,18 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 13:30 JST)
-反復判定（直近5サイクル）: summary契約系アクションが 4/5 で閾値(>=0.6)を超過。今サイクルは同系実装ループを断つため、Update Plan を再編して優先度を更新。
+## Update Plan (watchdog 2026-02-24 13:40 JST)
+反復判定（直近5サイクル）: summary契約系の連続実装を避けるため、今回は `--help` 同期の自動化（P62）を前進アクションとして実施。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。
 
 - [x] P57: `scripts/selfcheck.sh` に summary契約テスト用ヘルパー（成功/失敗実行 + `summary_code/summary_lines/first_line` 抽出）を追加し、既存の重複コマンド列を関数化する（Impact: 4, Effort: 2, Evidence: yes）
 - [x] P59: `scripts/selfcheck.sh --summary` 失敗時に `summary_code=<number>` の数値契約を単独回帰で固定し、機械処理の型崩れを防ぐ（Impact: 3, Effort: 2, Evidence: yes）
 - [x] P60: README Quick check に summary失敗時の triage 手順（`summary_code`→`summary_lines`→`first_line`）を3手順で追加し、一次切り分けを短縮する（Impact: 3, Effort: 1, Evidence: yes）
-- [ ] P62: `./bin/shape-standup --help` の全オプションを README へ機械同期する `scripts/sync-help-to-readme.sh` を追加し、README/実装の乖離を防ぐ（Impact: 4, Effort: 3, Evidence: yes）
+- [x] P62: `./bin/shape-standup --help` の全オプションを README へ機械同期する `scripts/sync-help-to-readme.sh` を追加し、README/実装の乖離を防ぐ（Impact: 4, Effort: 3, Evidence: yes）
 - [ ] P58: README に `grep -E` 1本で回せる summary契約の最小CI例を追加し、外部CI移植を容易にする（Impact: 2, Effort: 1, Evidence: yes）
 - [ ] P61: `scripts/selfcheck.sh` の summary失敗系検証を1関数1責務（実行/抽出/判定）に分割し、今後の失敗ケース追加の改修コストを下げる（Impact: 2, Effort: 2, Evidence: yes）
 - [ ] P63: `--strict --quiet` 契約を README の対応表から自動検証する markdownテーブルスナップショットテストを追加し、運用文書の回帰検知を強化する（Impact: 3, Effort: 3, Evidence: yes）
 
 ## Next
-- P62実施: `./bin/shape-standup --help` の全オプションを README へ機械同期する `scripts/sync-help-to-readme.sh` を追加する
+- P58実施: README に `grep -E` 1本で回せる summary契約の最小CI例を追加する
