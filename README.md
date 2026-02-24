@@ -56,10 +56,12 @@
 ```bash
 ./scripts/selfcheck.sh
 
-# README/スナップショット同期（help/options + one-line contract + links + recommended + sync-line + help-examples を1コマンドで揃える）
+# README/スナップショット同期（help/options + one-line contract + links + recommended + sync-line + summary-line + help-examples + optional-order を1コマンドで揃える）
 ./scripts/sync-help-to-readme.sh --all
 
 # 必要時のみ: 個別同期（推奨順で実行）
+# 個別同期5コマンドの順序スナップショットだけを1コマンドで復旧
+./scripts/sync-help-to-readme.sh --update-sync-help-optional-order-snapshot
 # 1) test-links だけ個別同期（--help Examples と同一手順）
 ./scripts/sync-help-to-readme.sh --update-one-line-contract-test-links
 # 2) 推奨順1行スナップショットだけ更新
@@ -91,7 +93,7 @@
 # extract_failed_case_from_summary_line も同じ許容境界で抽出し、境界文字を削らずに返す。
 <a id="quick-check-one-line-acceptance"></a>
 # 受け入れ条件（1行）: failed_case は `[a-z0-9._-]+` を満たし、`0foo` は許容・`Foo`/`fooA`/`foo/bar` は拒否（英大文字・スラッシュは全位置で規約外）。契約詳細は [Strict mode (CI向け)](#strict-mode-ci向け) / [Quiet mode](#quiet-mode) を参照。
-# 対応テスト: [`accepts 0foo (README one-line acceptance)`](./scripts/selfcheck.sh#L923), [`rejects Foo (README one-line acceptance)`](./scripts/selfcheck.sh#L924), [`rejects fooA (uppercase suffix, README one-line acceptance)`](./scripts/selfcheck.sh#L924), [`rejects foo/bar (slash delimiter, README one-line acceptance)`](./scripts/selfcheck.sh#L924)
+# 対応テスト: [`accepts 0foo (README one-line acceptance)`](./scripts/selfcheck.sh#L931), [`rejects Foo (README one-line acceptance)`](./scripts/selfcheck.sh#L932), [`rejects fooA (uppercase suffix, README one-line acceptance)`](./scripts/selfcheck.sh#L932), [`rejects foo/bar (slash delimiter, README one-line acceptance)`](./scripts/selfcheck.sh#L932)
 # 補足: 上記4リンクは selfcheck 内の「README one-line acceptance」境界テスト群（0foo許容 / Foo・fooA・foo/bar拒否）を指す。
 # 2行契約ブロックスナップショット更新: ./scripts/update-one-line-contract-snapshot.sh
 # 対応テスト4リンク行の同期（README行番号ズレ防止）: ./scripts/update-one-line-contract-test-links.sh
@@ -394,14 +396,14 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-25 04:50 JST)
-反復判定（実行前の直近5サイクル）: `P131(個別syncを必要時のみへ整理) -> P130(summary単体行の共通スナップショット化) -> P125(ローカル検証ワンライナー見出し+実コマンドの同時固定) -> P133(summary-line snapshot更新スクリプト追加) -> P135(sync-help個別更新5コマンド固定)` で README/sync-help/selfcheck の同系比率は `5/5=1.00`（閾値0.60）。
-閾値超過のため、このサイクルは **P136を完了しつつ Update Plan を再優先付け**（Impact優先、同ImpactではEffort低い順、Evidence-ready優先）。
+## Update Plan (watchdog 2026-02-25 05:00 JST)
+反復判定（実行前の直近5サイクル）: `P125 -> P133 -> P134 -> P135 -> P136` で README/sync-help/selfcheck の同系比率は `5/5=1.00`（閾値0.60）。
+閾値超過のため、このサイクルは **Plan更新を強制しつつ P132 を実施**（Impact優先、同ImpactではEffort低い順、Evidence-ready優先）。
 
-- [x] P136: `scripts/selfcheck.sh` の summary-line 同期検証を `./scripts/sync-help-to-readme.sh --update-summary-line-snapshot` 経由へ一本化し、`update-summary-line-snapshot.sh` 直接実行導線を撤去（Impact: 2, Effort: 2, Evidence: yes）
-- [ ] P132: sync-help 個別更新5コマンド（summary含む）を `scripts/update-sync-help-optional-order-snapshot.sh` に集約し、README手編集を減らして差分復旧を1コマンド化（Impact: 2, Effort: 3, Evidence: yes）
+- [x] P132: sync-help 個別更新5コマンド（summary含む）を `scripts/update-sync-help-optional-order-snapshot.sh` に集約し、`./scripts/sync-help-to-readme.sh --update-sync-help-optional-order-snapshot` で差分復旧を1コマンド化（Impact: 3, Effort: 2, Evidence: yes）
+- [ ] P138: `sync-help-to-readme.sh --all` の不変条件検証を summary-line/help-examples まで拡張し、`assert_sync_help_all_invariants` を完全に `--all` 対象と一致させる（Impact: 3, Effort: 3, Evidence: yes）
 - [ ] P137: `tests/snapshots/sync-help-examples.md` から README 個別同期コマンド群を自動抽出するヘルパーを追加し、help→README同期を単一ソース化（Impact: 2, Effort: 3, Evidence: yes）
-- [ ] P138: `sync-help-to-readme.sh --all` の不変条件検証へ `readme-sync-help-summary-line.md` を追加し、`assert_sync_help_all_invariants` を7点同期（help/options + one-line contract + links + recommended + sync-line + summary-line + help-examples）へ拡張（Impact: 2, Effort: 3, Evidence: yes）
+- [ ] P139: README Quick check の個別同期ブロック（見出し+6コマンド）を専用スナップショット化し、文言崩れを1テストで検知する（Impact: 2, Effort: 2, Evidence: yes）
 
 ## Next
-- P132を実施する: sync-help 個別更新5コマンド（summary含む）の順序/件数スナップショット更新を `scripts/update-sync-help-optional-order-snapshot.sh` に集約し、README差分復旧を1コマンド化する
+- P138を実施する: `sync-help-to-readme.sh --all` の不変条件検証に summary-line + help-examples を追加し、`--all` 1回で同期対象が全て不変であることを selfcheck で固定する
