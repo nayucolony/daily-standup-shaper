@@ -992,6 +992,19 @@ assert_readme_snapshot \
 
 readme_sync_all_line='./scripts/sync-help-to-readme.sh --all'
 readme_recommended_sequence_line='./scripts/sync-help-to-readme.sh --all && ./scripts/selfcheck.sh --summary'
+readme_local_verify_heading='# ローカル検証ワンライナー（同期→summary、直後のCI向け1行サマリと同順）'
+readme_local_verify_heading_count=$(grep -Fxc -- "$readme_local_verify_heading" "$ROOT_DIR/README.md" || true)
+if [ "$readme_local_verify_heading_count" -eq 1 ]; then
+  pass "README Quick check keeps local verification one-liner heading"
+else
+  fail "README Quick check keeps local verification one-liner heading" "README contains exactly one heading line: $readme_local_verify_heading" "count=$readme_local_verify_heading_count"
+fi
+readme_local_verify_pair=$(printf '%s\n%s' "$readme_local_verify_heading" "$readme_recommended_sequence_line")
+assert_readme_snapshot \
+  "README Quick check local verification heading+command snapshot matches expected" \
+  "$ROOT_DIR/tests/snapshots/readme-quick-check-local-verify-one-liner.md" \
+  "$readme_local_verify_pair"
+
 readme_recommended_sequence_count=$(grep -Fxc -- "$readme_recommended_sequence_line" "$ROOT_DIR/README.md" || true)
 if [ "$readme_recommended_sequence_count" -eq 1 ]; then
   pass "README Quick check keeps recommended sync-then-summary one-liner"
