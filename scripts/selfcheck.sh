@@ -426,6 +426,36 @@ Today: B plan
 Blockers: B blocker
 IN
 )
+
+set +e
+quiet_modes_ok=true
+for quiet_mode in single all; do
+  quiet_args="--strict --quiet"
+  quiet_input="$strict_missing_input"
+  quiet_expect='## Yesterday'
+  if [ "$quiet_mode" = "all" ]; then
+    quiet_args="--all --strict --quiet"
+    quiet_input="$strict_all_input"
+    quiet_expect='### Entry 1'
+  fi
+
+  quiet_stdout=$(printf "%s\n" "$quiet_input" | "$CLI" $quiet_args 2>/tmp/shape_strict_${quiet_mode}_quiet_err.txt)
+  quiet_code=$?
+  quiet_stderr=$(cat /tmp/shape_strict_${quiet_mode}_quiet_err.txt)
+
+  if [ "$quiet_code" -ne 2 ] || [ -n "$quiet_stderr" ] || ! echo "$quiet_stdout" | grep -q "$quiet_expect"; then
+    quiet_modes_ok=false
+    quiet_modes_debug="mode=$quiet_mode stdout=$quiet_stdout | stderr=$quiet_stderr | code=$quiet_code"
+    break
+  fi
+done
+set -e
+if [ "$quiet_modes_ok" = true ]; then
+  pass "--strict --quiet keeps exit code 2 and empty stderr in single/all markdown modes"
+else
+  fail "--strict --quiet keeps exit code 2 and empty stderr in single/all markdown modes" "single/all: code=2 + empty stderr + markdown output" "$quiet_modes_debug"
+fi
+
 set +e
 strict_all_out=$(printf "%s\n" "$strict_all_input" | "$CLI" --all --strict 2>&1)
 strict_all_code=$?
