@@ -718,6 +718,7 @@ if [ "$SKIP_SUMMARY_FAILCASE_TEST" != "1" ]; then
   summary_success_first_line=$(printf "%s\n" "$summary_success_out" | sed -n '/./{p;q;}')
   summary_line=$(printf "%s\n" "$summary_out" | grep '^SELF_CHECK_SUMMARY:' | head -n 1)
   summary_failure_line_count=$(printf "%s\n" "$summary_out" | grep -E -c '^SELF_CHECK_SUMMARY:' || true)
+  summary_failure_detail_lines=$(printf "%s\n" "$summary_out" | grep -E -c '^(PASS|FAIL): ' || true)
   summary_first_line=$(printf "%s\n" "$summary_out" | sed -n '/./{p;q;}')
   summary_fail_name=$(printf "%s\n" "$summary_out" | sed -n 's/^SELF_CHECK_SUMMARY: .*failed_case=//p' | head -n 1)
   normal_passed_count=$(printf "%s\n" "$normal_out" | grep -c '^PASS: ' | tr -d ' ')
@@ -751,6 +752,12 @@ if [ "$SKIP_SUMMARY_FAILCASE_TEST" != "1" ]; then
     pass "--summary failure emits exactly one SELF_CHECK_SUMMARY line"
   else
     fail "--summary failure emits exactly one SELF_CHECK_SUMMARY line" "summary failure output contains exactly one SELF_CHECK_SUMMARY line" "summary_code=$summary_code summary_lines=$summary_failure_line_count output=$summary_out"
+  fi
+
+  if [ "$summary_code" -ne 0 ] && [ "$summary_failure_detail_lines" -eq 0 ]; then
+    pass "--summary failure output does not include PASS/FAIL detail lines"
+  else
+    fail "--summary failure output does not include PASS/FAIL detail lines" "summary failure output contains no PASS:/FAIL: detail lines" "summary_code=$summary_code detail_lines=$summary_failure_detail_lines output=$summary_out"
   fi
 
   if [ "$normal_code" -ne 0 ] \

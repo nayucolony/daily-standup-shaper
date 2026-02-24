@@ -318,9 +318,9 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P50: `scripts/selfcheck.sh --summary` 実行時に `SELF_CHECK_SUMMARY` 行が1行のみで、`PASS:` / `FAIL:` の詳細行が混在しないことを検証し、CIの行パース前提を固定する（Impact: 2, Effort: 2, Evidence: yes）
 - [x] P51: `scripts/selfcheck.sh --summary` の成功時/失敗時で `SELF_CHECK_SUMMARY` 接頭辞が常に先頭行に出ること（余分な前置ログなし）を回帰追加し、ログ収集の先頭行パース互換を固定する（Impact: 2, Effort: 2, Evidence: yes）
 - [x] P52: `scripts/selfcheck.sh --summary` の失敗時に `SELF_CHECK_SUMMARY` 行が **ちょうど1行のみ**（重複なし）であることを回帰追加し、ログ収集の重複行パース揺れを防ぐ（Impact: 2, Effort: 2, Evidence: yes）
-- [ ] P53: `scripts/selfcheck.sh --summary` の失敗時に `PASS:` / `FAIL:` 詳細行が混在しないことを失敗系専用で回帰追加し、CIの単一行パーサ互換をさらに固定する（Impact: 3, Effort: 2, Evidence: yes）
+- [x] P53: `scripts/selfcheck.sh --summary` の失敗時に `PASS:` / `FAIL:` 詳細行が混在しないことを失敗系専用で回帰追加し、CIの単一行パーサ互換をさらに固定する（Impact: 3, Effort: 2, Evidence: yes）
 - [ ] P54: README Quick check に `--summary` 失敗例（期待: 先頭1行が SUMMARY、終了コード非0）を追記し、運用者向けの受け入れ条件を明示する（Impact: 2, Effort: 1, Evidence: yes）
 - [ ] P55: `scripts/selfcheck.sh` の summary契約回帰ブロックを関数化し、失敗時メッセージを `summary_code/summary_lines/first_line` の固定形式に統一する（Impact: 2, Effort: 2, Evidence: yes）
 
 ## Next
-- P53実施: `scripts/selfcheck.sh --summary` の失敗時に `PASS:` / `FAIL:` 詳細行が混在しないことを失敗系専用で回帰追加し、CI単一行パーサ互換を固定する
+- P54実施: README Quick check に `--summary` 失敗例（期待: 先頭1行が SUMMARY、終了コード非0）を追記し、運用者向け受け入れ条件を明示する
