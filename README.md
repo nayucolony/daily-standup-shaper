@@ -68,6 +68,8 @@
 ./scripts/sync-help-to-readme.sh --update-sync-line-snapshot
 # 4) --help Examples ブロック最小スナップショット更新（help/README二重編集差分を検知）
 ./scripts/sync-help-to-readme.sh --update-help-examples-snapshot
+# 5) summary単体行スナップショットだけ更新（READMEを1ソース化）
+./scripts/update-summary-line-snapshot.sh
 
 # ローカル検証ワンライナー（同期→summary、直後のCI向け1行サマリと同順）
 ./scripts/sync-help-to-readme.sh --all && ./scripts/selfcheck.sh --summary
@@ -392,15 +394,14 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-25 04:10 JST)
-反復判定（実行前の直近5サイクル）: `P129(Examples順序統一) -> P128(--all同期対象一覧の明文化) -> P131(個別syncを必要時のみへ整理) -> P130(summary単体行の共通スナップショット化) -> P125(ローカル検証ワンライナー見出し+実コマンドの同時固定)` で README/sync-help 導線の同系比率は `5/5=1.00`（閾値0.60）。
-閾値超過のため、このサイクルも **Update Plan優先（重複導線を1ソースへ集約）** を継続し、Impact/Effort/Evidenceで再優先付け。
+## Update Plan (watchdog 2026-02-25 04:20 JST)
+反復判定（実行前の直近5サイクル）: `P128(--all同期対象一覧の明文化) -> P131(個別syncを必要時のみへ整理) -> P130(summary単体行の共通スナップショット化) -> P125(ローカル検証ワンライナー見出し+実コマンドの同時固定) -> plan-update(Impact/Effort/Evidence再優先付け)` で README/sync-help 導線の同系比率は `5/5=1.00`（閾値0.60）。
+閾値超過のため、このサイクルは **P133を実装しつつ Update Plan を再優先付け**（high impact優先、同impactでは低effort優先、evidence-ready優先）。
 
-- [x] P125: README Quick check の「ローカル検証ワンライナー」見出し+実コマンドを `tests/snapshots/readme-quick-check-local-verify-one-liner.md` へ固定し、見出し変更ズレを selfcheck で検知（Impact: 2, Effort: 2, Evidence: yes）
-- [x] P130: `./scripts/selfcheck.sh --summary` 単体実行行の README/sync-help 両記載を `tests/snapshots/readme-sync-help-summary-line.md` へ集約し、二重更新ズレを selfcheck で検知（Impact: 2, Effort: 2, Evidence: yes）
-- [ ] P133: README Quick check の `--summary` 単体行を `scripts/update-summary-line-snapshot.sh` で自動更新できるようにし、手編集を排除（Impact: 2, Effort: 2, Evidence: yes）
-- [ ] P132: sync-help 個別更新4コマンドを `scripts/update-sync-help-optional-order-snapshot.sh` に集約し、README手編集を減らして差分復旧を1コマンド化（Impact: 2, Effort: 3, Evidence: yes）
+- [x] P133: README Quick check の `--summary` 単体行を `scripts/update-summary-line-snapshot.sh` で自動更新できるようにし、手編集を排除（Impact: 2, Effort: 2, Evidence: yes）
 - [ ] P134: `sync-help-to-readme.sh --all` に summary-line snapshot 更新を統合し、README/snapshot/help Examples の三点同期を1コマンド化（Impact: 3, Effort: 3, Evidence: yes）
+- [ ] P132: sync-help 個別更新4コマンドを `scripts/update-sync-help-optional-order-snapshot.sh` に集約し、README手編集を減らして差分復旧を1コマンド化（Impact: 2, Effort: 3, Evidence: yes）
+- [ ] P135: `sync-help-to-readme.sh --help Examples` に summary-line 更新導線（`update-summary-line-snapshot.sh`）を追加し、README/Help の手順差分を selfcheck で検知（Impact: 2, Effort: 2, Evidence: yes）
 
 ## Next
-- P133を実施する: README Quick check の `--summary` 単体行を `scripts/update-summary-line-snapshot.sh` で自動更新できるようにし、スナップショット更新手順を1ソース化する
+- P134を実施する: `sync-help-to-readme.sh --all` 実行時に `update-summary-line-snapshot.sh` も呼び出し、summary-line snapshot を既存同期導線へ統合する

@@ -1033,9 +1033,14 @@ else
   fail "README Quick check keeps one standalone summary command line" "README contains exactly one line: $readme_summary_line" "count=$readme_summary_line_count"
 fi
 assert_readme_snapshot \
-  "README and sync-help share standalone summary command snapshot" \
+  "README standalone summary command snapshot matches expected" \
   "$ROOT_DIR/tests/snapshots/readme-sync-help-summary-line.md" \
   "$readme_summary_line"
+
+readme_summary_snapshot_before=$(cat "$ROOT_DIR/tests/snapshots/readme-sync-help-summary-line.md")
+"$ROOT_DIR/scripts/update-summary-line-snapshot.sh" >/dev/null
+readme_summary_snapshot_after=$(cat "$ROOT_DIR/tests/snapshots/readme-sync-help-summary-line.md")
+assert_eq "update-summary-line-snapshot keeps standalone summary snapshot in sync" "$readme_summary_snapshot_before" "$readme_summary_snapshot_after"
 
 sync_help_summary_line=$(printf "%s\n" "$sync_help_examples_actual" | grep -E '^  \./scripts/selfcheck\.sh --summary$' | sed -E 's/^[[:space:]]+//')
 if [ "$sync_help_summary_line" = "$readme_summary_line" ]; then
