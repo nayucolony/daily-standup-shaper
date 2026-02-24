@@ -186,6 +186,8 @@ SYNC_HELP_ALL_INVARIANT_LABELS=(
   "recommended-sequence-snapshot"
   "sync-line-snapshot"
   "summary-line-snapshot"
+  "failure-heading-snapshot"
+  "failure-template-snapshot"
   "help-examples-snapshot"
   "optional-block-snapshot"
   "optional-order-snapshot"
@@ -219,6 +221,8 @@ assert_sync_help_all_invariants() {
     "${15}"
     "${17}"
     "${19}"
+    "${21}"
+    "${23}"
   )
   local -a after_values=(
     "$2"
@@ -231,6 +235,8 @@ assert_sync_help_all_invariants() {
     "${16}"
     "${18}"
     "${20}"
+    "${22}"
+    "${24}"
   )
 
   local -a mismatches=()
@@ -1258,6 +1264,8 @@ readme_test_links_snapshot_before_all=$(cat "$ROOT_DIR/tests/snapshots/readme-qu
 readme_recommended_snapshot_before_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-recommended-sequence.md")
 readme_sync_line_snapshot_before_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-sync-line.md")
 readme_summary_line_snapshot_before_all=$(cat "$ROOT_DIR/tests/snapshots/readme-sync-help-summary-line.md")
+readme_failure_heading_snapshot_before_all=$(cat "$ROOT_DIR/tests/snapshots/readme-sync-help-failure-heading.md")
+readme_failure_template_snapshot_before_all=$(cat "$ROOT_DIR/tests/snapshots/readme-sync-help-failure-template.md")
 readme_help_examples_snapshot_before_all=$(cat "$ROOT_DIR/tests/snapshots/sync-help-examples.md")
 readme_optional_block_snapshot_before_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-sync-help-optional-block.md")
 readme_optional_order_snapshot_before_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-sync-help-optional-order.md")
@@ -1274,6 +1282,8 @@ readme_test_links_snapshot_after_all=$(cat "$ROOT_DIR/tests/snapshots/readme-qui
 readme_recommended_snapshot_after_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-recommended-sequence.md")
 readme_sync_line_snapshot_after_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-sync-line.md")
 readme_summary_line_snapshot_after_all=$(cat "$ROOT_DIR/tests/snapshots/readme-sync-help-summary-line.md")
+readme_failure_heading_snapshot_after_all=$(cat "$ROOT_DIR/tests/snapshots/readme-sync-help-failure-heading.md")
+readme_failure_template_snapshot_after_all=$(cat "$ROOT_DIR/tests/snapshots/readme-sync-help-failure-template.md")
 readme_help_examples_snapshot_after_all=$(cat "$ROOT_DIR/tests/snapshots/sync-help-examples.md")
 readme_optional_block_snapshot_after_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-sync-help-optional-block.md")
 readme_optional_order_snapshot_after_all=$(cat "$ROOT_DIR/tests/snapshots/readme-quick-check-sync-help-optional-order.md")
@@ -1286,6 +1296,8 @@ assert_sync_help_all_invariants \
   "$readme_recommended_snapshot_before_all" "$readme_recommended_snapshot_after_all" \
   "$readme_sync_line_snapshot_before_all" "$readme_sync_line_snapshot_after_all" \
   "$readme_summary_line_snapshot_before_all" "$readme_summary_line_snapshot_after_all" \
+  "$readme_failure_heading_snapshot_before_all" "$readme_failure_heading_snapshot_after_all" \
+  "$readme_failure_template_snapshot_before_all" "$readme_failure_template_snapshot_after_all" \
   "$readme_help_examples_snapshot_before_all" "$readme_help_examples_snapshot_after_all" \
   "$readme_optional_block_snapshot_before_all" "$readme_optional_block_snapshot_after_all" \
   "$readme_optional_order_snapshot_before_all" "$readme_optional_order_snapshot_after_all"

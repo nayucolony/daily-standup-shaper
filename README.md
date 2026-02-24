@@ -100,7 +100,7 @@
 # extract_failed_case_from_summary_line も同じ許容境界で抽出し、境界文字を削らずに返す。
 <a id="quick-check-one-line-acceptance"></a>
 # 受け入れ条件（1行）: failed_case は `[a-z0-9._-]+` を満たし、`0foo` は許容・`Foo`/`fooA`/`foo/bar` は拒否（英大文字・スラッシュは全位置で規約外）。契約詳細は [Strict mode (CI向け)](#strict-mode-ci向け) / [Quiet mode](#quiet-mode) を参照。
-# 対応テスト: [`accepts 0foo (README one-line acceptance)`](./scripts/selfcheck.sh#L1018), [`rejects Foo (README one-line acceptance)`](./scripts/selfcheck.sh#L1019), [`rejects fooA (uppercase suffix, README one-line acceptance)`](./scripts/selfcheck.sh#L1019), [`rejects foo/bar (slash delimiter, README one-line acceptance)`](./scripts/selfcheck.sh#L1019)
+# 対応テスト: [`accepts 0foo (README one-line acceptance)`](./scripts/selfcheck.sh#L1024), [`rejects Foo (README one-line acceptance)`](./scripts/selfcheck.sh#L1025), [`rejects fooA (uppercase suffix, README one-line acceptance)`](./scripts/selfcheck.sh#L1025), [`rejects foo/bar (slash delimiter, README one-line acceptance)`](./scripts/selfcheck.sh#L1025)
 # 補足: 上記4リンクは selfcheck 内の「README one-line acceptance」境界テスト群（0foo許容 / Foo・fooA・foo/bar拒否）を指す。
 # 2行契約ブロックスナップショット更新: ./scripts/update-one-line-contract-snapshot.sh
 # 対応テスト4リンク行の同期（README行番号ズレ防止）: ./scripts/update-one-line-contract-test-links.sh
@@ -403,15 +403,15 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-25 08:10 JST)
-反復判定（実行前の直近5サイクル）: `P145 -> P147 -> P146 -> P148 -> P149` で README/sync-help/selfcheck の同系比率は `5/5=1.00`（閾値0.60超過）。
+## Update Plan (watchdog 2026-02-25 08:20 JST)
+反復判定（実行前の直近5サイクル）: `P147 -> P146 -> P148 -> P149 -> P150` で README/sync-help/selfcheck の同系比率は `5/5=1.00`（閾値0.60超過）。
 同系3連続ループ抑止ルールに基づき、Update PlanをImpact/Effort/Evidenceで再優先付け。
 
-- [x] P149: README Quick check の `# 失敗時はこの2行テンプレで復旧/確認` 行を `tests/snapshots/readme-sync-help-failure-heading.md` へ snapshot 化し、`sync-help-to-readme.sh --update-sync-help-failure-heading-snapshot` と selfcheck 検証を追加（Impact: 3, Effort: 2, Evidence: yes）
-- [ ] P150: `assert_sync_help_all_invariants` に `readme-sync-help-failure-template.md` と `readme-sync-help-failure-heading.md` の不変チェックを追加する（Impact: 3, Effort: 2, Evidence: yes）
+- [x] P150: `assert_sync_help_all_invariants` に `readme-sync-help-failure-template.md` と `readme-sync-help-failure-heading.md` の不変チェックを追加し、`sync-help-to-readme.sh --all` の差分検知を12対象へ拡張（Impact: 3, Effort: 2, Evidence: yes）
 - [ ] P151: `scripts/update-sync-help-failure-template-snapshot.sh` の冪等性検証（before/after一致）を selfcheck に追加する（Impact: 2, Effort: 1, Evidence: yes）
 - [ ] P152: `scripts/update-sync-help-failure-heading-snapshot.sh` の冪等性検証（before/after一致）を selfcheck に追加する（Impact: 2, Effort: 1, Evidence: yes）
 - [ ] P153: Quick check の「個別同期7コマンド」見出し数値と実コマンド数の一致を selfcheck で検証する（Impact: 2, Effort: 1, Evidence: yes）
+- [ ] P154: `sync_help_all_invariant_expected_no_diff_line` の期待文言に failure-heading/template を含むことを selfcheck で明示回帰化する（Impact: 2, Effort: 1, Evidence: yes）
 
 ## Next
-- P150を実施する: `assert_sync_help_all_invariants` に failure-heading/template の不変チェックを追加する
+- P151を実施する: `scripts/update-sync-help-failure-template-snapshot.sh` の冪等性検証（before/after一致）を selfcheck に追加する
