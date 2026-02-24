@@ -66,6 +66,8 @@
 # 理由: grep -E / POSIX sh / GitHub Actions log 上で追加エスケープなしに安全に抽出・再利用でき、
 # triage時に "どのケースが落ちたか" を機械判定で一意に追跡しやすくするため。
 # 運用では lower_snake / kebab / dot 区切りを使い、空白や日本語、記号（: , / など）は使わない。
+# 許容境界（先頭/末尾）: '.' '-' '_' は保持される（例: '.case', 'case-', '_case_'）。
+# extract_failed_case_from_summary_line も同じ許容境界で抽出し、境界文字を削らずに返す。
 # SELF_CHECK_FORCE_FAIL_CASE に空白など規約外文字を渡した場合は、
 # failed_case=invalid-self-check-force-fail-case で明示的に拒否される。
 
@@ -362,15 +364,15 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 15:40 JST)
-反復判定（直近5サイクル）: P68→P69→P70 に加え次候補も summary failed_case 契約ファミリで、similar ratio = 0.80（>=0.60）。同系3連続に達したため、このサイクルは実装より先に Update Plan を更新し、Impact/Effort/Evidence で再優先付けした。
+## Update Plan (watchdog 2026-02-24 15:50 JST)
+反復判定（直近5サイクル）: plan更新を挟みつつ P68→P69→P70 を消化。今回候補（P71）は README 契約明文化の仕上げで、同一作業の反復率は 2/5 = 0.40（<0.60）のため実装を継続。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。
 
-- [ ] P71: summary失敗ケース名の許容境界（先頭/末尾の `.` `-` `_`）をREADME Quick checkへ明記し、抽出関数 `extract_failed_case_from_summary_line` の期待値（境界文字を保持）を運用ルールと同期する（Impact: 3, Effort: 1, Evidence: yes）
+- [x] P71: summary失敗ケース名の許容境界（先頭/末尾の `.` `-` `_`）をREADME Quick checkへ明記し、抽出関数 `extract_failed_case_from_summary_line` の期待値（境界文字を保持）を運用ルールと同期する（Impact: 3, Effort: 1, Evidence: yes）
 - [ ] P72: `extract_failed_case_from_summary_line` の先頭境界（`.foo` / `-foo` / `_foo`）をselfcheck回帰へ追加し、READMEに記載した許容境界を実検証で固定する（Impact: 3, Effort: 2, Evidence: yes）
 - [ ] P73: `extract_failed_case_from_summary_line` の先頭不正文字（例: `)foo`）拒否をselfcheck回帰へ追加し、許容集合外の早期検知を強化する（Impact: 2, Effort: 2, Evidence: yes）
 - [ ] P74: README Quick check に `SELF_CHECK_FORCE_FAIL_CASE` の命名テンプレ（kebab/dot/underscore）を1行で追加し、運用時のケース名設計を統一する（Impact: 2, Effort: 1, Evidence: yes）
 
 ## Next
-- P71実施: summary失敗ケース名の許容境界（先頭/末尾の `.` `-` `_`）をREADMEへ明記し、抽出関数の期待値と運用ルールを同期する
+- P72実施: `extract_failed_case_from_summary_line` の先頭境界（`.foo` / `-foo` / `_foo`）をselfcheck回帰へ追加し、READMEに記載した許容境界を実検証で固定する
