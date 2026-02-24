@@ -371,14 +371,16 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 20:40 JST)
-反復判定（直近5サイクル）: `Plan更新 -> P88(selfcheck) -> P91(selfcheck) -> P90(README) -> P92(README)` で同系比率は `2/5=0.40`。閾値未満のため通常前進として P93 を実施。
+## Update Plan (watchdog 2026-02-24 20:50 JST)
+反復判定（直近5サイクル）: `P88(selfcheck) -> P91(selfcheck) -> P90(README) -> P92(README) -> P93(selfcheck)` で同系（selfcheck）比率は `3/5=0.60`（閾値以上）。
+このサイクルは反復回避のため **Plan更新を1アクション** とし、Impact/Effort/Evidenceで再優先付け。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) の順。
 
-- [x] P92: README Quick check の受け入れ条件1行を `scripts/selfcheck.sh` の該当テスト名へリンクし、仕様と回帰テストの対応追跡を容易にする（Impact: 2, Effort: 1, Evidence: yes）
-- [x] P93: scripts/selfcheck.sh に README受け入れ条件1行のリンク存在（4テスト名）を検証する回帰を追加し、README↔selfcheck対応のドリフトを自動検出する（Impact: 3, Effort: 1, Evidence: yes）
-- [ ] P94: README の対応テストリンク行で `./scripts/selfcheck.sh#L...` 形式が4件揃っていることを検証し、リンク先アンカー欠落を検出する（Impact: 2, Effort: 1, Evidence: yes）
+- [ ] P94: README の対応テストリンク行で `./scripts/selfcheck.sh#L...` 形式が4件揃っていることを selfcheck で検証し、リンク先アンカー欠落を自動検出する（Impact: 3, Effort: 1, Evidence: yes）
+- [ ] P95: README Quick check の「対応テスト」行に `scripts/selfcheck.sh` 内の対象ブロック見出し（境界テスト群）への説明を1行追加し、リンク意図を明確化する（Impact: 2, Effort: 1, Evidence: yes）
+- [ ] P96: scripts/selfcheck.sh で README の対応テストリンク数が4件ちょうどであること（不足/過剰）を検証し、README更新漏れ検知を強化する（Impact: 2, Effort: 2, Evidence: yes）
+- [ ] P97: README Quick check の受け入れ条件1行と対応テスト行の近接配置（連続2行）を selfcheck で固定し、可読性劣化を防ぐ（Impact: 2, Effort: 2, Evidence: yes）
 
 ## Next
 - P94を実施する: README の対応テストリンク行で `./scripts/selfcheck.sh#L...` 形式が4件揃っていることを selfcheck に追加し、リンク欠落を自動検出する
