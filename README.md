@@ -362,26 +362,15 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 15:00 JST)
-反復判定（直近5サイクル）: P61→P64→P65→P67→P66 はいずれも summary契約（README/selfcheck）ファミリで similar ratio = 1.00（>=0.60）。同系3連続を超過しているため、今サイクルは Update Plan を更新し、Impact/Effort/Evidence で優先度を再編した。
+## Update Plan (watchdog 2026-02-24 15:40 JST)
+反復判定（直近5サイクル）: P68→P69→P70 に加え次候補も summary failed_case 契約ファミリで、similar ratio = 0.80（>=0.60）。同系3連続に達したため、このサイクルは実装より先に Update Plan を更新し、Impact/Effort/Evidence で再優先付けした。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。
 
-- [x] P57: `scripts/selfcheck.sh` に summary契約テスト用ヘルパー（成功/失敗実行 + `summary_code/summary_lines/first_line` 抽出）を追加し、既存の重複コマンド列を関数化する（Impact: 4, Effort: 2, Evidence: yes）
-- [x] P59: `scripts/selfcheck.sh --summary` 失敗時に `summary_code=<number>` の数値契約を単独回帰で固定し、機械処理の型崩れを防ぐ（Impact: 3, Effort: 2, Evidence: yes）
-- [x] P60: README Quick check に summary失敗時の triage 手順（`summary_code`→`summary_lines`→`first_line`）を3手順で追加し、一次切り分けを短縮する（Impact: 3, Effort: 1, Evidence: yes）
-- [x] P62: `./bin/shape-standup --help` の全オプションを README へ機械同期する `scripts/sync-help-to-readme.sh` を追加し、README/実装の乖離を防ぐ（Impact: 4, Effort: 3, Evidence: yes）
-- [x] P58: README に `grep -E` 1本で回せる summary契約の最小CI例を追加し、外部CI移植を容易にする（Impact: 2, Effort: 1, Evidence: yes）
-- [x] P63: `--strict --quiet` 契約を README の対応表から自動検証する markdownテーブルスナップショットテストを追加し、運用文書の回帰検知を強化する（Impact: 3, Effort: 3, Evidence: yes）
-- [x] P61: `scripts/selfcheck.sh` の summary失敗系検証を1関数1責務（実行/抽出/判定）に分割し、今後の失敗ケース追加の改修コストを下げる（Impact: 2, Effort: 2, Evidence: yes）
-- [x] P64: `--summary` 出力行に余分な前後空白が混入しない契約（先頭/末尾trim不要）を失敗系で固定する（Impact: 3, Effort: 2, Evidence: yes）
-- [x] P65: summary失敗時の `failed_case` が `--` を含むケース名でも壊れないことを回帰追加する（Impact: 3, Effort: 2, Evidence: yes）
-- [x] P67: summary失敗時の `failed_case` が `.` と `_` を含むケース名でも末尾まで保持されることを回帰追加する（Impact: 3, Effort: 2, Evidence: yes）
-- [x] P66: README Quick check に `--summary` 契約を jq 非依存で検証する POSIX sh 例を追記する（Impact: 2, Effort: 1, Evidence: yes）
-- [x] P68: `failed_case` 抽出ロジックを `summary_failed_case_name` のE2E依存から分離し、正規表現の境界条件（末尾記号）を単体関数で固定する（Impact: 4, Effort: 2, Evidence: yes）
-- [x] P69: README Quick check に `failed_case` 許容文字集合（`[a-z0-9._-]+`）の契約理由を1段落追記し、運用時の命名ルールを明文化する（Impact: 3, Effort: 1, Evidence: yes）
-- [x] P70: `SELF_CHECK_FORCE_FAIL_CASE` へ空白含み文字列を与えた際の取り扱い（拒否）を仕様化し、selfcheckで固定する（Impact: 2, Effort: 3, Evidence: yes）
-- [ ] P71: summary失敗ケース名の許容境界（先頭/末尾の `.` `-` `_`）をREADMEに追記し、抽出関数の期待値を明文化する（Impact: 2, Effort: 1, Evidence: yes）
+- [ ] P71: summary失敗ケース名の許容境界（先頭/末尾の `.` `-` `_`）をREADME Quick checkへ明記し、抽出関数 `extract_failed_case_from_summary_line` の期待値（境界文字を保持）を運用ルールと同期する（Impact: 3, Effort: 1, Evidence: yes）
+- [ ] P72: `extract_failed_case_from_summary_line` の先頭境界（`.foo` / `-foo` / `_foo`）をselfcheck回帰へ追加し、READMEに記載した許容境界を実検証で固定する（Impact: 3, Effort: 2, Evidence: yes）
+- [ ] P73: `extract_failed_case_from_summary_line` の先頭不正文字（例: `)foo`）拒否をselfcheck回帰へ追加し、許容集合外の早期検知を強化する（Impact: 2, Effort: 2, Evidence: yes）
+- [ ] P74: README Quick check に `SELF_CHECK_FORCE_FAIL_CASE` の命名テンプレ（kebab/dot/underscore）を1行で追加し、運用時のケース名設計を統一する（Impact: 2, Effort: 1, Evidence: yes）
 
 ## Next
 - P71実施: summary失敗ケース名の許容境界（先頭/末尾の `.` `-` `_`）をREADMEへ明記し、抽出関数の期待値と運用ルールを同期する
