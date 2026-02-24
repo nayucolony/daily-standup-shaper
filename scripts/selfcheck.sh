@@ -154,9 +154,16 @@ summary_first_nonempty_line() {
   printf "%s\n" "$text" | sed -n '/./{p;q;}'
 }
 
+extract_failed_case_from_summary_line() {
+  local line="$1"
+  printf "%s\n" "$line" | sed -n 's/^SELF_CHECK_SUMMARY: passed=[0-9][0-9]*\/[0-9][0-9]* failed_case=\([a-z0-9._-][a-z0-9._-]*\)$/\1/p'
+}
+
 summary_failed_case_name() {
   local text="$1"
-  printf "%s\n" "$text" | sed -n 's/^SELF_CHECK_SUMMARY: .*failed_case=//p' | head -n 1
+  local summary_line
+  summary_line=$(printf "%s\n" "$text" | grep '^SELF_CHECK_SUMMARY:' | head -n 1)
+  extract_failed_case_from_summary_line "$summary_line"
 }
 
 summary_passed_count_from_line() {
@@ -768,6 +775,16 @@ readme_quiet_table_actual=$(awk '
 ' "$ROOT_DIR/README.md")
 readme_quiet_table_expected=$(cat "$ROOT_DIR/tests/snapshots/readme-strict-quiet-matrix.md")
 assert_eq "README strict/quiet matrix snapshot matches expected markdown table" "$readme_quiet_table_expected" "$readme_quiet_table_actual"
+
+summary_line_trailing_dot='SELF_CHECK_SUMMARY: passed=3/7 failed_case=summary-failcase-contract-sentinel.'
+summary_line_trailing_dash='SELF_CHECK_SUMMARY: passed=3/7 failed_case=summary-failcase-contract-sentinel-'
+summary_line_trailing_underscore='SELF_CHECK_SUMMARY: passed=3/7 failed_case=summary-failcase-contract-sentinel_'
+summary_line_trailing_paren='SELF_CHECK_SUMMARY: passed=3/7 failed_case=summary-failcase-contract-sentinel)'
+
+assert_eq "extract_failed_case_from_summary_line keeps trailing dot" "summary-failcase-contract-sentinel." "$(extract_failed_case_from_summary_line "$summary_line_trailing_dot")"
+assert_eq "extract_failed_case_from_summary_line keeps trailing dash" "summary-failcase-contract-sentinel-" "$(extract_failed_case_from_summary_line "$summary_line_trailing_dash")"
+assert_eq "extract_failed_case_from_summary_line keeps trailing underscore" "summary-failcase-contract-sentinel_" "$(extract_failed_case_from_summary_line "$summary_line_trailing_underscore")"
+assert_eq "extract_failed_case_from_summary_line rejects invalid trailing punctuation" "" "$(extract_failed_case_from_summary_line "$summary_line_trailing_paren")"
 
 if [ "$SKIP_SUMMARY_FAILCASE_TEST" != "1" ]; then
   summary_fail_case="summary-failcase-contract-sentinel"
