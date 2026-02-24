@@ -863,6 +863,13 @@ else
   fail "README one-line acceptance line links to Strict/Quiet contract sections" "contains [Strict mode (CI向け)](#strict-mode-ci向け) and [Quiet mode](#quiet-mode) links" "$readme_acceptance_line"
 fi
 
+readme_backlink_count=$(grep -F -- '[受け入れ条件（1行）](#quick-check-one-line-acceptance)' "$ROOT_DIR/README.md" | wc -l | tr -d ' ')
+if [ "$readme_backlink_count" -ge 2 ]; then
+  pass "Strict/Quiet sections link back to Quick check one-line acceptance"
+else
+  fail "Strict/Quiet sections link back to Quick check one-line acceptance" "at least two backlinks to [受け入れ条件（1行）](#quick-check-one-line-acceptance)" "count=$readme_backlink_count"
+fi
+
 readme_acceptance_line_no=$(grep -n -F -- '# 受け入れ条件（1行）:' "$ROOT_DIR/README.md" | head -n 1 | cut -d: -f1)
 readme_test_line_no=$(grep -n -F -- '# 対応テスト:' "$ROOT_DIR/README.md" | head -n 1 | cut -d: -f1)
 if [ -n "$readme_acceptance_line_no" ] && [ -n "$readme_test_line_no" ] && [ $((readme_test_line_no - readme_acceptance_line_no)) -eq 1 ]; then

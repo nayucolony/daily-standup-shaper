@@ -73,6 +73,7 @@
 # 最小再現（NG文字種の対比）: SELF_CHECK_FORCE_FAIL_CASE=fooA ./scripts/selfcheck.sh --summary && SELF_CHECK_FORCE_FAIL_CASE='foo/bar' ./scripts/selfcheck.sh --summary
 # 拒否境界（抽出NG例）: ')foo' / 'foo)' は failed_case として抽出されない（先頭/末尾の ')' は規約外）。
 # extract_failed_case_from_summary_line も同じ許容境界で抽出し、境界文字を削らずに返す。
+<a id="quick-check-one-line-acceptance"></a>
 # 受け入れ条件（1行）: failed_case は `[a-z0-9._-]+` を満たし、`0foo` は許容・`Foo`/`fooA`/`foo/bar` は拒否（英大文字・スラッシュは全位置で規約外）。契約詳細は [Strict mode (CI向け)](#strict-mode-ci向け) / [Quiet mode](#quiet-mode) を参照。
 # 対応テスト: [`accepts 0foo (README one-line acceptance)`](./scripts/selfcheck.sh#L821), [`rejects Foo (README one-line acceptance)`](./scripts/selfcheck.sh#L822), [`rejects fooA (uppercase suffix, README one-line acceptance)`](./scripts/selfcheck.sh#L822), [`rejects foo/bar (slash delimiter, README one-line acceptance)`](./scripts/selfcheck.sh#L822)
 # 補足: 上記4リンクは selfcheck 内の「README one-line acceptance」境界テスト群（0foo許容 / Foo・fooA・foo/bar拒否）を指す。
@@ -264,7 +265,7 @@ README側にもヘルプ文言をそのまま保持します（selfcheck で照�
 ## Strict mode (CI向け)
 必須3項目（Yesterday / Today / Blockers）のいずれかが未抽出なら、出力後に非0で終了します。
 
-> Quiet運用時のstderr抑制と終了コード維持については [Quiet mode](#quiet-mode) を参照してください。
+> Quiet運用時のstderr抑制と終了コード維持については [Quiet mode](#quiet-mode) を参照してください。Quick check側の受け入れ条件は [受け入れ条件（1行）](#quick-check-one-line-acceptance) で往復確認できます。
 
 - 終了コード: `2`
 - stderrフォーマット:
@@ -303,7 +304,7 @@ echo "$code"  # 2
 ## Quiet mode
 `--strict` と併用して、警告メッセージ（stderr）を抑制したい時に使います。
 
-> `--quiet` は stderr のみを抑制し、strictの失敗契約（終了コード `2`）は維持されます。strictの契約全体は [Strict mode (CI向け)](#strict-mode-ci向け) を参照してください。
+> `--quiet` は stderr のみを抑制し、strictの失敗契約（終了コード `2`）は維持されます。strictの契約全体は [Strict mode (CI向け)](#strict-mode-ci向け) を参照してください。Quick check側の受け入れ条件は [受け入れ条件（1行）](#quick-check-one-line-acceptance) で往復確認できます。
 
 ```bash
 ./bin/shape-standup --strict --quiet ./examples/sample.txt
