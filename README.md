@@ -69,8 +69,10 @@
 # 命名テンプレ: SELF_CHECK_FORCE_FAIL_CASE=summary-fail.case_name ./scripts/selfcheck.sh --summary
 # 正常系の最小例（NG例との対比用）: SELF_CHECK_FORCE_FAIL_CASE=foo-1 ./scripts/selfcheck.sh --summary
 # 許容境界（先頭/末尾）: '.' '-' '_' は保持される（例: '.case', 'case-', '_case_'）。
+# 先頭境界の対比: `0foo` は許容 / `Foo` は拒否（先頭英大文字は規約外）。
 # 拒否境界（抽出NG例）: ')foo' / 'foo)' は failed_case として抽出されない（先頭/末尾の ')' は規約外）。
 # extract_failed_case_from_summary_line も同じ許容境界で抽出し、境界文字を削らずに返す。
+# 受け入れ条件（1行）: failed_case は `[a-z0-9._-]+` を満たし、先頭 `0` は許容・先頭 `A-Z` は拒否。
 # SELF_CHECK_FORCE_FAIL_CASE に空白など規約外文字を渡した場合は、
 # failed_case=invalid-self-check-force-fail-case で明示的に拒否される。
 
@@ -367,15 +369,16 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 18:20 JST)
-反復判定（直近5サイクル）: `P79(回帰追加) -> P76(README追記) -> plan更新 -> P80(回帰追加) -> P81(README追記)` で同一ファミリ比率は `2/5=0.40`。閾値未満のため通常の1アクション前進を継続。
+## Update Plan (watchdog 2026-02-24 18:30 JST)
+反復判定（直近5サイクル）: `P76(README追記) -> plan更新 -> P80(回帰追加) -> P81(README追記) -> P82(回帰追加)` で同一ファミリ比率は `2/5=0.40`。閾値未満のため通常の1アクション前進を継続。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) の順。
 
 - [x] P80: scripts/selfcheck.sh に failed_case 先頭数字＋末尾数字（`0foo0`）保持の回帰を追加し、数値境界の両端同時ケースを固定する（Impact: 3, Effort: 2, Evidence: yes）
 - [x] P81: README Quick check に failed_case 正常系の最小例（`foo-1`）を1行追加し、NG例との対比を完成させる（Impact: 2, Effort: 1, Evidence: yes）
 - [x] P82: scripts/selfcheck.sh に failed_case 単一文字（`a` / `0`）保持の回帰を追加し、最小長境界を固定する（Impact: 2, Effort: 2, Evidence: yes）
-- [ ] P83: README Quick check に先頭数字許容（`0foo`）と先頭大文字拒否（`Foo`）を対で示す注記を追加し、受け入れ条件を1行化する（Impact: 1, Effort: 1, Evidence: yes）
+- [x] P83: README Quick check に先頭数字許容（`0foo`）と先頭大文字拒否（`Foo`）を対で示す注記を追加し、受け入れ条件を1行化する（Impact: 1, Effort: 1, Evidence: yes）
+- [ ] P84: scripts/selfcheck.sh に `0foo` 許容と `Foo` 拒否を同一ブロックで対比検証する回帰を追加し、READMEの1行受け入れ条件と実装契約を1:1で結びつける（Impact: 2, Effort: 2, Evidence: yes）
 
 ## Next
-- P83を実施する: README Quick check に先頭数字許容（`0foo`）と先頭大文字拒否（`Foo`）を対で示す注記を追加し、受け入れ条件を1行化する
+- P84を実施する: scripts/selfcheck.sh に `0foo` 許容と `Foo` 拒否を同一ブロックで対比検証する回帰を追加し、READMEの1行受け入れ条件と実装契約を1:1で結びつける
