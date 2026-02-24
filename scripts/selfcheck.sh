@@ -241,7 +241,7 @@ assert_sync_help_all_invariants() {
     fi
   done
 
-  local invariant_name="sync-help-to-readme --all keeps help/options + one-line contract + test-links + recommended-sequence + sync-line + summary-line + help-examples + optional-block + optional-order snapshots in sync"
+  local invariant_name="sync-help-to-readme --all keeps help/options + one-line contract + test-links + recommended-sequence + sync-line + summary-line + failure-template + help-examples + optional-block + optional-order snapshots in sync"
   if [ "${#mismatches[@]}" -eq 0 ]; then
     pass "$invariant_name"
   else
@@ -892,11 +892,12 @@ if printf "%s\n" "$sync_help_text" | grep -Fx -- '  ./scripts/sync-help-to-readm
   && printf "%s\n" "$sync_help_text" | grep -Fx -- '  ./scripts/selfcheck.sh --summary' >/dev/null \
   && printf "%s\n" "$sync_help_text" | grep -Fx -- '  ./scripts/sync-help-to-readme.sh --update-one-line-contract-test-links' >/dev/null \
   && printf "%s\n" "$sync_help_text" | grep -Fx -- '  ./scripts/sync-help-to-readme.sh --update-help-examples-snapshot' >/dev/null \
+  && printf "%s\n" "$sync_help_text" | grep -Fx -- '  ./scripts/sync-help-to-readme.sh --update-sync-help-failure-template-snapshot' >/dev/null \
   && printf "%s\n" "$sync_help_text" | grep -Fx -- '  ./scripts/sync-help-to-readme.sh --update-sync-help-optional-order-snapshot' >/dev/null \
   && printf "%s\n" "$sync_help_text" | grep -Fx -- '  ./scripts/sync-help-to-readme.sh --all' >/dev/null; then
-  pass "sync-help-to-readme --help includes recommended/sync-line/summary/test-links/help-examples/optional-order/--all examples"
+  pass "sync-help-to-readme --help includes recommended/sync-line/summary/test-links/help-examples/failure-template/optional-order/--all examples"
 else
-  fail "sync-help-to-readme --help includes recommended/sync-line/summary/test-links/help-examples/optional-order/--all examples" "--help Examples contain recommended-sequence, sync-line, summary, test-links, help-examples, optional-order, and --all commands" "$sync_help_text"
+  fail "sync-help-to-readme --help includes recommended/sync-line/summary/test-links/help-examples/failure-template/optional-order/--all examples" "--help Examples contain recommended-sequence, sync-line, summary, test-links, help-examples, failure-template, optional-order, and --all commands" "$sync_help_text"
 fi
 
 missing_sync_help_examples_line=""
@@ -932,15 +933,15 @@ else
   fail "README Quick check marks sync-help individual updates as optional" "README contains exactly one optional header line for sync-help individual updates" "count=$readme_sync_help_optional_header_count"
 fi
 
-readme_sync_help_optional_total_count=$(grep -E -c '^\./scripts/sync-help-to-readme\.sh --update-(one-line-contract-test-links|recommended-sequence-snapshot|sync-line-snapshot|help-examples-snapshot|summary-line-snapshot)$' "$ROOT_DIR/README.md" || true)
-if [ "$readme_sync_help_optional_total_count" -eq 5 ]; then
-  pass "README Quick check keeps exactly five sync-help individual update commands"
+readme_sync_help_optional_total_count=$(grep -E -c '^\./scripts/sync-help-to-readme\.sh --update-(one-line-contract-test-links|recommended-sequence-snapshot|sync-line-snapshot|help-examples-snapshot|summary-line-snapshot|sync-help-failure-template-snapshot)$' "$ROOT_DIR/README.md" || true)
+if [ "$readme_sync_help_optional_total_count" -eq 6 ]; then
+  pass "README Quick check keeps exactly six sync-help individual update commands"
 else
-  fail "README Quick check keeps exactly five sync-help individual update commands" "README contains exactly 5 sync-help individual update commands" "count=$readme_sync_help_optional_total_count"
+  fail "README Quick check keeps exactly six sync-help individual update commands" "README contains exactly 6 sync-help individual update commands" "count=$readme_sync_help_optional_total_count"
 fi
 
 readme_sync_help_optional_order_actual=$(awk '
-  /^\.\/scripts\/sync-help-to-readme\.sh --update-(one-line-contract-test-links|recommended-sequence-snapshot|sync-line-snapshot|help-examples-snapshot|summary-line-snapshot)$/ {print}
+  /^\.\/scripts\/sync-help-to-readme\.sh --update-(one-line-contract-test-links|recommended-sequence-snapshot|sync-line-snapshot|help-examples-snapshot|summary-line-snapshot|sync-help-failure-template-snapshot)$/ {print}
 ' "$ROOT_DIR/README.md")
 assert_readme_snapshot \
   "README Quick check keeps sync-help optional command order snapshot" \
@@ -953,11 +954,12 @@ readme_sync_help_optional_block_actual=$(awk '
   capture && /^\.\/scripts\/sync-help-to-readme\.sh --update-recommended-sequence-snapshot$/ {print; next}
   capture && /^\.\/scripts\/sync-help-to-readme\.sh --update-sync-line-snapshot$/ {print; next}
   capture && /^\.\/scripts\/sync-help-to-readme\.sh --update-summary-line-snapshot$/ {print; next}
+  capture && /^\.\/scripts\/sync-help-to-readme\.sh --update-sync-help-failure-template-snapshot$/ {print; next}
   capture && /^\.\/scripts\/sync-help-to-readme\.sh --update-one-line-contract-test-links$/ {print; next}
   capture && /^\.\/scripts\/sync-help-to-readme\.sh --update-help-examples-snapshot$/ {print; exit}
 ' "$ROOT_DIR/README.md")
 assert_readme_snapshot \
-  "README Quick check keeps sync-help optional block snapshot (header + 6 commands)" \
+  "README Quick check keeps sync-help optional block snapshot (header + 7 commands)" \
   "$ROOT_DIR/tests/snapshots/readme-quick-check-sync-help-optional-block.md" \
   "$readme_sync_help_optional_block_actual"
 
@@ -1070,11 +1072,11 @@ else
 fi
 
 readme_sync_all_scope_line=$(grep -F -- '# README/スナップショット同期（' "$ROOT_DIR/README.md" | head -n 1)
-readme_sync_all_scope_count=$(grep -Fxc -- '# README/スナップショット同期（help/options + one-line contract + links + recommended + sync-line + summary-line + help-examples + optional-order を1コマンドで揃える）' "$ROOT_DIR/README.md" || true)
+readme_sync_all_scope_count=$(grep -Fxc -- '# README/スナップショット同期（help/options + one-line contract + links + recommended + sync-line + summary-line + failure-template + help-examples + optional-order を1コマンドで揃える）' "$ROOT_DIR/README.md" || true)
 if [ "$readme_sync_all_scope_count" -eq 1 ]; then
   pass "README Quick check documents --all sync scope in one line"
 else
-  fail "README Quick check documents --all sync scope in one line" "README contains exactly one scope line for --all: help/options + one-line contract + links + recommended + sync-line + summary-line + help-examples + optional-order" "count=$readme_sync_all_scope_count line='$readme_sync_all_scope_line'"
+  fail "README Quick check documents --all sync scope in one line" "README contains exactly one scope line for --all: help/options + one-line contract + links + recommended + sync-line + summary-line + failure-template + help-examples + optional-order" "count=$readme_sync_all_scope_count line='$readme_sync_all_scope_line'"
 fi
 assert_readme_snapshot \
   "README Quick check --all sync scope line snapshot matches expected" \

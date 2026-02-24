@@ -11,7 +11,7 @@ END_MARK='<!-- AUTO_SYNC_HELP_OPTIONS:END -->'
 
 usage() {
   cat <<'USAGE'
-Usage: ./scripts/sync-help-to-readme.sh [--update-one-line-contract-snapshot|--update-one-line-contract-test-links|--update-recommended-sequence-snapshot|--update-sync-line-snapshot|--update-summary-line-snapshot|--update-help-examples-snapshot|--update-sync-help-optional-order-snapshot|--all]
+Usage: ./scripts/sync-help-to-readme.sh [--update-one-line-contract-snapshot|--update-one-line-contract-test-links|--update-recommended-sequence-snapshot|--update-sync-line-snapshot|--update-summary-line-snapshot|--update-sync-help-failure-template-snapshot|--update-help-examples-snapshot|--update-sync-help-optional-order-snapshot|--all]
 
 Options:
   --update-one-line-contract-snapshot   Update tests/snapshots/readme-quick-check-one-line-contract.md only.
@@ -19,14 +19,16 @@ Options:
   --update-recommended-sequence-snapshot Update tests/snapshots/readme-quick-check-recommended-sequence.md from README Quick check.
   --update-sync-line-snapshot          Update tests/snapshots/readme-quick-check-sync-line.md from README Quick check.
   --update-summary-line-snapshot       Update tests/snapshots/readme-sync-help-summary-line.md from README Quick check.
+  --update-sync-help-failure-template-snapshot Update tests/snapshots/readme-sync-help-failure-template.md from README Quick check retry/diff template lines.
   --update-help-examples-snapshot      Update tests/snapshots/sync-help-examples.md from sync-help-to-readme.sh --help Examples.
   --update-sync-help-optional-order-snapshot Update tests/snapshots/readme-quick-check-sync-help-optional-order.md from README Quick check.
-  --all                                 Sync README help options + one-line contract snapshot + test-link line/snapshot + recommended sequence snapshot + sync-help single-line snapshot + summary-line snapshot + sync-help --help Examples snapshot + sync-help optional-order snapshot.
+  --all                                 Sync README help options + one-line contract snapshot + test-link line/snapshot + recommended sequence snapshot + sync-help single-line snapshot + summary-line snapshot + sync-help failure-template snapshot + sync-help --help Examples snapshot + sync-help optional-order snapshot.
 
 Examples:
   ./scripts/sync-help-to-readme.sh --update-recommended-sequence-snapshot
   ./scripts/sync-help-to-readme.sh --update-sync-line-snapshot
   ./scripts/sync-help-to-readme.sh --update-summary-line-snapshot
+  ./scripts/sync-help-to-readme.sh --update-sync-help-failure-template-snapshot
   ./scripts/selfcheck.sh --summary
   ./scripts/sync-help-to-readme.sh --update-one-line-contract-test-links
   ./scripts/sync-help-to-readme.sh --update-help-examples-snapshot
@@ -44,6 +46,7 @@ update_recommended_sequence_snapshot=false
 update_sync_line_snapshot=false
 update_help_examples_snapshot=false
 update_summary_line_snapshot=false
+update_sync_help_failure_template_snapshot=false
 update_sync_help_optional_order_snapshot=false
 
 case "${1:-}" in
@@ -65,6 +68,9 @@ case "${1:-}" in
   --update-summary-line-snapshot)
     update_summary_line_snapshot=true
     ;;
+  --update-sync-help-failure-template-snapshot)
+    update_sync_help_failure_template_snapshot=true
+    ;;
   --update-help-examples-snapshot)
     update_help_examples_snapshot=true
     ;;
@@ -78,6 +84,7 @@ case "${1:-}" in
     update_recommended_sequence_snapshot=true
     update_sync_line_snapshot=true
     update_summary_line_snapshot=true
+    update_sync_help_failure_template_snapshot=true
     update_help_examples_snapshot=true
     update_sync_help_optional_order_snapshot=true
     ;;
@@ -165,6 +172,10 @@ fi
 
 if [ "$update_summary_line_snapshot" = true ]; then
   "$ROOT_DIR/scripts/update-summary-line-snapshot.sh"
+fi
+
+if [ "$update_sync_help_failure_template_snapshot" = true ]; then
+  "$ROOT_DIR/scripts/update-sync-help-failure-template-snapshot.sh"
 fi
 
 if [ "$update_help_examples_snapshot" = true ]; then
