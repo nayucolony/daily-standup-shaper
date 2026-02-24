@@ -367,15 +367,15 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 18:04 JST)
-反復判定（直近5サイクル）: `P76(README追記) -> plan更新 -> P80(回帰追加) -> P79(回帰追加) -> P77(README追記)` で同一ファミリ比率は `2/5=0.40`。閾値未満のため通常の1アクション前進を継続。
+## Update Plan (watchdog 2026-02-24 18:20 JST)
+反復判定（直近5サイクル）: `P79(回帰追加) -> P76(README追記) -> plan更新 -> P80(回帰追加) -> P81(README追記)` で同一ファミリ比率は `2/5=0.40`。閾値未満のため通常の1アクション前進を継続。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) の順。
 
 - [x] P80: scripts/selfcheck.sh に failed_case 先頭数字＋末尾数字（`0foo0`）保持の回帰を追加し、数値境界の両端同時ケースを固定する（Impact: 3, Effort: 2, Evidence: yes）
-- [ ] P81: README Quick check に failed_case 正常系の最小例（`foo-1`）を1行追加し、NG例との対比を完成させる（Impact: 2, Effort: 1, Evidence: yes）
-- [ ] P82: scripts/selfcheck.sh に failed_case 単一文字（`a` / `0`）保持の回帰を追加し、最小長境界を固定する（Impact: 2, Effort: 2, Evidence: yes）
+- [x] P81: README Quick check に failed_case 正常系の最小例（`foo-1`）を1行追加し、NG例との対比を完成させる（Impact: 2, Effort: 1, Evidence: yes）
+- [x] P82: scripts/selfcheck.sh に failed_case 単一文字（`a` / `0`）保持の回帰を追加し、最小長境界を固定する（Impact: 2, Effort: 2, Evidence: yes）
 - [ ] P83: README Quick check に先頭数字許容（`0foo`）と先頭大文字拒否（`Foo`）を対で示す注記を追加し、受け入れ条件を1行化する（Impact: 1, Effort: 1, Evidence: yes）
 
 ## Next
-- P81を実施する: README Quick check に failed_case 正常系の最小例（`foo-1`）を1行追加し、NG例との対比を明確化する
+- P83を実施する: README Quick check に先頭数字許容（`0foo`）と先頭大文字拒否（`Foo`）を対で示す注記を追加し、受け入れ条件を1行化する
