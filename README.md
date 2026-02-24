@@ -384,15 +384,15 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-25 01:50 JST)
-反復判定（実行前の直近5サイクル）: `P116(README導線更新) -> P118(復旧手順固定) -> P120(推奨順1行追加) -> plan再優先付け -> P121(selfcheck回帰固定)` で同系（README同期/検証）比率は `5/5=1.00`（閾値0.60）。
-閾値超過のため、Update Plan を Impact/Effort/Evidence で再優先付けし、次は READMEの運用手順を selfcheck で継続的に検証する。
+## Update Plan (watchdog 2026-02-25 02:00 JST)
+反復判定（実行前の直近5サイクル）: `P118(復旧手順固定) -> P120(推奨順1行追加) -> P121(推奨順1行の存在回帰) -> plan再優先付け -> P122(単体行→推奨順の順序回帰)` で同系（README同期/検証）比率は `5/5=1.00`（閾値0.60）。
+閾値超過のため、Update Plan を Impact/Effort/Evidence で再優先付けし、次サイクルは README運用手順の「実行しやすさ」を増やす施策を優先する。
 
-- [x] P121: Quick check の推奨順1行（`sync-help-to-readme --all && selfcheck --summary`）の存在を selfcheck で回帰固定する（Impact: 3, Effort: 1, Evidence: yes）
-- [ ] P122: README Quick check の `sync-help-to-readme --all` 行と推奨順1行の順序（単体行→推奨順）を selfcheck で固定する（Impact: 3, Effort: 1, Evidence: yes）
+- [x] P122: README Quick check の `sync-help-to-readme --all` 行と推奨順1行の順序（単体行→推奨順）を selfcheck で固定する（Impact: 3, Effort: 1, Evidence: yes）
 - [ ] P119: `./scripts/selfcheck.sh --summary` の直前に `./scripts/sync-help-to-readme.sh --all` を入れるローカル検証ワンライナーを README に追加（Impact: 2, Effort: 1, Evidence: yes）
 - [ ] P117: `sync-help-to-readme.sh --help` の使用例へ test-links 統合例を追記し、CLIガイドと実装の乖離を防止（Impact: 2, Effort: 1, Evidence: yes）
 - [ ] P123: README Quick check の推奨順1行を tests/snapshots/readme-quick-check-recommended-sequence.md に分離し、更新スクリプト経由で同期可能にする（Impact: 2, Effort: 2, Evidence: yes）
+- [ ] P124: README Quick check の `sync-help-to-readme --all` 単体行を tests/snapshots/readme-quick-check-sync-line.md に分離し、推奨順行との順序差分をスナップショット比較で検知可能にする（Impact: 2, Effort: 2, Evidence: yes）
 
 ## Next
-- P122を実施する: README Quick check の `sync-help-to-readme --all` 行と推奨順1行の順序（単体行→推奨順）を scripts/selfcheck.sh で回帰固定する
+- P119を実施する: README Quick check に `sync-help-to-readme --all` → `selfcheck --summary` の順で検証するローカルワンライナーを追加し、selfcheckで存在確認を回帰化する

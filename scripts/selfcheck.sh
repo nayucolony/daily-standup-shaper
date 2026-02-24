@@ -905,12 +905,21 @@ else
   fail "README one-line acceptance line links to Strict/Quiet contract sections" "contains [Strict mode (CI向け)](#strict-mode-ci向け) and [Quiet mode](#quiet-mode) links" "$readme_acceptance_line"
 fi
 
+readme_sync_all_line='./scripts/sync-help-to-readme.sh --all'
 readme_recommended_sequence_line='./scripts/sync-help-to-readme.sh --all && ./scripts/selfcheck.sh --summary'
 readme_recommended_sequence_count=$(grep -Fxc -- "$readme_recommended_sequence_line" "$ROOT_DIR/README.md" || true)
 if [ "$readme_recommended_sequence_count" -eq 1 ]; then
   pass "README Quick check keeps recommended sync-then-summary one-liner"
 else
   fail "README Quick check keeps recommended sync-then-summary one-liner" "README contains exactly one line: $readme_recommended_sequence_line" "count=$readme_recommended_sequence_count"
+fi
+
+readme_sync_all_line_no=$(grep -n -F -- "$readme_sync_all_line" "$ROOT_DIR/README.md" | head -n 1 | cut -d: -f1)
+readme_recommended_sequence_line_no=$(grep -n -F -- "$readme_recommended_sequence_line" "$ROOT_DIR/README.md" | head -n 1 | cut -d: -f1)
+if [ -n "$readme_sync_all_line_no" ] && [ -n "$readme_recommended_sequence_line_no" ] && [ "$readme_sync_all_line_no" -lt "$readme_recommended_sequence_line_no" ]; then
+  pass "README Quick check keeps sync-help single-line command before recommended sequence one-liner"
+else
+  fail "README Quick check keeps sync-help single-line command before recommended sequence one-liner" "README keeps './scripts/sync-help-to-readme.sh --all' above '$readme_recommended_sequence_line'" "sync_all_line=${readme_sync_all_line_no:-missing} recommended_line=${readme_recommended_sequence_line_no:-missing}"
 fi
 
 readme_backlink_count=$(grep -F -- '[受け入れ条件（1行）](#quick-check-one-line-acceptance)' "$ROOT_DIR/README.md" | wc -l | tr -d ' ')
