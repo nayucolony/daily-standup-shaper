@@ -62,6 +62,21 @@
 # 最小CI例（grep -E 1本で summary 契約を検証）
 ./scripts/selfcheck.sh --summary | grep -E '^SELF_CHECK_SUMMARY: passed=[0-9]+/[0-9]+ failed_case=(none|[a-z0-9._-]+)$'
 
+# jq 非依存の POSIX sh 例（summary行の形式 + passed 分子/分母整合）
+summary_line=$(./scripts/selfcheck.sh --summary)
+case "$summary_line" in
+  SELF_CHECK_SUMMARY:\ passed=*/*\ failed_case=none|SELF_CHECK_SUMMARY:\ passed=*/*\ failed_case=[a-z0-9._-]*) ;;
+  *) echo "FAIL: invalid summary format: $summary_line" >&2; exit 1 ;;
+esac
+passed_pair=${summary_line#SELF_CHECK_SUMMARY: passed=}
+passed_pair=${passed_pair%% failed_case=*}
+passed_ok=${passed_pair%%/*}
+passed_all=${passed_pair#*/}
+[ "$passed_ok" = "$passed_all" ] || {
+  echo "FAIL: passed mismatch: $passed_ok/$passed_all" >&2
+  exit 1
+}
+
 # --summary 失敗例（期待: 先頭1行が SUMMARY / 終了コードは非0）
 set +e
 SELF_CHECK_FORCE_FAIL_CASE=summary-failcase-contract-sentinel \
@@ -355,10 +370,10 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P64: `--summary` 出力行に余分な前後空白が混入しない契約（先頭/末尾trim不要）を失敗系で固定する（Impact: 3, Effort: 2, Evidence: yes）
 - [x] P65: summary失敗時の `failed_case` が `--` を含むケース名でも壊れないことを回帰追加する（Impact: 3, Effort: 2, Evidence: yes）
 - [x] P67: summary失敗時の `failed_case` が `.` と `_` を含むケース名でも末尾まで保持されることを回帰追加する（Impact: 3, Effort: 2, Evidence: yes）
-- [ ] P66: README Quick check に `--summary` 契約を jq 非依存で検証する POSIX sh 例を追記する（Impact: 2, Effort: 1, Evidence: yes）
+- [x] P66: README Quick check に `--summary` 契約を jq 非依存で検証する POSIX sh 例を追記する（Impact: 2, Effort: 1, Evidence: yes）
 - [ ] P68: `failed_case` 抽出ロジックを `summary_failed_case_name` のE2E依存から分離し、正規表現の境界条件（末尾記号）を単体関数で固定する（Impact: 3, Effort: 2, Evidence: yes）
 - [ ] P69: README Quick check に `failed_case` 許容文字集合（`[a-z0-9._-]+`）の契約理由を1段落追記し、運用時の命名ルールを明文化する（Impact: 2, Effort: 1, Evidence: yes）
 - [ ] P70: `SELF_CHECK_FORCE_FAIL_CASE` へ空白含み文字列を与えた際の取り扱い（拒否 or エスケープ）を仕様化し、selfcheckで固定する（Impact: 2, Effort: 3, Evidence: yes）
 
 ## Next
-- P66実施: README Quick check に `--summary` 契約を jq 非依存で検証する POSIX sh 例を追記する
+- P68実施: `failed_case` 抽出ロジックを `summary_failed_case_name` のE2E依存から分離し、正規表現の境界条件（末尾記号）を単体関数で固定する
