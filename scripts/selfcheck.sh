@@ -1038,9 +1038,9 @@ assert_readme_snapshot \
   "$readme_summary_line"
 
 readme_summary_snapshot_before=$(cat "$ROOT_DIR/tests/snapshots/readme-sync-help-summary-line.md")
-"$ROOT_DIR/scripts/update-summary-line-snapshot.sh" >/dev/null
+"$ROOT_DIR/scripts/sync-help-to-readme.sh" --update-summary-line-snapshot >/dev/null
 readme_summary_snapshot_after=$(cat "$ROOT_DIR/tests/snapshots/readme-sync-help-summary-line.md")
-assert_eq "update-summary-line-snapshot keeps standalone summary snapshot in sync" "$readme_summary_snapshot_before" "$readme_summary_snapshot_after"
+assert_eq "sync-help --update-summary-line-snapshot keeps standalone summary snapshot in sync" "$readme_summary_snapshot_before" "$readme_summary_snapshot_after"
 
 sync_help_summary_line=$(printf "%s\n" "$sync_help_examples_actual" | grep -E '^  \./scripts/selfcheck\.sh --summary$' | sed -E 's/^[[:space:]]+//')
 if [ "$sync_help_summary_line" = "$readme_summary_line" ]; then

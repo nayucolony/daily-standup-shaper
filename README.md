@@ -394,15 +394,14 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-25 04:42 JST)
-反復判定（実行前の直近5サイクル）: `P128(--all同期対象一覧の明文化) -> P131(個別syncを必要時のみへ整理) -> P130(summary単体行の共通スナップショット化) -> P125(ローカル検証ワンライナー見出し+実コマンドの同時固定) -> P134(--all へ summary-line 同期統合)` で README/sync-help 導線の同系比率は `5/5=1.00`（閾値0.60）。
-閾値超過のため、このサイクルは **P135を完了しつつ Update Plan を再優先付け**（high impact優先、同impactでは低effort優先、evidence-ready優先）。
+## Update Plan (watchdog 2026-02-25 04:50 JST)
+反復判定（実行前の直近5サイクル）: `P131(個別syncを必要時のみへ整理) -> P130(summary単体行の共通スナップショット化) -> P125(ローカル検証ワンライナー見出し+実コマンドの同時固定) -> P133(summary-line snapshot更新スクリプト追加) -> P135(sync-help個別更新5コマンド固定)` で README/sync-help/selfcheck の同系比率は `5/5=1.00`（閾値0.60）。
+閾値超過のため、このサイクルは **P136を完了しつつ Update Plan を再優先付け**（Impact優先、同ImpactではEffort低い順、Evidence-ready優先）。
 
-- [x] P134: `sync-help-to-readme.sh --all` に summary-line snapshot 更新を統合し、README/snapshot/help Examples の三点同期を1コマンド化（Impact: 3, Effort: 3, Evidence: yes）
-- [x] P135: sync-help個別更新リストに `--update-summary-line-snapshot` を含め、`scripts/selfcheck.sh` 側でも optional command 数/順序スナップショットを5コマンド前提へ更新して README/Help 差分検知を固定（Impact: 3, Effort: 2, Evidence: yes）
-- [ ] P136: `./scripts/update-summary-line-snapshot.sh` の直接案内を `sync-help-to-readme.sh --update-summary-line-snapshot` へ一本化し、README Quick check の導線を sync-help だけに統一（Impact: 2, Effort: 2, Evidence: yes）
+- [x] P136: `scripts/selfcheck.sh` の summary-line 同期検証を `./scripts/sync-help-to-readme.sh --update-summary-line-snapshot` 経由へ一本化し、`update-summary-line-snapshot.sh` 直接実行導線を撤去（Impact: 2, Effort: 2, Evidence: yes）
 - [ ] P132: sync-help 個別更新5コマンド（summary含む）を `scripts/update-sync-help-optional-order-snapshot.sh` に集約し、README手編集を減らして差分復旧を1コマンド化（Impact: 2, Effort: 3, Evidence: yes）
 - [ ] P137: `tests/snapshots/sync-help-examples.md` から README 個別同期コマンド群を自動抽出するヘルパーを追加し、help→README同期を単一ソース化（Impact: 2, Effort: 3, Evidence: yes）
+- [ ] P138: `sync-help-to-readme.sh --all` の不変条件検証へ `readme-sync-help-summary-line.md` を追加し、`assert_sync_help_all_invariants` を7点同期（help/options + one-line contract + links + recommended + sync-line + summary-line + help-examples）へ拡張（Impact: 2, Effort: 3, Evidence: yes）
 
 ## Next
-- P136を実施する: README Quick check の summary単体更新導線を `./scripts/sync-help-to-readme.sh --update-summary-line-snapshot` に一本化し、`./scripts/update-summary-line-snapshot.sh` 直接案内を撤去する
+- P132を実施する: sync-help 個別更新5コマンド（summary含む）の順序/件数スナップショット更新を `scripts/update-sync-help-optional-order-snapshot.sh` に集約し、README差分復旧を1コマンド化する
