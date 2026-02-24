@@ -391,15 +391,15 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-25 02:50 JST)
-反復判定（実行前の直近5サイクル）: `P123(推奨順1行スナップショット化) -> P117(--help例/README同期) -> P119(ローカル検証ワンライナー明確化) -> P122(単体sync行→推奨順の順序回帰) -> このサイクル` で README/sync-help 導線の同系比率は `5/5=1.00`（閾値0.60）。
-閾値超過のため、`## Update Plan` を再優先付けしつつ、1アクション前進として P124（単体sync行スナップショット化 + 順序スナップショット比較）を完了。
+## Update Plan (watchdog 2026-02-25 03:10 JST)
+反復判定（実行前の直近5サイクル）: `P122(順序回帰) -> P119(ワンライナー明確化) -> P117(--help例/README同期) -> P124(sync行スナップショット化) -> P126(help Examplesスナップショット化)` で README/sync-help 導線の同系比率は `5/5=1.00`（閾値0.60）。
+閾値超過のため、このサイクルは **Update Plan再優先付け** を1アクション前進として実施。
 
-- [x] P124: README Quick check の `./scripts/sync-help-to-readme.sh --all` 単体行を `tests/snapshots/readme-quick-check-sync-line.md` に分離し、推奨順行との順序差分を selfcheck のスナップショット比較で検知可能にした（Impact: 3, Effort: 2, Evidence: yes）
-- [x] P126: `sync-help-to-readme.sh --help` の Examples ブロック最小スナップショット（`tests/snapshots/sync-help-examples.md`）と更新コマンド（`--update-help-examples-snapshot`）を追加し、README Quick check 記載との一致を selfcheck で固定した（Impact: 4, Effort: 3, Evidence: yes）
-- [ ] P127: `sync-help-to-readme.sh --help` の Examples に推奨順/単体syncスナップショット更新導線（`--update-recommended-sequence-snapshot` / `--update-sync-line-snapshot`）を追記し、README Quick check 記載との一致を selfcheck で固定（Impact: 3, Effort: 2, Evidence: yes）
+- [ ] P127: `sync-help-to-readme.sh --help` の Examples に推奨順/単体syncスナップショット更新導線（`--update-recommended-sequence-snapshot` / `--update-sync-line-snapshot`）を追記し、README Quick check 記載との一致を selfcheck で固定（Impact: 4, Effort: 2, Evidence: yes）
+- [ ] P129: `sync-help-to-readme.sh --help` Examples の順序を README Quick check 見出し順（推奨順→単体sync→summary）に統一し、`tests/snapshots/sync-help-examples.md` との差分で順序崩れを検知（Impact: 4, Effort: 2, Evidence: yes）
+- [ ] P128: `sync-help-to-readme.sh --all` の同期対象一覧（help/options + one-line contract + links + recommended + sync-line + help-examples）を README Quick check に1行で明示し、selfcheck で文言固定（Impact: 3, Effort: 1, Evidence: yes）
 - [ ] P125: README Quick check の「ローカル検証ワンライナー」見出しと実コマンドの組を専用スナップショットへ固定し、見出し変更時の差分検知を追加（Impact: 2, Effort: 2, Evidence: yes）
-- [ ] P128: `sync-help-to-readme.sh --all` の同期対象一覧（help/options + one-line contract + links + recommended + sync-line）を README Quick check に1行で明示し、selfcheck で文言固定（Impact: 2, Effort: 1, Evidence: yes）
+- [ ] P130: `./scripts/selfcheck.sh --summary` 単体実行行の README/sync-help 両記載を同一スナップショットへ集約し、二重更新ズレを検知（Impact: 2, Effort: 2, Evidence: yes）
 
 ## Next
 - P127を実施する: `sync-help-to-readme.sh --help` の Examples に推奨順/単体syncスナップショット更新導線（`--update-recommended-sequence-snapshot` / `--update-sync-line-snapshot`）を追記し、README Quick check 記載との一致を selfcheck で固定する
