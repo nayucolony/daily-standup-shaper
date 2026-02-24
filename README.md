@@ -399,14 +399,14 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-25 07:20 JST)
-反復判定（実行前の直近5サイクル）: `P137 -> P143 -> P144 -> P145 -> P147` で README/sync-help/selfcheck の同系比率は `5/5=1.00`（閾値0.60超過）。
+## Update Plan (watchdog 2026-02-25 07:50 JST)
+反復判定（実行前の直近5サイクル）: `P143 -> P144 -> P145 -> P147 -> P146` で README/sync-help/selfcheck の同系比率は `5/5=1.00`（閾値0.60超過）。
 同系3連続ループ抑止ルールに基づき、Update PlanをImpact/Effort/Evidenceで再優先付け。
 
+- [x] P146: `sync-help-to-readme.sh --help` に失敗時2行テンプレ節を追加し、README/selfcheck/helpの3点一致をスナップショット化する（Impact: 3, Effort: 3, Evidence: yes）
 - [x] P147: README Quick check の `--all` 直下にある復旧テンプレの位置（`--all` の直後2行）を selfcheck で順序契約化する（Impact: 3, Effort: 2, Evidence: yes）
-- [ ] P146: `sync-help-to-readme.sh --help` に失敗時2行テンプレ節を追加し、README/selfcheck/helpの3点一致をスナップショット化する（Impact: 3, Effort: 3, Evidence: yes）
 - [ ] P148: `scripts/sync-help-to-readme.sh --update-sync-help-failure-template-snapshot` を追加し、2行テンプレ更新を1コマンド化する（Impact: 2, Effort: 2, Evidence: yes）
 - [ ] P149: README Quick check の `# 失敗時はこの2行テンプレで復旧/確認` 行を snapshot 化し、見出し文言のドリフトも selfcheck で検知する（Impact: 2, Effort: 2, Evidence: yes）
 
 ## Next
-- P146を実施する: `sync-help-to-readme.sh --help` に失敗時2行テンプレ節を追加し、README/selfcheck/helpの3点一致をスナップショット化する
+- P148を実施する: `scripts/sync-help-to-readme.sh --update-sync-help-failure-template-snapshot` を追加し、2行テンプレ更新を1コマンド化する
