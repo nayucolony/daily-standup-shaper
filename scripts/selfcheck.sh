@@ -122,6 +122,23 @@ summary_contract_actual() {
   printf "summary_code=%s summary_lines=%s first_line=%s" "$summary_code" "$summary_lines" "${first_line:-<empty>}"
 }
 
+RUN_SELF_CHECK_OUT=""
+RUN_SELF_CHECK_CODE=0
+run_selfcheck_capture() {
+  local force_fail_case="${1:-}"
+  local mode="${2:-normal}"
+
+  local -a cmd=("$0")
+  if [ "$mode" = "summary" ]; then
+    cmd+=("--summary")
+  fi
+
+  set +e
+  RUN_SELF_CHECK_OUT=$(SELF_CHECK_FORCE_FAIL_CASE="$force_fail_case" SELF_CHECK_SKIP_SUMMARY_FAILCASE_TEST=1 "${cmd[@]}" 2>&1)
+  RUN_SELF_CHECK_CODE=$?
+  set -e
+}
+
 multiline_input=$(cat <<'IN'
 昨日:
 - APIモック作成
@@ -707,14 +724,17 @@ assert_eq "README quiet snapshot matches --help" "$help_quiet_line" "$readme_qui
 if [ "$SKIP_SUMMARY_FAILCASE_TEST" != "1" ]; then
   summary_fail_case="summary-failcase-contract-sentinel"
 
-  set +e
-  summary_success_out=$(SELF_CHECK_SKIP_SUMMARY_FAILCASE_TEST=1 "$0" --summary 2>&1)
-  summary_success_code=$?
-  normal_out=$(SELF_CHECK_FORCE_FAIL_CASE="$summary_fail_case" SELF_CHECK_SKIP_SUMMARY_FAILCASE_TEST=1 "$0" 2>&1)
-  normal_code=$?
-  summary_out=$(SELF_CHECK_FORCE_FAIL_CASE="$summary_fail_case" SELF_CHECK_SKIP_SUMMARY_FAILCASE_TEST=1 "$0" --summary 2>&1)
-  summary_code=$?
-  set -e
+  run_selfcheck_capture "" summary
+  summary_success_out="$RUN_SELF_CHECK_OUT"
+  summary_success_code=$RUN_SELF_CHECK_CODE
+
+  run_selfcheck_capture "$summary_fail_case" normal
+  normal_out="$RUN_SELF_CHECK_OUT"
+  normal_code=$RUN_SELF_CHECK_CODE
+
+  run_selfcheck_capture "$summary_fail_case" summary
+  summary_out="$RUN_SELF_CHECK_OUT"
+  summary_code=$RUN_SELF_CHECK_CODE
 
   normal_fail_name=$(printf "%s\n" "$normal_out" | sed -n 's/^FAIL: //p' | head -n 1)
   summary_success_line_count=$(printf "%s\n" "$summary_success_out" | grep -E -c '^SELF_CHECK_SUMMARY:' || true)
