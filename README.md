@@ -273,8 +273,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 09:03 JST)
-反復判定（直近5サイクル）では Quiet/Strict 契約まわりの同系作業比率が 4/5 で閾値以上だったため、このサイクルは実装ではなく Update Plan の再優先付けを実施しました（Impact/Effort/Evidence）。
+## Update Plan (watchdog 2026-02-24 09:10 JST)
+反復判定（直近5サイクル）では plan更新系の比率が 1/5 で閾値未満のため、selfcheckで検証可能なドキュメント前進（P37）を実施しました。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。未完了候補は上から着手。
 
@@ -301,7 +301,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P34: `--strict --quiet`（single/markdown）の終了コード2を README Quiet mode対応表の single/markdown 行へ明記し、受け入れ条件を1行化（Impact: 3, Effort: 1, Evidence: yes）
 - [x] P36: Quiet mode対応表に `single/json`・`all/json` の「stderr空 + exit 2 + JSON維持」要約列を追加し、運用判断を表だけで完結させる（Impact: 3, Effort: 1, Evidence: yes）
 - [x] P35: strict失敗時の終了コード契約（2）を `examples/strict-missing.txt` ベースの再現コマンドとして README に追加（Impact: 2, Effort: 1, Evidence: yes）
-- [ ] P37: README `Strict mode` 末尾に「quiet指定時はstderr抑制されても終了コード2は維持」の再確認チェックリストを追加（Impact: 2, Effort: 1, Evidence: yes）
+- [x] P37: README `Strict mode` 末尾に「quiet指定時はstderr抑制されても終了コード2は維持」の再確認チェックリストを追加（Impact: 2, Effort: 1, Evidence: yes）
+- [ ] P38: README Quiet mode に「運用確認ワンライナー（single/all の exit code=2 と stderr空を同時検証）」を追加し、手動確認の手順を1コマンド化する（Impact: 2, Effort: 1, Evidence: yes）
 
 ## Next
-- P37実施: README `Strict mode` 末尾に「quiet指定時はstderr抑制されても終了コード2は維持」の再確認チェックリストを追加する
+- P38実施: README Quiet mode に single/all の exit code=2 + stderr空を同時確認できる運用ワンライナーを追記する
