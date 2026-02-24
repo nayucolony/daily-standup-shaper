@@ -309,31 +309,16 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 12:20 JST)
-反復判定（直近5サイクル）: summary契約回帰系 5/5 で閾値到達。P55で失敗メッセージ形式を固定化したため、次は同系の重複検証を減らしつつ契約差分検知力を上げる候補へ再優先付け。
+## Update Plan (watchdog 2026-02-24 12:30 JST)
+反復判定（直近5サイクル）: summary契約回帰系 5/5 で閾値到達。今サイクルは同系実装を一旦止め、`## Update Plan` を再編して優先度を更新。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) で並べています。
 
-- [x] P39: `scripts/selfcheck.sh` に Quiet mode 契約ワンライナー相当（single/all の exit=2 + stderr空）を `for mode in ...` で1ブロック検証する節を追加し、README手順との同型性を高める（Impact: 2, Effort: 2, Evidence: yes）
-- [x] P40: `scripts/selfcheck.sh` の Quiet/Strict検証ブロックを関数化して重複を削減し、失敗時ログ（mode/code/stderr）を1形式に統一する（Impact: 4, Effort: 2, Evidence: yes）
-- [x] P41: `--strict --quiet` の single/all/json を `examples/strict-missing.txt` と標準入力の両系統で再検証し、入力経路差分がないことを回帰化する（Impact: 4, Effort: 3, Evidence: yes）
-- [x] P42: README Quiet mode 対応表に「入力経路（file/stdin）」列を追加し、運用時の再現コマンドを各行へ1つずつ明示する（Impact: 3, Effort: 1, Evidence: yes）
-- [x] P43: `./bin/shape-standup --help` の quiet/strict説明と README 文言の差分を selfcheck で検知する簡易スナップショット比較を追加（Impact: 3, Effort: 3, Evidence: yes）
-- [x] P44: CI向けに `./scripts/selfcheck.sh` 実行結果の要約（checks passed / failed case）を1行出力するオプションを追加（Impact: 2, Effort: 3, Evidence: yes）
-- [x] P45: `scripts/selfcheck.sh` の strict/quiet 回帰で使用する一時stderrファイル（`/tmp/shape_*`）を `trap` で自動削除し、CI環境での残骸をなくす（Impact: 2, Effort: 2, Evidence: yes）
-- [x] P46: `scripts/selfcheck.sh --summary` 失敗時に `failed_case` と同じ名前の `FAIL:` 行が通常モード出力に存在することを検証し、CIログ突合を簡単にする（Impact: 2, Effort: 2, Evidence: yes）
-- [x] P47: `scripts/selfcheck.sh --summary` の失敗例で `passed=<n>/<m>` が通常モードの失敗直前までの PASS 件数と一致することを検証し、進捗率の信頼性を固定する（Impact: 2, Effort: 2, Evidence: yes）
-- [x] P48: `scripts/selfcheck.sh --summary` の失敗例で `<m>`（総チェック数）が通常モード実行時の総チェック数（FAILケース含む）と一致することを検証し、分母の信頼性を固定する（Impact: 2, Effort: 2, Evidence: yes）
-- [x] P49: `scripts/selfcheck.sh --summary` の失敗系回帰ブロック（P46-P48）に対し、`SELF_CHECK_SUMMARY` 行のフォーマット変化（`passed=<n>/<m> failed_case=<name>`）を1回で検知する単一スナップショット検証を追加する（Impact: 2, Effort: 2, Evidence: yes）
-- [x] P50: `scripts/selfcheck.sh --summary` 実行時に `SELF_CHECK_SUMMARY` 行が1行のみで、`PASS:` / `FAIL:` の詳細行が混在しないことを検証し、CIの行パース前提を固定する（Impact: 2, Effort: 2, Evidence: yes）
-- [x] P51: `scripts/selfcheck.sh --summary` の成功時/失敗時で `SELF_CHECK_SUMMARY` 接頭辞が常に先頭行に出ること（余分な前置ログなし）を回帰追加し、ログ収集の先頭行パース互換を固定する（Impact: 2, Effort: 2, Evidence: yes）
-- [x] P52: `scripts/selfcheck.sh --summary` の失敗時に `SELF_CHECK_SUMMARY` 行が **ちょうど1行のみ**（重複なし）であることを回帰追加し、ログ収集の重複行パース揺れを防ぐ（Impact: 2, Effort: 2, Evidence: yes）
-- [x] P53: `scripts/selfcheck.sh --summary` の失敗時に `PASS:` / `FAIL:` 詳細行が混在しないことを失敗系専用で回帰追加し、CIの単一行パーサ互換をさらに固定する（Impact: 3, Effort: 2, Evidence: yes）
-- [x] P54: README Quick check に `--summary` 失敗例（期待: 先頭1行が SUMMARY、終了コード非0）を追記し、運用者向けの受け入れ条件を明示する（Impact: 2, Effort: 1, Evidence: yes）
-- [x] P55: `scripts/selfcheck.sh` の summary契約回帰ブロックを関数化し、失敗時メッセージを `summary_code/summary_lines/first_line` の固定形式に統一する（Impact: 2, Effort: 2, Evidence: yes）
 - [ ] P56: summary失敗時の固定形式（`summary_code/summary_lines/first_line`）を README Quick check に追記し、運用者が失敗ログを即読できる受け入れ条件を追加する（Impact: 3, Effort: 1, Evidence: yes）
 - [ ] P57: `scripts/selfcheck.sh` に summary契約テスト用のヘルパー関数（成功/失敗ケース実行と項目抽出）を追加し、重複コマンド列を削減する（Impact: 3, Effort: 2, Evidence: yes）
+- [ ] P59: `scripts/selfcheck.sh --summary` 失敗時に `summary_code=` が数値であることを単独回帰で固定し、ログ機械処理の型崩れを防ぐ（Impact: 3, Effort: 2, Evidence: yes）
 - [ ] P58: `scripts/selfcheck.sh --summary` の出力を `grep -E` 1本で検証できる最小CI例を README に追加し、外部CIへの移植性を上げる（Impact: 2, Effort: 1, Evidence: yes）
+- [ ] P60: README Quick check に summary失敗時の triage 手順（`summary_code`→`summary_lines`→`first_line`）を3手順で追記し、一次切り分け時間を短縮する（Impact: 2, Effort: 1, Evidence: yes）
 
 ## Next
 - P56実施: README Quick check に `summary_code/summary_lines/first_line` 固定形式の失敗時ログ受け入れ条件を追記する
