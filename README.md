@@ -75,6 +75,7 @@
 # extract_failed_case_from_summary_line も同じ許容境界で抽出し、境界文字を削らずに返す。
 # 受け入れ条件（1行）: failed_case は `[a-z0-9._-]+` を満たし、`0foo` は許容・`Foo`/`fooA`/`foo/bar` は拒否（英大文字・スラッシュは全位置で規約外）。
 # 対応テスト: [`accepts 0foo (README one-line acceptance)`](./scripts/selfcheck.sh#L821), [`rejects Foo (README one-line acceptance)`](./scripts/selfcheck.sh#L822), [`rejects fooA (uppercase suffix, README one-line acceptance)`](./scripts/selfcheck.sh#L822), [`rejects foo/bar (slash delimiter, README one-line acceptance)`](./scripts/selfcheck.sh#L822)
+# 補足: 上記4リンクは selfcheck 内の「README one-line acceptance」境界テスト群（0foo許容 / Foo・fooA・foo/bar拒否）を指す。
 # SELF_CHECK_FORCE_FAIL_CASE に空白など規約外文字を渡した場合は、
 # failed_case=invalid-self-check-force-fail-case で明示的に拒否される。
 
@@ -371,16 +372,16 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 20:50 JST)
-反復判定（直近5サイクル）: `P88(selfcheck) -> P91(selfcheck) -> P90(README) -> P92(README) -> P93(selfcheck)` で同系（selfcheck）比率は `3/5=0.60`（閾値以上）。
-このサイクルは反復回避のため **Plan更新を1アクション** とし、Impact/Effort/Evidenceで再優先付け。
+## Update Plan (watchdog 2026-02-24 21:10 JST)
+反復判定（直近5サイクル）: `P92(README) -> P93(selfcheck) -> stagnation(plan) -> P94(selfcheck) -> P95(README)` で同系比率は `2/5=0.40`（閾値未満）。
+このサイクルは selfcheck で検証可能な前進として **P95（README説明1行追加）** を実施。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) の順。
 
-- [ ] P94: README の対応テストリンク行で `./scripts/selfcheck.sh#L...` 形式が4件揃っていることを selfcheck で検証し、リンク先アンカー欠落を自動検出する（Impact: 3, Effort: 1, Evidence: yes）
-- [ ] P95: README Quick check の「対応テスト」行に `scripts/selfcheck.sh` 内の対象ブロック見出し（境界テスト群）への説明を1行追加し、リンク意図を明確化する（Impact: 2, Effort: 1, Evidence: yes）
+- [x] P94: README の対応テストリンク行で `./scripts/selfcheck.sh#L...` 形式が4件揃っていることを selfcheck で検証し、リンク先アンカー欠落を自動検出する（Impact: 3, Effort: 1, Evidence: yes）
+- [x] P95: README Quick check の「対応テスト」行に `scripts/selfcheck.sh` 内の対象ブロック見出し（境界テスト群）への説明を1行追加し、リンク意図を明確化する（Impact: 2, Effort: 1, Evidence: yes）
 - [ ] P96: scripts/selfcheck.sh で README の対応テストリンク数が4件ちょうどであること（不足/過剰）を検証し、README更新漏れ検知を強化する（Impact: 2, Effort: 2, Evidence: yes）
 - [ ] P97: README Quick check の受け入れ条件1行と対応テスト行の近接配置（連続2行）を selfcheck で固定し、可読性劣化を防ぐ（Impact: 2, Effort: 2, Evidence: yes）
 
 ## Next
-- P94を実施する: README の対応テストリンク行で `./scripts/selfcheck.sh#L...` 形式が4件揃っていることを selfcheck に追加し、リンク欠落を自動検出する
+- P96を実施する: scripts/selfcheck.sh で README の対応テストリンク数が4件ちょうど（不足/過剰NG）を検証し、README更新漏れ検知を強化する
