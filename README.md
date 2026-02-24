@@ -70,6 +70,7 @@
 # 正常系の最小例（NG例との対比用）: SELF_CHECK_FORCE_FAIL_CASE=foo-1 ./scripts/selfcheck.sh --summary
 # 許容境界（先頭/末尾）: '.' '-' '_' は保持される（例: '.case', 'case-', '_case_'）。
 # 境界対比（3点セット）: `0foo` は許容 / `Foo` は拒否 / `fooA` は拒否（英大文字は先頭・末尾とも規約外）。
+# 最小再現（NG文字種の対比）: SELF_CHECK_FORCE_FAIL_CASE=fooA ./scripts/selfcheck.sh --summary && SELF_CHECK_FORCE_FAIL_CASE='foo/bar' ./scripts/selfcheck.sh --summary
 # 拒否境界（抽出NG例）: ')foo' / 'foo)' は failed_case として抽出されない（先頭/末尾の ')' は規約外）。
 # extract_failed_case_from_summary_line も同じ許容境界で抽出し、境界文字を削らずに返す。
 # 受け入れ条件（1行）: failed_case は `[a-z0-9._-]+` を満たし、`0foo` は許容・`Foo`/`fooA`/`foo/bar` は拒否（英大文字・スラッシュは全位置で規約外）。
@@ -378,8 +379,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] Plan更新: `## Update Plan` を再編し、README偏重から selfcheck 回帰追加を最上位に昇格（Impact: 3, Effort: 1, Evidence: yes）
 - [ ] P88: scripts/selfcheck.sh に `foo/bar` と `fooA` を同一ブロックで対比検証する回帰を追加し、NG境界の網羅性を一括で固定する（Impact: 3, Effort: 2, Evidence: yes）
 - [x] P91: scripts/selfcheck.sh に `foo/bar`・`Foo`・`fooA` の3点を1ケース群で検証するヘルパー化を追加し、境界回帰追加時の重複を減らす（Impact: 2, Effort: 2, Evidence: yes）
-- [ ] P90: README Quick check に `foo/bar` 拒否の最小再現例を1行追加し、`fooA` と並べて NG 文字種の対比を即時確認可能にする（Impact: 2, Effort: 1, Evidence: yes）
+- [x] P90: README Quick check に `foo/bar` 拒否の最小再現例を1行追加し、`fooA` と並べて NG 文字種の対比を即時確認可能にする（Impact: 2, Effort: 1, Evidence: yes）
 - [ ] P92: README Quick check の受け入れ条件1行を `scripts/selfcheck.sh` の該当テスト名へリンクし、仕様と回帰テストの対応追跡を容易にする（Impact: 1, Effort: 1, Evidence: yes）
 
 ## Next
-- P90を実施する: README Quick check に `foo/bar` 拒否の最小再現例を1行追加し、`fooA` と並べて NG 文字種の対比を即時確認可能にする
+- P92を実施する: README Quick check の受け入れ条件1行を `scripts/selfcheck.sh` の該当テスト名へリンクし、仕様と回帰テストの対応追跡を容易にする
