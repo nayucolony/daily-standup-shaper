@@ -403,15 +403,15 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-25 08:30 JST)
-反復判定（実行前の直近5サイクル）: `P146 -> P148 -> P149 -> P150 -> P151` で README/sync-help/selfcheck の同系比率は `5/5=1.00`（閾値0.60超過）。
+## Update Plan (watchdog 2026-02-25 08:40 JST)
+反復判定（実行前の直近5サイクル）: `P148 -> P149 -> P150 -> P151 -> P152` で README/sync-help/selfcheck の同系比率は `5/5=1.00`（閾値0.60超過）。
 同系3連続ループ抑止ルールに基づき、Update PlanをImpact/Effort/Evidenceで再優先付け。
 
-- [x] P151: `scripts/update-sync-help-failure-template-snapshot.sh` の冪等性検証（before/after一致）を selfcheck に追加し、`sync-help-to-readme.sh --update-sync-help-failure-template-snapshot` 実行前後で snapshot 一致を回帰固定（Impact: 2, Effort: 1, Evidence: yes）
-- [ ] P152: `scripts/update-sync-help-failure-heading-snapshot.sh` の冪等性検証（before/after一致）を selfcheck に追加する（Impact: 2, Effort: 1, Evidence: yes）
+- [x] P152: `scripts/update-sync-help-failure-heading-snapshot.sh` の冪等性検証（before/after一致）を selfcheck に追加し、updater実行前後で snapshot 一致を回帰固定（Impact: 2, Effort: 1, Evidence: yes）
 - [ ] P154: `sync_help_all_invariant_expected_no_diff_line` の期待文言に failure-heading/template を含むことを selfcheck で明示回帰化する（Impact: 2, Effort: 1, Evidence: yes）
 - [ ] P153: Quick check の「個別同期7コマンド」見出し数値と実コマンド数の一致を selfcheck で検証する（Impact: 2, Effort: 1, Evidence: yes）
 - [ ] P155: `sync-help-to-readme.sh --all` の不変対象ラベル配列（12件）と README Quick check 同期対象一覧1行の一致を selfcheck で回帰化する（Impact: 2, Effort: 2, Evidence: yes）
+- [ ] P156: `scripts/update-sync-help-failure-heading-snapshot.sh` と `sync-help-to-readme.sh --update-sync-help-failure-heading-snapshot` の実行結果同値（snapshot内容一致）を selfcheck で検証する（Impact: 2, Effort: 2, Evidence: yes）
 
 ## Next
-- P152を実施する: `scripts/update-sync-help-failure-heading-snapshot.sh` の冪等性検証（before/after一致）を selfcheck に追加する
+- P154を実施する: `sync_help_all_invariant_expected_no_diff_line` の期待文言に failure-heading/template を含むことを selfcheck で明示回帰化する

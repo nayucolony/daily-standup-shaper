@@ -1132,6 +1132,11 @@ readme_sync_help_failure_heading_before=$(cat "$ROOT_DIR/tests/snapshots/readme-
 readme_sync_help_failure_heading_after=$(cat "$ROOT_DIR/tests/snapshots/readme-sync-help-failure-heading.md")
 assert_eq "sync-help --update-sync-help-failure-heading-snapshot keeps failure-heading snapshot in sync" "$readme_sync_help_failure_heading_before" "$readme_sync_help_failure_heading_after"
 
+readme_sync_help_failure_heading_before_updater=$(cat "$ROOT_DIR/tests/snapshots/readme-sync-help-failure-heading.md")
+"$ROOT_DIR/scripts/update-sync-help-failure-heading-snapshot.sh" >/dev/null
+readme_sync_help_failure_heading_after_updater=$(cat "$ROOT_DIR/tests/snapshots/readme-sync-help-failure-heading.md")
+assert_eq "update-sync-help-failure-heading-snapshot keeps failure-heading snapshot in sync" "$readme_sync_help_failure_heading_before_updater" "$readme_sync_help_failure_heading_after_updater"
+
 readme_sync_help_retry_line=$(grep -F -- '# retry: ./scripts/sync-help-to-readme.sh --all' "$ROOT_DIR/README.md" | head -n 1 | sed -E 's/^#[[:space:]]*//')
 readme_sync_help_diff_line=$(grep -F -- '# diff: git diff -- README.md tests/snapshots' "$ROOT_DIR/README.md" | head -n 1 | sed -E 's/^#[[:space:]]*//')
 readme_sync_help_failure_template_actual=$(printf '%s\n%s' "$readme_sync_help_retry_line" "$readme_sync_help_diff_line")
