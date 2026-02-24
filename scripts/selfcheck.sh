@@ -824,6 +824,27 @@ for boundary_case in   "rejects Foo (README one-line acceptance)|$summary_line_b
   line_value=${boundary_case#*|}
   assert_failed_case_extraction "${case_label}" "" "$line_value"
 done
+
+readme_boundary_link_missing=""
+for readme_boundary_link_label in \
+  '[`accepts 0foo (README one-line acceptance)`]' \
+  '[`rejects Foo (README one-line acceptance)`]' \
+  '[`rejects fooA (uppercase suffix, README one-line acceptance)`]' \
+  '[`rejects foo/bar (slash delimiter, README one-line acceptance)`]'; do
+  if ! grep -F -- "$readme_boundary_link_label" "$ROOT_DIR/README.md" >/dev/null; then
+    if [ -n "$readme_boundary_link_missing" ]; then
+      readme_boundary_link_missing="$readme_boundary_link_missing, $readme_boundary_link_label"
+    else
+      readme_boundary_link_missing="$readme_boundary_link_label"
+    fi
+  fi
+done
+if [ -z "$readme_boundary_link_missing" ]; then
+  pass "README one-line acceptance links include all four failed_case boundary tests"
+else
+  fail "README one-line acceptance links include all four failed_case boundary tests" "README contains 4 link labels for 0foo/Foo/fooA/foo-bar tests" "missing: $readme_boundary_link_missing"
+fi
+
 assert_eq "extract_failed_case_from_summary_line keeps leading digit" "0summary-failcase-contract-sentinel" "$(extract_failed_case_from_summary_line "$summary_line_leading_digit")"
 assert_eq "extract_failed_case_from_summary_line keeps trailing digit" "summary-failcase-contract-sentinel0" "$(extract_failed_case_from_summary_line "$summary_line_trailing_digit")"
 assert_eq "extract_failed_case_from_summary_line keeps both-edge digits" "0summary-failcase-contract-sentinel0" "$(extract_failed_case_from_summary_line "$summary_line_both_edge_digits")"

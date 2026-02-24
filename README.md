@@ -371,17 +371,14 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-24 19:50 JST)
-反復判定（直近5サイクル）: `stagnation(Plan更新) -> P87(回帰追加) -> P86(README追記) -> P89(README追記) -> 今回候補P90(README追記)` となり、README追記ファミリ比率が `3/5=0.60` で閾値到達。
-同系3連続ループ回避のため、このサイクルは **Update Plan再編** を前進アクションとして実施した。
+## Update Plan (watchdog 2026-02-24 20:40 JST)
+反復判定（直近5サイクル）: `Plan更新 -> P88(selfcheck) -> P91(selfcheck) -> P90(README) -> P92(README)` で同系比率は `2/5=0.40`。閾値未満のため通常前進として P93 を実施。
 
 優先度は Impact(高) / Effort(低) / Evidence readiness(可) の順。
 
-- [x] Plan更新: `## Update Plan` を再編し、README偏重から selfcheck 回帰追加を最上位に昇格（Impact: 3, Effort: 1, Evidence: yes）
-- [ ] P88: scripts/selfcheck.sh に `foo/bar` と `fooA` を同一ブロックで対比検証する回帰を追加し、NG境界の網羅性を一括で固定する（Impact: 3, Effort: 2, Evidence: yes）
-- [x] P91: scripts/selfcheck.sh に `foo/bar`・`Foo`・`fooA` の3点を1ケース群で検証するヘルパー化を追加し、境界回帰追加時の重複を減らす（Impact: 2, Effort: 2, Evidence: yes）
-- [x] P90: README Quick check に `foo/bar` 拒否の最小再現例を1行追加し、`fooA` と並べて NG 文字種の対比を即時確認可能にする（Impact: 2, Effort: 1, Evidence: yes）
-- [ ] P92: README Quick check の受け入れ条件1行を `scripts/selfcheck.sh` の該当テスト名へリンクし、仕様と回帰テストの対応追跡を容易にする（Impact: 1, Effort: 1, Evidence: yes）
+- [x] P92: README Quick check の受け入れ条件1行を `scripts/selfcheck.sh` の該当テスト名へリンクし、仕様と回帰テストの対応追跡を容易にする（Impact: 2, Effort: 1, Evidence: yes）
+- [x] P93: scripts/selfcheck.sh に README受け入れ条件1行のリンク存在（4テスト名）を検証する回帰を追加し、README↔selfcheck対応のドリフトを自動検出する（Impact: 3, Effort: 1, Evidence: yes）
+- [ ] P94: README の対応テストリンク行で `./scripts/selfcheck.sh#L...` 形式が4件揃っていることを検証し、リンク先アンカー欠落を検出する（Impact: 2, Effort: 1, Evidence: yes）
 
 ## Next
-- P92を実施する: README Quick check の受け入れ条件1行を `scripts/selfcheck.sh` の該当テスト名へリンクし、仕様と回帰テストの対応追跡を容易にする
+- P94を実施する: README の対応テストリンク行で `./scripts/selfcheck.sh#L...` 形式が4件揃っていることを selfcheck に追加し、リンク欠落を自動検出する
