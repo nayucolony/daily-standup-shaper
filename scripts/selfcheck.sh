@@ -201,6 +201,52 @@ sync_help_all_invariant_expected_no_diff_line() {
   printf "no diff after --all for: %s (includes failure-heading/template)" "$labels_csv"
 }
 
+sync_help_all_invariant_mismatch_summary() {
+  local -a labels=("${SYNC_HELP_ALL_INVARIANT_LABELS[@]}")
+  local -a before_values=(
+    "$1"
+    "$3"
+    "$5"
+    "$7"
+    "$9"
+    "${11}"
+    "${13}"
+    "${15}"
+    "${17}"
+    "${19}"
+    "${21}"
+    "${23}"
+  )
+  local -a after_values=(
+    "$2"
+    "$4"
+    "$6"
+    "$8"
+    "${10}"
+    "${12}"
+    "${14}"
+    "${16}"
+    "${18}"
+    "${20}"
+    "${22}"
+    "${24}"
+  )
+
+  local -a mismatches=()
+  local i
+  for i in "${!labels[@]}"; do
+    if [ "${before_values[$i]}" != "${after_values[$i]}" ]; then
+      mismatches+=("${labels[$i]}")
+    fi
+  done
+
+  local mismatch_summary=""
+  if [ "${#mismatches[@]}" -gt 0 ]; then
+    mismatch_summary=$(IFS=', '; echo "${mismatches[*]}")
+  fi
+  printf "changed_count=%s changed=%s" "${#mismatches[@]}" "${mismatch_summary:-none}"
+}
+
 sync_help_all_quick_check_targets_from_labels() {
   local -a mapped=()
   local label
@@ -251,51 +297,19 @@ EOF
 }
 
 assert_sync_help_all_invariants() {
-  local -a labels=("${SYNC_HELP_ALL_INVARIANT_LABELS[@]}")
-  local -a before_values=(
-    "$1"
-    "$3"
-    "$5"
-    "$7"
-    "$9"
-    "${11}"
-    "${13}"
-    "${15}"
-    "${17}"
-    "${19}"
-    "${21}"
-    "${23}"
-  )
-  local -a after_values=(
-    "$2"
-    "$4"
-    "$6"
-    "$8"
-    "${10}"
-    "${12}"
-    "${14}"
-    "${16}"
-    "${18}"
-    "${20}"
-    "${22}"
-    "${24}"
-  )
+  local mismatch_actual
+  mismatch_actual=$(sync_help_all_invariant_mismatch_summary \
+    "$1" "$2" "$3" "$4" "$5" "$6" "$7" "$8" "$9" "${10}" "${11}" "${12}" \
+    "${13}" "${14}" "${15}" "${16}" "${17}" "${18}" "${19}" "${20}" "${21}" "${22}" "${23}" "${24}")
 
-  local -a mismatches=()
-  local i
-  for i in "${!labels[@]}"; do
-    if [ "${before_values[$i]}" != "${after_values[$i]}" ]; then
-      mismatches+=("${labels[$i]}")
-    fi
-  done
+  local mismatch_count
+  mismatch_count=$(printf "%s" "$mismatch_actual" | sed -n 's/^changed_count=\([0-9][0-9]*\) changed=.*/\1/p')
 
   local invariant_name="sync-help-to-readme --all keeps help/options + one-line contract + test-links + recommended-sequence + sync-line + summary-line + failure-template + help-examples + optional-block + optional-order snapshots in sync"
-  if [ "${#mismatches[@]}" -eq 0 ]; then
+  if [ "$mismatch_count" -eq 0 ]; then
     pass "$invariant_name"
   else
-    local mismatch_summary
-    mismatch_summary=$(IFS=', '; echo "${mismatches[*]}")
-    fail "$invariant_name" "$(sync_help_all_invariant_expected_no_diff_line)" "changed_count=${#mismatches[@]} changed=${mismatch_summary}"
+    fail "$invariant_name" "$(sync_help_all_invariant_expected_no_diff_line)" "$mismatch_actual"
   fi
 }
 
@@ -1363,6 +1377,21 @@ assert_eq \
   "sync_help_all_invariant_expected_no_diff_line includes failure-heading/template wording" \
   "1" \
   "$(printf "%s" "$(sync_help_all_invariant_expected_no_diff_line)" | grep -F -c -- 'includes failure-heading/template')"
+
+sync_help_all_expected_labels_csv=$(printf "%s" "$(sync_help_all_invariant_expected_no_diff_line)" | sed -n 's/^no diff after --all for: \(.*\) (includes failure-heading\/template)$/\1/p')
+sync_help_all_mismatch_all=$(sync_help_all_invariant_mismatch_summary \
+  before1 after1 before2 after2 before3 after3 before4 after4 before5 after5 before6 after6 \
+  before7 after7 before8 after8 before9 after9 before10 after10 before11 after11 before12 after12)
+sync_help_all_mismatch_labels_csv=$(printf "%s" "$sync_help_all_mismatch_all" | sed -n 's/^changed_count=[0-9][0-9]* changed=\(.*\)$/\1/p')
+assert_eq \
+  "sync_help_all_invariant_expected_no_diff_line label CSV matches assert_sync_help_all_invariants mismatch label set" \
+  "$sync_help_all_expected_labels_csv" \
+  "$sync_help_all_mismatch_labels_csv"
+assert_eq \
+  "assert_sync_help_all_invariants mismatch label count is 12 when all labels differ" \
+  "changed_count=12" \
+  "$(printf "%s" "$sync_help_all_mismatch_all" | sed -n 's/^\(changed_count=[0-9][0-9]*\) changed=.*/\1/p')"
+
 readme_sync_help_targets_line=$(grep -F -- '# README/スナップショット同期（' "$ROOT_DIR/README.md" | head -n 1)
 readme_sync_help_targets_actual=$(printf "%s\n" "$readme_sync_help_targets_line" | sed -n 's/^# README\/スナップショット同期（\(.*\)）$/\1/p' | sed 's/ を1コマンドで揃える$//')
 readme_sync_help_targets_expected=$(sync_help_all_quick_check_targets_from_labels)
