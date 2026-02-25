@@ -1399,6 +1399,29 @@ assert_eq \
   "README Quick check sync-help --all target list matches SYNC_HELP_ALL_INVARIANT_LABELS" \
   "$readme_sync_help_targets_expected" \
   "$readme_sync_help_targets_actual"
+
+sync_help_all_mismatch_actual=$(sync_help_all_invariant_mismatch_summary \
+  "$readme_help_block_before" "$readme_help_block_after" \
+  "$sync_contract_before_all" "$sync_contract_after_all" \
+  "$readme_test_links_before_all" "$readme_test_links_after_all" \
+  "$readme_test_links_snapshot_before_all" "$readme_test_links_snapshot_after_all" \
+  "$readme_recommended_snapshot_before_all" "$readme_recommended_snapshot_after_all" \
+  "$readme_sync_line_snapshot_before_all" "$readme_sync_line_snapshot_after_all" \
+  "$readme_summary_line_snapshot_before_all" "$readme_summary_line_snapshot_after_all" \
+  "$readme_failure_heading_snapshot_before_all" "$readme_failure_heading_snapshot_after_all" \
+  "$readme_failure_template_snapshot_before_all" "$readme_failure_template_snapshot_after_all" \
+  "$readme_help_examples_snapshot_before_all" "$readme_help_examples_snapshot_after_all" \
+  "$readme_optional_block_snapshot_before_all" "$readme_optional_block_snapshot_after_all" \
+  "$readme_optional_order_snapshot_before_all" "$readme_optional_order_snapshot_after_all")
+if [ "$readme_sync_help_targets_actual" = "$readme_sync_help_targets_expected" ] \
+  && [ "$sync_help_all_mismatch_actual" = "changed_count=0 changed=none" ]; then
+  pass "sync-help-to-readme --all keeps README Quick check target list and invariant checks no diff in one cycle"
+else
+  fail "sync-help-to-readme --all keeps README Quick check target list and invariant checks no diff in one cycle" \
+    "targets=$readme_sync_help_targets_expected and changed_count=0 changed=none" \
+    "targets=$readme_sync_help_targets_actual $sync_help_all_mismatch_actual"
+fi
+
 assert_sync_help_all_invariants \
   "$readme_help_block_before" "$readme_help_block_after" \
   "$sync_contract_before_all" "$sync_contract_after_all" \
