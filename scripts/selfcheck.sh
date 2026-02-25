@@ -1392,6 +1392,30 @@ assert_eq \
   "changed_count=12" \
   "$(printf "%s" "$sync_help_all_mismatch_all" | sed -n 's/^\(changed_count=[0-9][0-9]*\) changed=.*/\1/p')"
 
+sync_help_all_mismatch_partial=$(sync_help_all_invariant_mismatch_summary \
+  same same \
+  same changed-one \
+  same same \
+  same changed-two \
+  same same \
+  same same \
+  same changed-three \
+  same same \
+  same same \
+  same same \
+  same same \
+  same same)
+sync_help_all_mismatch_partial_count=$(printf "%s" "$sync_help_all_mismatch_partial" | sed -n 's/^changed_count=\([0-9][0-9]*\) changed=.*/\1/p')
+sync_help_all_mismatch_partial_labels=$(printf "%s" "$sync_help_all_mismatch_partial" | sed -n 's/^changed_count=[0-9][0-9]* changed=\(.*\)$/\1/p')
+assert_eq \
+  "assert_sync_help_all_invariants mismatch changed_count matches number of changed labels" \
+  "3" \
+  "$sync_help_all_mismatch_partial_count"
+assert_eq \
+  "assert_sync_help_all_invariants partial mismatch labels list has exactly 3 entries" \
+  "2" \
+  "$(printf "%s" "$sync_help_all_mismatch_partial_labels" | tr -cd ',' | wc -c | tr -d ' ')"
+
 readme_sync_help_targets_line=$(grep -F -- '# README/スナップショット同期（' "$ROOT_DIR/README.md" | head -n 1)
 readme_sync_help_targets_actual=$(printf "%s\n" "$readme_sync_help_targets_line" | sed -n 's/^# README\/スナップショット同期（\(.*\)）$/\1/p' | sed 's/ を1コマンドで揃える$//')
 readme_sync_help_targets_expected=$(sync_help_all_quick_check_targets_from_labels)
