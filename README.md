@@ -403,8 +403,8 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-25 11:15 JST)
-反復判定（実行前の直近5サイクル）: `P155 -> P156 -> P157 -> P158 -> P160` で README/sync-help/selfcheck の同系比率は `5/5=1.00`（閾値0.60超過）。
+## Update Plan (watchdog 2026-02-25 11:30 JST)
+反復判定（実行前の直近5サイクル）: `P156 -> P157 -> P158 -> P160 -> P159` で README/sync-help/selfcheck の同系比率は `5/5=1.00`（閾値0.60超過）。
 同系3連続ループ抑止ルールに基づき、Update PlanをImpact/Effort/Evidenceで再優先付け。
 
 - [x] P155: `sync-help-to-readme.sh --all` の不変対象ラベル配列（12件）と README Quick check 同期対象一覧1行の一致を selfcheck で回帰化する（Impact: 2, Effort: 2, Evidence: yes）
@@ -412,9 +412,10 @@ cp ./config/labels.example.json ./config/labels.local.json
 - [x] P157: `sync_help_all_invariant_expected_no_diff_line` のラベル列（12件）と `assert_sync_help_all_invariants` の mismatch表示ラベル集合が一致することを selfcheck で回帰化する（Impact: 3, Effort: 2, Evidence: yes）
 - [x] P158: `sync-help-to-readme.sh --all` 実行後の README Quick check 同期対象一覧（12項目）と `assert_sync_help_all_invariants` の検証対象が同時に no diff であることを selfcheckで1ケース回帰化する（Impact: 2, Effort: 3, Evidence: yes）
 - [x] P160: `assert_sync_help_all_invariants` の mismatchメッセージ `changed_count=<n>` が changed ラベル数と一致することを、3件差分の部分mismatchケースでも selfcheck で回帰化する（Impact: 3, Effort: 2, Evidence: yes）
-- [ ] P159: `assert_sync_help_all_invariants` の mismatchメッセージに含まれるラベル順序が README 同期対象一覧順と一致することを selfcheck で固定する（Impact: 3, Effort: 3, Evidence: yes）
+- [x] P159: `assert_sync_help_all_invariants` の mismatchメッセージに含まれるラベル順序が README 同期対象一覧順と一致することを selfcheck で固定する（Impact: 3, Effort: 3, Evidence: yes）
 - [ ] P161: `assert_sync_help_all_invariants` の mismatchメッセージが `changed=none` のときに `changed_count=0` を必ず返す契約を、0件/複数件の対比で selfcheck に追加する（Impact: 3, Effort: 2, Evidence: yes）
+- [ ] P163: `sync_help_all_invariant_mismatch_summary` の `changed` ラベル列が重複なし（unique）かつ先勝ち順序で出力されることを selfcheck で固定する（Impact: 3, Effort: 2, Evidence: yes）
 - [ ] P162: mismatchサマリ生成を専用ヘルパーに分離し、`changed_count` と `changed` の組み立てロジックを単一定義化する（Impact: 2, Effort: 3, Evidence: yes）
 
 ## Next
-- P159を実施する: `assert_sync_help_all_invariants` の mismatchメッセージに含まれるラベル順序が README 同期対象一覧順と一致することを selfcheck で固定する
+- P161を実施する: `assert_sync_help_all_invariants` の mismatchメッセージが `changed=none` のときに `changed_count=0` を必ず返す契約を、0件/複数件の対比で selfcheck に追加する

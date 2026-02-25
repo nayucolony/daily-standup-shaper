@@ -1415,6 +1415,10 @@ assert_eq \
   "assert_sync_help_all_invariants partial mismatch labels list has exactly 3 entries" \
   "2" \
   "$(printf "%s" "$sync_help_all_mismatch_partial_labels" | tr -cd ',' | wc -c | tr -d ' ')"
+assert_eq \
+  "assert_sync_help_all_invariants partial mismatch labels keep README target order" \
+  "one-line-contract,test-links-snapshot,summary-line-snapshot" \
+  "$sync_help_all_mismatch_partial_labels"
 
 readme_sync_help_targets_line=$(grep -F -- '# README/スナップショット同期（' "$ROOT_DIR/README.md" | head -n 1)
 readme_sync_help_targets_actual=$(printf "%s\n" "$readme_sync_help_targets_line" | sed -n 's/^# README\/スナップショット同期（\(.*\)）$/\1/p' | sed 's/ を1コマンドで揃える$//')
