@@ -947,6 +947,19 @@ else
   fail "README Quick check keeps exactly seven sync-help individual update commands" "README contains exactly 7 sync-help individual update commands" "count=$readme_sync_help_optional_total_count"
 fi
 
+readme_sync_help_optional_heading_declared_count=$(sed -nE 's/^# 個別同期([0-9]+)コマンド.*/\1/p' "$ROOT_DIR/README.md" | head -n 1)
+readme_sync_help_optional_numbered_count=$(awk '
+  /^# 必要時のみ: 個別同期（推奨順で実行）$/ {capture=1; next}
+  capture && /^# ローカル検証ワンライナー/ {exit}
+  capture && /^# [0-9]+\)/ {count++}
+  END {print count+0}
+' "$ROOT_DIR/README.md")
+if [ -n "$readme_sync_help_optional_heading_declared_count" ] && [ "$readme_sync_help_optional_heading_declared_count" -eq "$readme_sync_help_optional_numbered_count" ]; then
+  pass "README Quick check optional-sync heading count matches numbered command count"
+else
+  fail "README Quick check optional-sync heading count matches numbered command count" "heading declared count equals number of '# N)' lines in optional-sync block" "declared=${readme_sync_help_optional_heading_declared_count:-missing}, numbered=$readme_sync_help_optional_numbered_count"
+fi
+
 readme_sync_help_optional_order_actual=$(awk '
   /^\.\/scripts\/sync-help-to-readme\.sh --update-(one-line-contract-test-links|recommended-sequence-snapshot|sync-line-snapshot|help-examples-snapshot|summary-line-snapshot|sync-help-failure-heading-snapshot|sync-help-failure-template-snapshot)$/ {print}
 ' "$ROOT_DIR/README.md")

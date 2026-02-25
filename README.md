@@ -100,7 +100,7 @@
 # extract_failed_case_from_summary_line も同じ許容境界で抽出し、境界文字を削らずに返す。
 <a id="quick-check-one-line-acceptance"></a>
 # 受け入れ条件（1行）: failed_case は `[a-z0-9._-]+` を満たし、`0foo` は許容・`Foo`/`fooA`/`foo/bar` は拒否（英大文字・スラッシュは全位置で規約外）。契約詳細は [Strict mode (CI向け)](#strict-mode-ci向け) / [Quiet mode](#quiet-mode) を参照。
-# 対応テスト: [`accepts 0foo (README one-line acceptance)`](./scripts/selfcheck.sh#L1024), [`rejects Foo (README one-line acceptance)`](./scripts/selfcheck.sh#L1025), [`rejects fooA (uppercase suffix, README one-line acceptance)`](./scripts/selfcheck.sh#L1025), [`rejects foo/bar (slash delimiter, README one-line acceptance)`](./scripts/selfcheck.sh#L1025)
+# 対応テスト: [`accepts 0foo (README one-line acceptance)`](./scripts/selfcheck.sh#L1037), [`rejects Foo (README one-line acceptance)`](./scripts/selfcheck.sh#L1038), [`rejects fooA (uppercase suffix, README one-line acceptance)`](./scripts/selfcheck.sh#L1038), [`rejects foo/bar (slash delimiter, README one-line acceptance)`](./scripts/selfcheck.sh#L1038)
 # 補足: 上記4リンクは selfcheck 内の「README one-line acceptance」境界テスト群（0foo許容 / Foo・fooA・foo/bar拒否）を指す。
 # 2行契約ブロックスナップショット更新: ./scripts/update-one-line-contract-snapshot.sh
 # 対応テスト4リンク行の同期（README行番号ズレ防止）: ./scripts/update-one-line-contract-test-links.sh
@@ -403,15 +403,15 @@ cp ./config/labels.example.json ./config/labels.local.json
 }
 ```
 
-## Update Plan (watchdog 2026-02-25 08:50 JST)
-反復判定（実行前の直近5サイクル）: `P149 -> P150 -> P151 -> P152 -> P154` で README/sync-help/selfcheck の同系比率は `5/5=1.00`（閾値0.60超過）。
+## Update Plan (watchdog 2026-02-25 09:03 JST)
+反復判定（実行前の直近5サイクル）: `P150 -> P151 -> P152 -> P154 -> P153` で README/sync-help/selfcheck の同系比率は `5/5=1.00`（閾値0.60超過）。
 同系3連続ループ抑止ルールに基づき、Update PlanをImpact/Effort/Evidenceで再優先付け。
 
-- [x] P154: `sync_help_all_invariant_expected_no_diff_line` の期待文言に failure-heading/template を含むことを selfcheck で明示回帰化する（Impact: 2, Effort: 1, Evidence: yes）
-- [ ] P153: Quick check の「個別同期7コマンド」見出し数値と実コマンド数の一致を selfcheck で検証する（Impact: 2, Effort: 1, Evidence: yes）
+- [x] P153: Quick check の「個別同期7コマンド」見出し数値と実コマンド数の一致を selfcheck で検証する（Impact: 2, Effort: 1, Evidence: yes）
 - [ ] P155: `sync-help-to-readme.sh --all` の不変対象ラベル配列（12件）と README Quick check 同期対象一覧1行の一致を selfcheck で回帰化する（Impact: 2, Effort: 2, Evidence: yes）
 - [ ] P156: `scripts/update-sync-help-failure-heading-snapshot.sh` と `sync-help-to-readme.sh --update-sync-help-failure-heading-snapshot` の実行結果同値（snapshot内容一致）を selfcheck で検証する（Impact: 2, Effort: 2, Evidence: yes）
 - [ ] P157: `sync_help_all_invariant_expected_no_diff_line` のラベル列（12件）と `assert_sync_help_all_invariants` の mismatch表示ラベル集合が一致することを selfcheck で回帰化する（Impact: 2, Effort: 2, Evidence: yes）
+- [ ] P158: `sync-help-to-readme.sh --all` 実行後の README Quick check 同期対象一覧（12項目）と `assert_sync_help_all_invariants` の検証対象が同時に no diff であることを selfcheckで1ケース回帰化する（Impact: 2, Effort: 3, Evidence: yes）
 
 ## Next
-- P153を実施する: Quick check の「個別同期7コマンド」見出し数値と実コマンド数の一致を selfcheck で検証する
+- P155を実施する: `sync-help-to-readme.sh --all` の不変対象ラベル配列（12件）と README Quick check 同期対象一覧1行の一致を selfcheck で回帰化する
