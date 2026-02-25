@@ -201,6 +201,48 @@ sync_help_all_invariant_expected_no_diff_line() {
   printf "no diff after --all for: %s (includes failure-heading/template)" "$labels_csv"
 }
 
+sync_help_all_quick_check_targets_from_labels() {
+  local -a mapped=()
+  local label
+  for label in "${SYNC_HELP_ALL_INVARIANT_LABELS[@]}"; do
+    case "$label" in
+      "help/options") mapped+=("help/options") ;;
+      "one-line-contract") mapped+=("one-line contract") ;;
+      "test-links-line"|"test-links-snapshot") mapped+=("links") ;;
+      "recommended-sequence-snapshot") mapped+=("recommended") ;;
+      "sync-line-snapshot") mapped+=("sync-line") ;;
+      "summary-line-snapshot") mapped+=("summary-line") ;;
+      "failure-heading-snapshot"|"failure-template-snapshot") mapped+=("failure-heading/template") ;;
+      "help-examples-snapshot") mapped+=("help-examples") ;;
+      "optional-block-snapshot") mapped+=("optional-block") ;;
+      "optional-order-snapshot") mapped+=("optional-order") ;;
+    esac
+  done
+
+  local -a unique=()
+  local seen="|"
+  for label in "${mapped[@]}"; do
+    case "$seen" in
+      *"|$label|"*) ;;
+      *)
+        unique+=("$label")
+        seen="${seen}${label}|"
+        ;;
+    esac
+  done
+
+  local joined=""
+  for label in "${unique[@]}"; do
+    if [ -n "$joined" ]; then
+      joined="$joined + $label"
+    else
+      joined="$label"
+    fi
+  done
+
+  printf "%s" "$joined"
+}
+
 sync_help_all_retry_template() {
   cat <<'EOF'
 retry: ./scripts/sync-help-to-readme.sh --all
@@ -1093,11 +1135,11 @@ else
 fi
 
 readme_sync_all_scope_line=$(grep -F -- '# README/スナップショット同期（' "$ROOT_DIR/README.md" | head -n 1)
-readme_sync_all_scope_count=$(grep -Fxc -- '# README/スナップショット同期（help/options + one-line contract + links + recommended + sync-line + summary-line + failure-heading/template + help-examples + optional-order を1コマンドで揃える）' "$ROOT_DIR/README.md" || true)
+readme_sync_all_scope_count=$(grep -Fxc -- '# README/スナップショット同期（help/options + one-line contract + links + recommended + sync-line + summary-line + failure-heading/template + help-examples + optional-block + optional-order を1コマンドで揃える）' "$ROOT_DIR/README.md" || true)
 if [ "$readme_sync_all_scope_count" -eq 1 ]; then
   pass "README Quick check documents --all sync scope in one line"
 else
-  fail "README Quick check documents --all sync scope in one line" "README contains exactly one scope line for --all: help/options + one-line contract + links + recommended + sync-line + summary-line + failure-heading/template + help-examples + optional-order" "count=$readme_sync_all_scope_count line='$readme_sync_all_scope_line'"
+  fail "README Quick check documents --all sync scope in one line" "README contains exactly one scope line for --all: help/options + one-line contract + links + recommended + sync-line + summary-line + failure-heading/template + help-examples + optional-block + optional-order" "count=$readme_sync_all_scope_count line='$readme_sync_all_scope_line'"
 fi
 assert_readme_snapshot \
   "README Quick check --all sync scope line snapshot matches expected" \
@@ -1315,6 +1357,13 @@ assert_eq \
   "sync_help_all_invariant_expected_no_diff_line includes failure-heading/template wording" \
   "1" \
   "$(printf "%s" "$(sync_help_all_invariant_expected_no_diff_line)" | grep -F -c -- 'includes failure-heading/template')"
+readme_sync_help_targets_line=$(grep -F -- '# README/スナップショット同期（' "$ROOT_DIR/README.md" | head -n 1)
+readme_sync_help_targets_actual=$(printf "%s\n" "$readme_sync_help_targets_line" | sed -n 's/^# README\/スナップショット同期（\(.*\)）$/\1/p' | sed 's/ を1コマンドで揃える$//')
+readme_sync_help_targets_expected=$(sync_help_all_quick_check_targets_from_labels)
+assert_eq \
+  "README Quick check sync-help --all target list matches SYNC_HELP_ALL_INVARIANT_LABELS" \
+  "$readme_sync_help_targets_expected" \
+  "$readme_sync_help_targets_actual"
 assert_sync_help_all_invariants \
   "$readme_help_block_before" "$readme_help_block_after" \
   "$sync_contract_before_all" "$sync_contract_after_all" \
